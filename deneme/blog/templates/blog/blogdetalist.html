@@ -13,14 +13,14 @@
 			<div class="card mb-3">
 				<div class="row g-0">
 					<div class="col-md-3">
-					<img src="{% static 'img/'|add:blog.image %}" class="img-fluid rounded-start" alt="...">
+						<img src="{% static 'img/'|add:blog.image %}" class="img-fluid rounded-start" alt="...">
 					</div>
 					<div class="col-md-9">
 					<div class="card-body">
 						<h5 class="card-title">
 								{{ blog.title }}
 						</h5>
-						<p class="card-text">{{ blog.content }}</p>
+						<p class="card-text">{{ blog.context }}</p>
 					</div>
 					</div>
 				</div>
