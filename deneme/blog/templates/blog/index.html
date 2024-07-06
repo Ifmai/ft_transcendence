@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block cssfile %}
+	<link rel="stylesheet" href="{% static 'blog/css/index.css' %}">
+{% endblock %}
+
+{% block title %}Anasayfa{% endblock %}
+
+{% block content %}
+	<div class="container mt-3">
+		<div class="row">
+			<div class="col-3">
+				{% include 'partials/_catagories.html' %}
+			</div>
+			<div class="col-9">
+				<h1>HOME PAGE</h1>
+
+				{% for blog in blogs %}
+					{% if blog.is_home and blog.is_active %}
+						{% include 'blog/partials/_blog.html' %}
+					{% endif %}
+				{% endfor %}
+			</div>		
+		</div>
+	</div>
+{% endblock %}
+
+{% block JsFile %}
+	<script src="{% static 'blog/js/script.js' %}"></script>
+{% endblock %}
