@@ -53,12 +53,12 @@ def blogs(request):
 
 def blogsDetalist(request, id):
 	blogs = data["blogs"]
+	seletedBlog = [blog for blog in blogs if blog["id"] == id][0]
 #	seletedBlog = None
 #	for blog in blogs:
 #		if blog["id"] == id:
 #			seletedBlog = blog
 #			break
-	seletedBlog = [blog for blog in blogs if blog["id"] == id][0]
 	return render(request, 'blog/blogdetalist.html', {
 			'blog': seletedBlog
 		}
