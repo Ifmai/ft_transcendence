@@ -5,5 +5,5 @@ urlpatterns = [
 	path('', views.index, name='home page'),
 	path('index', views.index, name='home page'),
 	path('blog', views.blogs, name='blog page'),
-	path('blog/<int:id>', views.blogsDetalist, name='blog detalist page'),
+	path('blog/<slug:slug>', views.blogsDetalist, name='blog detalist page'),
 ]

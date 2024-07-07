@@ -55,8 +55,8 @@ def blogs(request):
 	}
 	return render(request, 'blog/blog.html', context)
 
-def blogsDetalist(request, id):
-	blogs = Blog.objects.get(id=id)
+def blogsDetalist(request, slug):
+	blogs = Blog.objects.get(slug=slug)
 	return render(request, 'blog/blogdetalist.html', {
 			'blog': blogs
 		}

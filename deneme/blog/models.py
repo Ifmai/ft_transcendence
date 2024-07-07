@@ -9,6 +9,7 @@ class Blog(models.Model):
 	is_active = models.BooleanField()
 	is_home = models.BooleanField(default=False) # bir bilgi kaydedildiğinde default değer false eklenir. veri kaydederken göndermek zorunda kalmayız.
 	slug = models.SlugField(null=False, blank=True, unique=True, db_index=True, editable=False)
+	
 	def __str__(self) -> str:
 		return f"{self.title}"
 	
@@ -18,7 +19,12 @@ class Blog(models.Model):
 
 class Catagory(models.Model):
 	name = models.CharField(max_length=150)
+	slug = models.SlugField(null=False, blank=True, unique=True, db_index=True, editable=False)
 
 	def __str__(self) -> str:
 		return f"{self.name}"
+	
+	def save(self, *args, **kwargs):
+		self.slug = slugify(self.name)
+		super().save(*args, **kwargs)
 
