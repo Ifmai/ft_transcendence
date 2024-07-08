@@ -1,64 +1,35 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from blog.models import Blog
-
-
-
-
-data = {
-	"blogs" : [
-		{
-			"id": 1,
-			"title": "Blog 1",
-			"image": "djangop.jpg",
-			"is_active": True,
-			"is_home": True,
-			"content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel purus nec nibh aliquam tincidunt. Donec ac erat sit amet felis fermentum efficitur"
-		},
-		{
-			"id": 2,
-			"title": "Blog 2",
-			"image": "nodejs.jpg",
-			"is_active": True,
-			"is_home": True,
-			"content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel purus nec nibh aliquam tincidunt. Donec ac erat sit amet felis fermentum efficitur"
-		},
-		{
-			"id": 3,
-			"title": "Blog 3",
-			"image": "python.jpg",
-			"is_active": True,
-			"is_home": True,
-			"content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel purus nec nibh aliquam tincidunt. Donec ac erat sit amet felis fermentum efficitur"
-		},
-		{
-			"id": 4,
-			"title": "Blog 4",
-			"image": "sadikturan.jpg",
-			"is_active": True,
-			"is_home": False,
-			"content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel purus nec nibh aliquam tincidunt. Donec ac erat sit amet felis fermentum efficitur"
-		},
-	]
-}
+from blog.models import Blog, Catagory
 
 # Create your views here.
 def index(request):
+	print("BEN BURAYA GİRDİM INDEX.HTML")
 	context = {
 		"blogs": Blog.objects.filter(is_home=True, is_active=True),
+		"catagories" : Catagory.objects.all()
 	}
 	return render(request, 'blog/index.html', context)
 
 def blogs(request):
 	context = {
 		"blogs":Blog.objects.filter(is_active=True),
+		"catagories" : Catagory.objects.all()
 	}
 	return render(request, 'blog/blog.html', context)
 
 def blogsDetalist(request, slug):
 	blogs = Blog.objects.get(slug=slug)
+	cat = Catagory.objects.all(),
 	return render(request, 'blog/blogdetalist.html', {
-			'blog': blogs
+			'blog': blogs,
 		}
 	)
 
+def blogs_by_catagory(request, slug):
+	context = {
+		"blogs": Catagory.objects.get(slug=slug).blog_set.filter(is_active=True),
+		"catagories" : Catagory.objects.all(),
+		"selected" : slug
+	}
+	return render(request, 'blog/blog.html', context)

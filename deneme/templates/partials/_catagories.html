@@ -1,8 +1,9 @@
 <div class="list-group">
-	<a href="#" class="list-group-item list-group-item-action active" aria-current="true">
-	  PROGRAMLAMA
-	</a>
-	<a href="#" class="list-group-item list-group-item-action">PROGRAMLAMA</a>
-	<a href="#" class="list-group-item list-group-item-action">SOFTWARE PROGRAMLAMA</a>
-	<a href="#" class="list-group-item list-group-item-action">MOBIL PROGRAMLAMA</a>
-  </div>
+	{% for catagory in catagories  %}
+		{% if catagory.slug == selected %}
+			<a href="{% url "blogs_by_catagory" catagory.slug %}" class="list-group-item list-group-item-action active">{{ catagory.name|title }}</a>
+		{% else %}
+			<a href="{% url "blogs_by_catagory" catagory.slug %}" class="list-group-item list-group-item-action">{{ catagory.name|title }}</a>
+		{% endif %}
+	{% endfor %}
+</div>
