@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block cssfile %}
+	<link rel="stylesheet" href="{% static 'account/css/index.css' %}">
+{% endblock %}
+
+{% block title %}REGISTER{% endblock %}
+
+{% block content %}
+	<div class="container mt-3">
+		<h1>REGISTER</h1>
+	</div>
+{% endblock %}
+
+{% block JsFile %}
+	<script src="{% static 'account/js/script.js' %}"></script>
+{% endblock %}

@@ -20,6 +20,6 @@ from django.conf.urls.static import static
 from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
-	path('', include('blog.urls')) # Burada ise blog uygulamasının urls.py dosyası include edilmiştir. Bu durumda blog uygulamasının urls.py dosyasındaki url'ler çalışır.
-	# path('user/', include('blog.urls')) Bu durumda user/blogs user/index gibi url'ler çalışır.
+	path('', include('blog.urls')), # Burada ise blog uygulamasının urls.py dosyası include edilmiştir. Bu durumda blog uygulamasının urls.py dosyasındaki url'ler çalışır.
+	path('', include('account.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
