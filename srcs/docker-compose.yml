@@ -1,0 +1,58 @@
+version: "3.4"
+
+networks:
+  lastdance:
+    name: lastdance
+    driver: bridge
+
+volumes:
+  auth:
+    driver: local
+    driver_opts:
+      device: /Users/huseyinalpaslanozdemir/Documents/GitHub/ft_transcendence/srcs/authService
+      o: bind
+      type: none
+
+  user_volume:
+    driver: local
+    driver_opts:
+      device: /Users/huseyinalpaslanozdemir/Documents/GitHub/ft_transcendence/srcs/userdb
+      o: bind
+      type: none
+  
+services:
+  user:
+    container_name: userservice
+    build: ./authService
+    entrypoint: ./start.sh
+    command: uvicorn auth.asgi:application --host 0.0.0.0 --port 8000 --reload
+    environment:
+      USER_DB_USER: ${USER_DB_USER}
+      USER_DB_PASS: ${USER_DB_PASS}
+      USER_DB_NAME: ${USER_DB_NAME}
+      USER_DB_HOST: ${USER_DB_HOST}
+      USER_DB_PORT: ${USER_DB_PORT}
+    volumes:
+      - auth:/authServices
+    ports:
+      - 8000:8000
+    networks:
+      - lastdance
+    depends_on:
+      - users_db
+
+  users_db:
+    container_name: users_db
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: authuser
+      POSTGRES_PASSWORD: Zodiyac123++
+      POSTGRES_DB: users
+    volumes:
+      - user_volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - lastdance
+      
