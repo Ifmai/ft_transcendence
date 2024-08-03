@@ -1,8 +1,8 @@
 up:
-	@docker-compose up -d --build
+	@sudo docker compose up -d --build
 
 down:
-	@docker-compose down
+	@sudo docker compose down
 
 
 clean:down

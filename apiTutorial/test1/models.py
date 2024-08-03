@@ -1,8 +1,19 @@
 from django.db import models
 
 # Create your models here.
+
+class Gazateci(models.Model):
+    isim = models.CharField(max_length=120)
+    soyisim = models.CharField(max_length=120)
+    bio = models.TextField(blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f'{self.isim} {self.soyisim}'
+
+
+
 class Makale(models.Model):
-    yazar = models.CharField(max_length=120)
+    yazar = models.ForeignKey(Gazateci, on_delete=models.CASCADE, related_name='makaleler')
     baslik = models.CharField(max_length=120)
     aciklama = models.CharField(max_length=200)
     metin = models.TextField()

@@ -1,4 +1,4 @@
-version: "3.4"
+# version: "3.4"
 
 networks:
   lastdance:
@@ -9,14 +9,14 @@ volumes:
   auth:
     driver: local
     driver_opts:
-      device: /Users/huseyinalpaslanozdemir/Documents/GitHub/ft_transcendence/srcs/authService
+      device: /root/ft_transcendence/srcs/authService
       o: bind
       type: none
 
   user_volume:
     driver: local
     driver_opts:
-      device: /Users/huseyinalpaslanozdemir/Documents/GitHub/ft_transcendence/srcs/userdb
+      device: /root/ft_transcendence/srcs/userdb
       o: bind
       type: none
   
@@ -25,7 +25,7 @@ services:
     container_name: userservice
     build: ./authService
     entrypoint: ./start.sh
-    command: uvicorn auth.asgi:application --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn auth.asgi:application --host 0.0.0.0 --port 8080 --reload
     environment:
       USER_DB_USER: ${USER_DB_USER}
       USER_DB_PASS: ${USER_DB_PASS}
@@ -35,7 +35,7 @@ services:
     volumes:
       - auth:/authServices
     ports:
-      - 8000:8000
+      - 8080:8080
     networks:
       - lastdance
     depends_on:
