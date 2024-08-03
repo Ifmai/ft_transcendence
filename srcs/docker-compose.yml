@@ -47,7 +47,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: authuser
-      POSTGRES_PASSWORD: Zodiyac123++
+      POSTGRES_PASSWORD: ${USER_DB_PASS}
       POSTGRES_DB: users
     volumes:
       - user_volume:/var/lib/postgresql/data
