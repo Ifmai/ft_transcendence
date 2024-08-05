@@ -2,7 +2,9 @@ Django==5.0.6
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 pillow==10.4.0
-requests
-uvicorn
-serializers
-psycopg2-binary
+requests==2.32.3
+psycopg2-binary==2.9.9
+uvicorn==0.30.5
+dj-rest-auth==6.0.0
+django-allauth==64.0.0
+django-filter==24.3

@@ -1,0 +1,12 @@
+FROM nginx:alpine
+
+RUN apk add --no-cache certbot certbot-nginx
+
+# HTML dosyalarını kopyala
+COPY ./htmlfile/. /usr/share/nginx/html/
+
+# Nginx konfigürasyon dosyasını kopyala
+COPY ./conf/default.conf /etc/nginx/nginx.conf
+
+# Nginx'i başlat
+CMD ["nginx", "-g", "daemon off;"]
