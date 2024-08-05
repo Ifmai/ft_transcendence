@@ -1,7 +1,7 @@
 const getPath = () => window.location.pathname;
 
 const routers = {
-    '/404' : "../pages/_404.html",
+    //'/404' : "../pages/_404.html",
     "/" : "../index.html",
     "/login" : "../pages/_login.html",
     "/register" : "../pages/_register.html",

@@ -4,21 +4,37 @@ networks:
   lastdance:
     name: lastdance
     driver: bridge
+
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /root/lastdance/srcs/user_db
+  web_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /root/lastdance/srcs/authService
   
 services:
   user:
     container_name: userservice
     build: ./authService 
     entrypoint: ./start.sh
-    command: uvicorn auth.asgi:application --host 0.0.0.0 --port 8000 --reload
+    command: python manage.py runserver 0.0.0.0:8000
     environment:
       USER_DB_USER: ${USER_DB_USER}
       USER_DB_PASS: ${USER_DB_PASS}
       USER_DB_NAME: ${USER_DB_NAME}
       USER_DB_HOST: ${USER_DB_HOST}
       USER_DB_PORT: ${USER_DB_PORT}
+    ports:
+      - "8000:8000"
     volumes:
-      - authService:/authServices
+      - web_data:/authServices
     networks:
       - lastdance
     depends_on:
@@ -31,11 +47,11 @@ services:
     volumes:
       - /etc/letsencrypt/live/lastdance.com.tr/fullchain.pem:/etc/letsencrypt/live/lastdance.com.tr/fullchain.pem:ro
       - /etc/letsencrypt/live/lastdance.com.tr/privkey.pem:/etc/letsencrypt/live/lastdance.com.tr/privkey.pem:ro
-      - ./nginx/conf/default.conf:/etc/nginx/nginx.conf
-      - ./nginx/letsencrypt:/etc/letsencrypt
+      - /root/lastdance/srcs/nginx/conf/default.conf:/etc/nginx/nginx.conf
+      - /root/lastdance/srcs/nginx/letsencrypt:/etc/letsencrypt
     ports:
-      - 80:80
-      - 443:443
+      - '80:80'
+      - '443:443'
     networks:
       - lastdance
     depends_on:
@@ -50,12 +66,9 @@ services:
       POSTGRES_PASSWORD: Zodiyac123++
       POSTGRES_DB: users
     volumes:
-      - user_db:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - '5432:5432'
     networks:
       - lastdance
-  
-volumes:
-  user_db:
-  authService:
+
