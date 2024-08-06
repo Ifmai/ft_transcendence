@@ -15,7 +15,11 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://lastdance.com.tr',
+]
+CSRF_COOKIE_NAME = 'csrftoken'  # CSRF çerezi için isim
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -25,7 +29,7 @@ SECRET_KEY = 'django-insecure-+zo&y+uv@s7t#&juqo7-j04xt%+1jaba^yem7m1&$n@180&lvh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['188.166.163.124', '127.0.0.1', 'lastdance.com.tr' , '*']
+ALLOWED_HOSTS = ['188.166.163.124', '127.0.0.1', 'lastdance.com.tr']
 
 
 # Application definition

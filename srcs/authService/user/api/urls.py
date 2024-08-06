@@ -1,6 +1,6 @@
 from django.urls import path
-from user.api.views import UserListCreateView
+from user.api.views import UserCreateView, UserLogoutView, custom_logout
 
 urlpatterns = [
-    path('register/', UserListCreateView.as_view(), name='register'),
+    path('register/', UserCreateView.as_view(), name='register'),
 ]

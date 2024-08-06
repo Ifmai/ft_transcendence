@@ -1,15 +1,21 @@
 const getPath = () => window.location.pathname;
 
+function getToken(token) {
+    return localStorage.getItem(token);
+}
+
 const routers = {
     //'/404' : "../pages/_404.html",
     "/" : "../index.html",
     "/login" : "../pages/_login.html",
     "/register" : "../pages/_register.html",
+    '/logout' : '../pages/_logout.html',
 };
 
 const scripts = {
     "../pages/_login.html" : loginPage,
     "../pages/_register.html" : registerPage,
+    "../pages/_logout.html": logoutPage,
 };
 
 function selectPage (){
