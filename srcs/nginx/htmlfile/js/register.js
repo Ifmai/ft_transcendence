@@ -21,7 +21,8 @@ async function registerPage(){
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken,
+                    'X-CSRFToken': getCsrfToken()
+
                 },
                 body: JSON.stringify({
                     "username": username,

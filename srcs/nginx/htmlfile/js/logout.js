@@ -18,17 +18,18 @@ async function logoutPage() {
 		csrfToken = getCsrfToken()
 		console.log(csrfToken)
 		console.log(token);
-        const response = await fetch('https://lastdance.com.tr/api/rest-auth/logout/', {
+        const response = await fetch('https://lastdance.com.tr/api/logout/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-				'X-CSRFToken': csrfToken,
+                'X-CSRFToken': getCsrfToken()
             },
         });
 
         if (response.ok) {
             const data = await response.json();
             console.log('Logout successful:', data);
+            localStorage.removeItem('token');
             // Çıkış işlemi başarılı olduğunda yapılacak işlemler
         } else {
             const errorData = await response.json();

@@ -6,20 +6,33 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import logout
 from rest_framework import status
+from django.http import JsonResponse
+
 
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+
 class UserLogoutView(APIView):
     permission_classes = [IsAuthenticated]
-
+    
     def post(self, request, *args, **kwargs):
         logout(request)  # Django'nun built-in logout fonksiyonunu kullanarak oturumu sonlandır
-        return Response({'detail': 'Successfully logged out.'}, status=status.HTTP_200_OK)
+        
+        response = Response({'detail': 'Successfully logged out.'}, status=status.HTTP_200_OK)
+        response.delete_cookie('csrftoken')  # CSRF token çerezini sil
+        response.delete_cookie('sessionid')
+        return response
 
-def custom_logout(request):
-    if request.method == 'POST':
-        logout(request)
-        return Response({'message': 'Logged out successfully'})
-    return Response({'error': 'Invalid method'}, status=405)
+
+def get_request_info(request):
+    origin = request.META.get('HTTP_ORIGIN', 'Unknown origin')
+    referer = request.META.get('HTTP_REFERER', 'Unknown referer')
+    
+    data = {
+        'origin': origin,
+        'referer': referer
+    }
+    
+    return JsonResponse(data)

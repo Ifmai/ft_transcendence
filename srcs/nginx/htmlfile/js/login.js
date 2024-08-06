@@ -17,7 +17,7 @@ async function loginPage() {
             const response = await fetch('https://lastdance.com.tr/api/rest-auth/login/', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     username: email,
