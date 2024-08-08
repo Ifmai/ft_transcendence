@@ -22,9 +22,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+zo&y+uv@s7t#&juqo7-j04xt%+1jaba^yem7m1&$n@180&lvh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['lastdance.com.tr']
+ALLOWED_HOSTS = ['apigateway', 'userservice']
 
 # Application definition
 
@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -52,7 +51,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -152,18 +150,3 @@ SITE_ID = 1
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_EMAIL_REQUIRED = (False)
-
-
-CORS_ALLOW_ALL = False
-
-CORS_ALLOWED_ORIGINS = [
-    'https://lastdance.com.tr',
-]
-
-CORS_ALLOW_CREDENTIALS = False
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://lastdance.com.tr',
-]
-CSRF_COOKIE_NAME = 'csrftoken'  # CSRF çerezi için isim
-CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'

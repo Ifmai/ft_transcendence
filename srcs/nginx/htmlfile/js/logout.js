@@ -8,7 +8,6 @@ function getCsrfToken() {
             return cookie.substring(name.length, cookie.length); // Token'ı döndür
         }
     }
-
     return null; // Token bulunamazsa null döndür
 }
 
@@ -18,18 +17,19 @@ async function logoutPage() {
 		csrfToken = getCsrfToken()
 		console.log(csrfToken)
 		console.log(token);
-        const response = await fetch('https://lastdance.com.tr/api/logout/', {
+        const response = await fetch('https://lastdance.com.tr/api/users/logout/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken()
+                'X-CSRFToken': getCsrfToken(),
+                'Token' : token
             },
         });
-
         if (response.ok) {
             const data = await response.json();
             console.log('Logout successful:', data);
             localStorage.removeItem('token');
+            loadPage('../pages/_homepage.html', '../partials/_navbar.html')
             // Çıkış işlemi başarılı olduğunda yapılacak işlemler
         } else {
             const errorData = await response.json();

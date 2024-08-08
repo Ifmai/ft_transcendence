@@ -17,12 +17,11 @@ async function registerPage(){
 
         try {
             // API'ye istek gönderme
-            const response = await fetch('https://lastdance.com.tr/api/register/', {
+            const response = await fetch('https://lastdance.com.tr/api/users/register/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': getCsrfToken()
-
+                    'X-CSRFToken': getCsrfToken(),
                 },
                 body: JSON.stringify({
                     "username": username,
@@ -32,21 +31,20 @@ async function registerPage(){
                     "password": pass1
                 })
             });
-
             console.log('Status Code:', response.status);
-
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-
             const responseData = await response.json();
             console.log(responseData);
-
-            // Giriş başarılı olduğunda yapılacak işlemler buraya eklenebilir
-
+            loadPage('../pages/_login.html', '../partials/_navbar.html')
         } catch (error) {
             console.error('Error:', error);
         }
-        // Burada ek işlemler yapılabilir (örneğin, bir API'ye istek gönderme)
     });
+}
+
+
+async function profilePage(){
+    
 }

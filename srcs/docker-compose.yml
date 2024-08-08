@@ -12,19 +12,42 @@ volumes:
       type: none
       o: bind
       device: /root/lastdance/srcs/user_db
+
   web_data:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: /root/lastdance/srcs/authService
-  
+
+  api_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /root/lastdance/srcs/apigateway
+
 services:
+
+  apigateway:
+    container_name: apigateway
+    build: ./apigateway 
+    entrypoint: ./start.sh
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - api_data:/apigateway
+    networks:
+      - lastdance
+    depends_on:
+      - user
+
   user:
     container_name: userservice
     build: ./authService 
     entrypoint: ./start.sh
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8001
     environment:
       USER_DB_USER: ${USER_DB_USER}
       USER_DB_PASS: ${USER_DB_PASS}
@@ -32,7 +55,7 @@ services:
       USER_DB_HOST: ${USER_DB_HOST}
       USER_DB_PORT: ${USER_DB_PORT}
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - web_data:/authServices
     networks:
@@ -49,6 +72,7 @@ services:
       - /etc/letsencrypt/live/lastdance.com.tr/privkey.pem:/etc/letsencrypt/live/lastdance.com.tr/privkey.pem:ro
       - /root/lastdance/srcs/nginx/conf/default.conf:/etc/nginx/nginx.conf
       - /root/lastdance/srcs/nginx/letsencrypt:/etc/letsencrypt
+      - /root/lastdance/srcs/nginx/htmlfile:/usr/share/nginx/html
     ports:
       - '80:80'
       - '443:443'

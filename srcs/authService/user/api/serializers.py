@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from user.models import Profil, ProfileComment
 
 class UserSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(max_length=30, required=True)
@@ -7,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'password')
+        fields = ('id', 'username', 'first_name', 'last_name', 'email')
 
     def create(self, validated_data):
         username = validated_data['username']
@@ -23,3 +24,24 @@ class UserSerializer(serializers.ModelSerializer):
             password=password,
         )
         return user
+
+
+class ProfilSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
+    foto = serializers.ImageField(read_only=True)
+
+    class Meta:
+        model = Profil
+        fields = '__all__'
+
+class ProfilePhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profil
+        fields = ('photo')
+
+class ProfileCommentSerializer(serializers.ModelSerializer):
+    user_profil = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = ProfileComment
+        fields = '__all__'
