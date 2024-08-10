@@ -17,5 +17,5 @@ def create_first_durum(sender, instance, created, **kwargs):
 	if created:
 		ProfileComment.objects.create(
 			user_profil = instance,
-			durum_mesaji = f'{instance.user.username} attended the last dance ball..',
+			comment_text = f'{instance.user.username} attended the last dance ball..',
 		)

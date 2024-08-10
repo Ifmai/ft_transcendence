@@ -6,29 +6,36 @@ class ApiRequestPermission(permissions.BasePermission):
 	def has_permission(self, request, view):
 		origin = request.META.get('HTTP_ORIGIN', 'Unknown origin')
 		referer = request.META.get('HTTP_REFERER', 'Unknown referer')
-        # İzin verilen origin ve referer bilgilerini tanımlayın
 		allowed_origins = ['https://alp.com.tr']
 		allowed_referers = ['https://alp.com.tr/login', 
-					  'https://alp.com.tr/logout', 
-					  'https://alp.com.tr/register']
+					        'https://alp.com.tr/logout', 
+					        'https://alp.com.tr/register']
 		if origin not in allowed_origins or referer not in allowed_referers:
 			raise PermissionDenied(f"You do not have permission to access this resource.")
 		return True
-		
 
-class SelfProfilOrReadOnly(permissions.IsAdminUser):
 
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS :
+class myAuth(permissions.BasePermission):
+    def has_permission(self, request, view):
+        cookies = request.COOKIES
+        print("Gelen cookies: ", cookies)
+        if cookies.get('access_token'):
             return True
-        else:
-            return obj.user == request.user 
+        return False
+
+# class SelfProfilOrReadOnly(permissions.IsAdminUser):
+
+#     def has_object_permission(self, request, view, obj):
+#         if request.method in permissions.SAFE_METHODS :
+#             return True
+#         else:
+#             return obj.user == request.user 
         
 
-class SelfCommentOrReadOnly(permissions.IsAdminUser):
+# class SelfCommentOrReadOnly(permissions.IsAdminUser):
 
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS :
-            return True
-        else:
-            return obj.user_profil == request.user.profil
+#     def has_object_permission(self, request, view, obj):
+#         if request.method in permissions.SAFE_METHODS :
+#             return True
+#         else:
+#             return obj.user_profil == request.user.profil

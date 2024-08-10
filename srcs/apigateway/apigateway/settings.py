@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-dyleu*ply7t2eb_#65*%^)m1*y3as^gn(3^wk5pjmok+aj^wf#
 DEBUG = True
 
 #ALLOWED_HOSTS = ['lastdance.com.tr', 'apigateway', 'userservice']
-ALLOWED_HOSTS = ['lastdance.com.tr','188.166.163.124', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['lastdance.com.tr','188.166.163.124', 'localhost', '127.0.0.1', 'example.com:443']
 
 
 # Application definition
@@ -44,9 +44,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -129,7 +129,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
     'https://lastdance.com.tr',
+    'http://userservice:8001'
 ]
 CSRF_COOKIE_NAME = 'csrftoken'  # CSRF çerezi için isim
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
@@ -144,26 +146,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://userservice:8001'
 ]
 
-# HTTP yöntemlerine izin vermek için
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
 
-# Belirli başlıklara izin vermek için
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'authorization',
-    'content-type',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
+# HTTP yöntemlerine izin vermek için
 
 # Kimlik doğrulama bilgilerini iletmeye izin vermek için
 CORS_ALLOW_CREDENTIALS = True

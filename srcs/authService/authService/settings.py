@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-+zo&y+uv@s7t#&juqo7-j04xt%+1jaba^yem7m1&$n@180&lvh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['apigateway', 'userservice']
+ALLOWED_HOSTS = ['apigateway', 'userservice', 'lastdance.com.tr']
 
 # Application definition
 
@@ -36,27 +36,23 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+	'user.apps.UserConfig',
     'rest_framework',
-    'rest_framework.authtoken',
-    'dj_rest_auth',
-    'allauth', 
-    'allauth.account',  
-    'allauth.socialaccount', 
-    'dj_rest_auth.registration', 
+    'corsheaders',
     'django.contrib.sites',
 	'django_filters',
-	'user.apps.UserConfig',
+	'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'authService.urls'
@@ -138,10 +134,10 @@ MEDIA_ROOT = 'uploads'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+#RestFreamWork
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+		'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 	'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
@@ -150,3 +146,34 @@ SITE_ID = 1
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_EMAIL_REQUIRED = (False)
+
+#CSRF
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'https://lastdance.com.tr',
+    'http://userservice:8001',
+    'http://apigateway:8000'
+]
+CSRF_COOKIE_NAME = 'csrftoken'  # CSRF çerezi için isim
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+
+#Cors
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    'https://lastdance.com.tr',
+    'http://userservice:8001',
+    'http://apigateway:8000'
+]
+
+#JWT Token
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}

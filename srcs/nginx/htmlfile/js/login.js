@@ -10,7 +10,7 @@ async function loginPage() {
         console.log('Password:', password);
         try {
             // API'ye istek gönderme
-            const response = await fetch('https://lastdance.com.tr/api/users/login/', {
+            const response = await fetch('https://lastdance.com.tr/api/users/jwtlogin/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -20,14 +20,21 @@ async function loginPage() {
                     password: password
                 })
             });
+
+            // Yanıtın tüm detaylarını görme
             console.log('Status Code:', response.status);
-            if (!response.ok) {
+            console.log('Status Text:', response.statusText);
+            console.log('Headers:', [...response.headers.entries()]);
+
+            // Yanıtı JSON olarak işleme
+            const responseText = await response.text(); // Yanıt metnini al
+            console.log('Response Text:', responseText);
+
+            // JSON parse yaparak veriyi alma
+            if (response.ok) {
+                loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html');
+            } else {
                 throw new Error(`HTTP error! Status: ${response.status}`);
-            }else{
-                const responseData = await response.json();
-                console.log(responseData);
-                localStorage.setItem('token', responseData.token);
-                loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html')
             }
         } catch (error) {
             console.error('Error:', error);
