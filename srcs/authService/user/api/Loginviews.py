@@ -64,3 +64,13 @@ class UserLogoutView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
+class CheckRefreshTokenView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            cookies = request.COOKIES
+            refresh_token = cookies.get('refresh_token')
+            if not refresh_token:
+                return Response({'error': 'Refresh token required.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'okaii'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)

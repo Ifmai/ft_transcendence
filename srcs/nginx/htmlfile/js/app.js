@@ -2,6 +2,22 @@ const getPath = () => window.location.pathname;
 const only_auth_pages = ["../pages/_profile.html"]
 const not_auth_pages = ["../pages/_login.html", "../pages/_register.html"]
 
+
+async function checkingauth() {
+	try {
+		const response = await fetch('https://lastdance.com.tr/api/users/whois/', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			}
+		});
+		return response.status
+	} catch (error) {
+		return 500;
+	}
+}
+
+
 function getToken(token) {
     return localStorage.getItem(token);
 }
@@ -30,13 +46,19 @@ const scripts = {
     "../pages/_profile.html" : profilePage,
 };
 
-function selectNavbar(){
+async function selectNavbar(){
     token = getCookie('access_token')
-    console.log("Token Accsess : ", token);
-    if(token){
+    if(token)
         return "../partials/_navbarlogin.html"
+    else{
+        if(await checkingauth() == 200){
+            return "../partials/_navbarlogin.html"
+        }
+        else{
+            console.log("geldim girdim siktim");
+            return "../partials/_navbar.html"
+        }
     }
-    return "../partials/_navbar.html"
 }
 
 
@@ -46,18 +68,18 @@ function selectPage(){
     return route;
 }
 
-const route = (event) => {
+const route = async (event) => {
     event = event || window.event;
     event.preventDefault();
     window.history.pushState({}, "", event.target.href);
-    loadPage(selectPage(), selectNavbar());
+    loadPage(selectPage());
 }
 
-const loadPage = async (page, navbar) => {
+const loadPage = async (page) => {
     console.log("page : ", page);
-    if(only_auth_pages.includes(page) && !getCookie('access_token')){
-        loadPage('../pages/_login.html', '../partials/_navbar.html')
-        window.history.replaceState({}, "", "/login");  // URL'i anasayfa olarak güncelle
+    if(only_auth_pages.includes(page) && !getCookie('access_token') && await checkingauth() !== 200){
+        loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html')
+        window.history.replaceState({}, "", "/");  // URL'i anasayfa olarak güncelle
     }
     else if(not_auth_pages.includes(page) && getCookie('access_token')){
         loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html')
@@ -72,6 +94,7 @@ const loadPage = async (page, navbar) => {
                 return response.text();
             });
             document.getElementById('main-div').innerHTML = html;
+            const navbar = await selectNavbar()
             const navbarhtml = await fetch(navbar).then((response) => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -95,10 +118,10 @@ const loadPage = async (page, navbar) => {
     }
 }
 
-window.onpopstate = () => loadPage(selectPage(), selectNavbar());
+window.onpopstate = () => loadPage(selectPage());
 window.route = route;
 
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sayfa Yüklendi.");
-    loadPage(selectPage(), selectNavbar());
+    loadPage(selectPage()   );
 });
