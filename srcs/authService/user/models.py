@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 from django.contrib.auth.models import User
 from PIL import Image
 
@@ -38,3 +38,12 @@ class ProfileComment(models.Model):
 
 	def __str__(self):
 		return str(self.user_profil.user.username)
+	
+# class RefreshToken(models.Model):
+#     auth_user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     refresh_token = models.CharField(max_length=255, unique=True, blank=True, null=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     expires_at = models.DateTimeField()
+
+#     def is_expired(self):
+#         return self.expires_at <= timezone.now()

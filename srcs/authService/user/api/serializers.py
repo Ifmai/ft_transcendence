@@ -45,3 +45,9 @@ class ProfileCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileComment
         fields = '__all__'
+
+# class RefreshTokenSerializer(serializers.ModelSerializer):
+#     user = serializers.StringRelatedField(read_only=True)
+#     class Meta:
+#         model = RefreshToken
+#         fields = '__all__'

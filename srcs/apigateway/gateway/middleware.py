@@ -26,51 +26,54 @@ class APIGatewayMiddleware:
 			return response
 		except requests.exceptions.RequestException as e:
 			print("error " , e)
-			return Response({'error ': e})
+			return Response({'error: ': e})
 	
-	def jwt_token_delete(self, response, http_response):
+	def jwt_token_delete(self, http_response):
 		http_response.set_cookie(
-            key = 'access_token',
-            max_age=0,
-            path='/',
-            domain=None,
-            secure='none',
-            expires="Thu, 01 Jan 1970 00:00:00 GMT",
-            samesite=None,
-        )
+			key = 'access_token',
+			max_age=0,
+			path='/',
+			domain=None,
+			secure='none',
+			expires="Thu, 01 Jan 1970 00:00:00 GMT",
+			samesite=None,
+		)
 		http_response.set_cookie(
-            key = 'refresh_token',
-            max_age=0,
-            path='/',
-            domain=None,
-            secure='none',
-            expires="Thu, 01 Jan 1970 00:00:00 GMT",
-            samesite=None,
-        )
+			key = 'refresh_token',
+			max_age=0,
+			path='/',
+			domain=None,
+			secure='none',
+			expires="Thu, 01 Jan 1970 00:00:00 GMT",
+			samesite=None,
+		)
 
 	def jwt_token_cookies(self, response, http_response):
-		tokens = response.json()
-		access_token = tokens.get('access')
-		refresh_token = tokens.get('refresh')
-		if access_token:
-			http_response.set_cookie(
-				key='access_token',
-				value=access_token,
-				httponly=False,
-				secure=True,  # HTTPS kullanıyorsanız True yapın
-				samesite='Strict',
-				max_age=5 * 60,  # 20 saniye
-			)
-		if refresh_token:
-			http_response.set_cookie(
-				key='refresh_token',
-				value=refresh_token,
-				httponly=True,
-				secure=True,  # HTTPS kullanıyorsanız True yapın
-				samesite='Strict',
-				max_age=7 * 24 * 60 * 60,  # 7 gün
-			)
-		return http_response
+		try:
+			tokens = response.json()
+			access_token = tokens.get('access')
+			refresh_token = tokens.get('refresh')
+			if access_token:
+				http_response.set_cookie(
+					key='access_token',
+					value=access_token,
+					httponly=False,
+					secure=True,  # HTTPS kullanıyorsanız True yapın
+					samesite='Strict',
+					max_age=5 * 60,  # 20 saniye
+				)
+			if refresh_token:
+				http_response.set_cookie(
+					key='refresh_token',
+					value=refresh_token,
+					httponly=True,
+					secure=True,  # HTTPS kullanıyorsanız True yapın
+					samesite='Strict',
+					max_age=7 * 24 * 60 * 60,  # 7 gün
+				)
+			return http_response
+		except Exception as e:
+			return Response({'error: ': e})
 	
 	def process_request(self, request):
 		path = request.path
@@ -82,7 +85,9 @@ class APIGatewayMiddleware:
 		for key, value in cookies.items():
 			cookie_jar.set(key, value)
 
-		#print("COOKIE JAR : " , cookie_jar)
+		#Servis Servis bölücem burayı.
+		# if path.startswith('/api/users/'):
+		# 	return self.handle_users_service(path, method, headers, body, cookie_jar)
 		if path.startswith('/api/users/'):
 			url = f'http://userservice:8001{path}'
 		else:
@@ -111,7 +116,7 @@ class APIGatewayMiddleware:
 			if path == '/api/users/jwtlogin/':
 				self.jwt_token_cookies(response, http_response)
 			if path == '/api/users/logout/':
-				self.jwt_token_delete(response, http_response)
+				self.jwt_token_delete(http_response)
 			return http_response
 		except requests.exceptions.RequestException as e:
 			return HttpResponse(json.dumps({'error': str(e)}), status=500, content_type='application/json')

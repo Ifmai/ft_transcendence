@@ -1,10 +1,7 @@
 from rest_framework import generics, mixins
 from user.models import Profil, ProfileComment
-from rest_framework.filters import SearchFilter
-from user.api.permissions import ApiRequestPermission
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import  GenericViewSet, ModelViewSet #ReadOnlyModelViewSet
-from user.api.permissions import myAuth
+from rest_framework.viewsets import  GenericViewSet, ModelViewSet
 from user.api.serializers import ProfilSerializer, ProfileCommentSerializer, ProfilePhotoSerializer
 
 
@@ -18,12 +15,11 @@ class ProfilViewList(
 	serializer_class = ProfilSerializer
 	permission_classes = [IsAuthenticated]
 	#filter_backends = [SearchFilter]
-	#permission_classes = [Auth]
 	#search_fields = ['=city', '=user__username', '=id']
 
 class ProfilCommentViewList(ModelViewSet):
 	serializer_class = ProfileCommentSerializer
-	permission_classes = [myAuth]
+	permission_classes = [IsAuthenticated]
 
 	def get_queryset(self):
 		queryset = ProfileComment.objects.all()
@@ -38,7 +34,7 @@ class ProfilCommentViewList(ModelViewSet):
 
 class ProfilPhotoUpdateView(generics.UpdateAPIView):
 	serializer_class = ProfilePhotoSerializer
-	permission_classes = [myAuth]
+	permission_classes = [IsAuthenticated]
 
 	def get_object(self):
 		profil_object = self.request.user.profil

@@ -19,3 +19,12 @@ def create_first_durum(sender, instance, created, **kwargs):
 			user_profil = instance,
 			comment_text = f'{instance.user.username} attended the last dance ball..',
 		)
+
+# @receiver(post_save, sender=User)
+# def create_refresh_token(sender, instance, created, **kwargs):
+# 	print(instance.user.username , '__Created: ', created )
+# 	if created:
+# 		RefreshToken.objects.create(
+# 			auth_user = instance,
+# 			token = f'',
+# 		)
