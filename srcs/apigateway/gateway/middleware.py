@@ -1,11 +1,9 @@
 import requests
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse
 from requests.cookies import RequestsCookieJar
 import json
 from rest_framework.response import Response
 
-
-from pprint import pprint
 
 class APIGatewayMiddleware:
 	def __init__(self, get_response):
@@ -18,7 +16,8 @@ class APIGatewayMiddleware:
 		return self.get_response(request)
 
 	def refresh_access_token(self, refresh_token):
-		url = 'http://authservice:8001/api/users/token/refresh/'
+		print("selam bro ")
+		url = 'http://userservice:8001/api/users/token/refresh/'
 		payload = {
 			'refresh': refresh_token
 		}
@@ -26,7 +25,8 @@ class APIGatewayMiddleware:
 			response = requests.post(url, data=payload)
 			return response
 		except requests.exceptions.RequestException as e:
-			return Response({'error': "annnnnnnnnnnnnnn"})
+			print("error " , e)
+			return Response({'error ': e})
 	
 	def jwt_token_delete(self, response, http_response):
 		http_response.set_cookie(
@@ -82,7 +82,7 @@ class APIGatewayMiddleware:
 		for key, value in cookies.items():
 			cookie_jar.set(key, value)
 
-		print("COOKIE JAR : " , cookie_jar)
+		#print("COOKIE JAR : " , cookie_jar)
 		if path.startswith('/api/users/'):
 			url = f'http://userservice:8001{path}'
 		else:
@@ -97,19 +97,17 @@ class APIGatewayMiddleware:
 			elif method == 'DELETE':
 				response = requests.delete(url, headers=headers, cookies=cookie_jar)
 
-			#refresh token ile token yeniliyoruz. Denemedim yalan yok. olursa bu sorunuda çözerim n.p
-			#Çalışmıyor bakıcam xd
-			# if response.status_code == 401 and 'refresh_token' in cookies:
-			# 	refresh_response = self.refresh_access_token(cookies['refresh_token'])
-			# 	if refresh_response.status_code == 200:
-			# 		self.jwt_token_cookies(refresh_response, response)
-			# 		headers['Authorization'] = f"Bearer {refresh_response.json().get('access')}"
-			# 		response = requests.request(method, url, headers=headers, cookies=cookie_jar, data=body)
+			#Çalışıyor.
+			if response.status_code == 401 and 'refresh_token' in cookies:
+				refresh_response = self.refresh_access_token(cookie_jar['refresh_token'])
+				if refresh_response.status_code == 200:
+					headers['Authorization'] = f"Bearer {refresh_response.json().get('access')}"
+					response = requests.request(method, url, headers=headers, cookies=cookie_jar, data=body)
+					http_response = HttpResponse(content=response.content, status=response.status_code, headers=dict(response.headers))
+					self.jwt_token_cookies(refresh_response, http_response)
+					return http_response
 			
 			http_response = HttpResponse(content=response.content, status=response.status_code, headers=dict(response.headers))
-			print("Headers : " , response.headers)
-			print("Cookies : " , response.cookies)
-			print("Content : " , response.content)
 			if path == '/api/users/jwtlogin/':
 				self.jwt_token_cookies(response, http_response)
 			if path == '/api/users/logout/':

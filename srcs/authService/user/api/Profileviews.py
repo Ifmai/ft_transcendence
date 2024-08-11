@@ -16,7 +16,7 @@ class ProfilViewList(
 
 	queryset = Profil.objects.all()
 	serializer_class = ProfilSerializer
-	permission_classes = [myAuth]
+	permission_classes = [IsAuthenticated]
 	#filter_backends = [SearchFilter]
 	#permission_classes = [Auth]
 	#search_fields = ['=city', '=user__username', '=id']
