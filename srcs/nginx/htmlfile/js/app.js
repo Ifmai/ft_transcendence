@@ -1,6 +1,6 @@
 const getPath = () => window.location.pathname;
 const only_auth_pages = ["../pages/_profile.html"]
-const not_auth_pages = ["../pages/_login.html", "../pages/_register.html"]
+const not_auth_pages = ["../pages/_login.html", "../pages/_register.html", "../pages/_forgot_password.html" ]
 
 
 async function checkingauth() {
@@ -13,6 +13,7 @@ async function checkingauth() {
 		});
 		return response.status
 	} catch (error) {
+        console.log('errrora düşüyorum geldim.');
 		return 500;
 	}
 }
@@ -31,12 +32,14 @@ function getCookie(name) {
 
 
 const routers = {
-    //'/404' : "../pages/_404.html",
+    '/404' : "../pages/_404.html",
     "/" : "../pages/_homepage.html",
     "/login" : "../pages/_login.html",
     "/register" : "../pages/_register.html",
     '/logout' : '../pages/_logout.html',
     '/profile' : '../pages/_profile.html',
+    '/forgot-password' : '../pages/_forgot_password.html',
+    '/new-password': '../pages/_new_password.html',
 };
 
 const scripts = {
@@ -44,6 +47,8 @@ const scripts = {
     "../pages/_register.html" : registerPage,
     "../pages/_logout.html": logoutPage,
     "../pages/_profile.html" : profilePage,
+    "../pages/_forgot_password.html" : forgotPassword,
+    "../pages/_new_password.html" : newPasswordPage,
 };
 
 async function selectNavbar(){
@@ -55,12 +60,10 @@ async function selectNavbar(){
             return "../partials/_navbarlogin.html"
         }
         else{
-            console.log("geldim girdim siktim");
             return "../partials/_navbar.html"
         }
     }
 }
-
 
 function selectPage(){
     const path = getPath();
@@ -78,11 +81,11 @@ const route = async (event) => {
 const loadPage = async (page) => {
     console.log("page : ", page);
     if(only_auth_pages.includes(page) && !getCookie('access_token') && await checkingauth() !== 200){
-        loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html')
+        loadPage('../pages/_homepage.html', '../partials/navbar.html')
         window.history.replaceState({}, "", "/");  // URL'i anasayfa olarak güncelle
     }
     else if(not_auth_pages.includes(page) && getCookie('access_token')){
-        loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html')
+        loadPage('../pages/_homepage.html', '../partials/_navbar.html')
         window.history.replaceState({}, "", "/");  // URL'i anasayfa olarak güncelle
     }
     else{
@@ -123,5 +126,5 @@ window.route = route;
 
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sayfa Yüklendi.");
-    loadPage(selectPage()   );
+    loadPage(selectPage());
 });

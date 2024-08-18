@@ -14,22 +14,13 @@ class ApiRequestPermission(permissions.BasePermission):
 			raise PermissionDenied(f"You do not have permission to access this resource.")
 		return True
 
+class SelfProfilOrReadOnly(permissions.IsAuthenticated):
 
-class myAuth(permissions.BasePermission):
-    def has_permission(self, request, view):
-        cookies = request.COOKIES
-        print("Gelen cookies: ", cookies)
-        if cookies.get('access_token'):
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS :
             return True
-        return False
-
-# class SelfProfilOrReadOnly(permissions.IsAdminUser):
-
-#     def has_object_permission(self, request, view, obj):
-#         if request.method in permissions.SAFE_METHODS :
-#             return True
-#         else:
-#             return obj.user == request.user 
+        else:
+            return obj.user == request.user 
         
 
 # class SelfCommentOrReadOnly(permissions.IsAdminUser):

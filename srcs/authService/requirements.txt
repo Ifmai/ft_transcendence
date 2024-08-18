@@ -9,3 +9,4 @@ dj-rest-auth==6.0.0
 django-allauth==64.0.0
 django-filter==24.3
 django-cors-headers==4.4.0
+cryptography==43.0.0

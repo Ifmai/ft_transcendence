@@ -21,16 +21,6 @@ async function loginPage() {
                 })
             });
 
-            // Yanıtın tüm detaylarını görme
-            console.log('Status Code:', response.status);
-            console.log('Status Text:', response.statusText);
-            console.log('Headers:', [...response.headers.entries()]);
-
-            // Yanıtı JSON olarak işleme
-            const responseText = await response.text(); // Yanıt metnini al
-            console.log('Response Text:', responseText);
-
-            // JSON parse yaparak veriyi alma
             if (response.ok) {
                 loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html');
             } else {

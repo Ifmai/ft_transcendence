@@ -1,4 +1,3 @@
-// login.js
 
 async function registerPage(){
     const registerBtn = document.getElementById('registerBtn');
@@ -9,7 +8,6 @@ async function registerPage(){
         const last_name = document.getElementById('register-lName').value;
         const pass1 = document.getElementById('register-pass1').value;
         const pass2 = document.getElementById('register-pass2').value;
-        csrfToken = getCsrfToken()
         console.log('user name:', username);
         console.log('Email:', email);
         console.log('pass1:', pass1);
@@ -21,7 +19,6 @@ async function registerPage(){
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': getCsrfToken(),
                 },
                 body: JSON.stringify({
                     "username": username,

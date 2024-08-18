@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email')
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'password')
 
     def create(self, validated_data):
         username = validated_data['username']
@@ -27,12 +27,16 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProfilSerializer(serializers.ModelSerializer):
+    user_first_name = serializers.CharField(source='user.first_name', read_only=True)
+    user_last_name = serializers.CharField(source='user.last_name', read_only=True)
+    user_email = serializers.CharField(source='user.email', read_only=True)
     user = serializers.StringRelatedField(read_only=True)
-    foto = serializers.ImageField(read_only=True)
+    photo = serializers.ImageField(read_only=True)
 
     class Meta:
         model = Profil
         fields = '__all__'
+        #fields = ['id', 'user_name', 'bio', 'city', 'photo', 'two_factory','user_first_name']
 
 class ProfilePhotoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,8 +50,5 @@ class ProfileCommentSerializer(serializers.ModelSerializer):
         model = ProfileComment
         fields = '__all__'
 
-# class RefreshTokenSerializer(serializers.ModelSerializer):
-#     user = serializers.StringRelatedField(read_only=True)
-#     class Meta:
-#         model = RefreshToken
-#         fields = '__all__'
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()

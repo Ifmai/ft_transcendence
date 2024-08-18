@@ -3,6 +3,8 @@ from user.models import Profil, ProfileComment
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import  GenericViewSet, ModelViewSet
 from user.api.serializers import ProfilSerializer, ProfileCommentSerializer, ProfilePhotoSerializer
+from user.api.permissions import  SelfProfilOrReadOnly
+from rest_framework.filters import SearchFilter
 
 
 class ProfilViewList(
@@ -11,11 +13,14 @@ class ProfilViewList(
 			mixins.UpdateModelMixin,
 			GenericViewSet):
 
-	queryset = Profil.objects.all()
+	#queryset = Profil.objects.all()
 	serializer_class = ProfilSerializer
-	permission_classes = [IsAuthenticated]
-	#filter_backends = [SearchFilter]
-	#search_fields = ['=city', '=user__username', '=id']
+	permission_classes = [IsAuthenticated, SelfProfilOrReadOnly]
+	filter_backends = [SearchFilter]
+	search_fields = ['=id', '=user__username']
+
+	def get_queryset(self):
+		return Profil.objects.filter(user=self.request.user)
 
 class ProfilCommentViewList(ModelViewSet):
 	serializer_class = ProfileCommentSerializer
