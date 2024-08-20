@@ -2,7 +2,6 @@ const getPath = () => window.location.pathname;
 const only_auth_pages = ["../pages/_profile.html"]
 const not_auth_pages = ["../pages/_login.html", "../pages/_register.html", "../pages/_forgot_password.html" ]
 
-
 async function checkingauth() {
 	try {
 		const response = await fetch('https://lastdance.com.tr/api/users/whois/', {
@@ -18,7 +17,6 @@ async function checkingauth() {
 	}
 }
 
-
 function getToken(token) {
     return localStorage.getItem(token);
 }
@@ -29,7 +27,6 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
     return null;
 }
-
 
 const routers = {
     '/404' : "../pages/_404.html",
@@ -99,14 +96,16 @@ const loadPage = async (page) => {
                 return response.text();
             });
             document.getElementById('main-div').innerHTML = html;
-            const navbar = await selectNavbar()
-            const navbarhtml = await fetch(navbar).then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            });
-            document.getElementById('main-navbar').innerHTML = navbarhtml;
+            if(page != '../pages/_waitlogin.html'){
+                const navbar = await selectNavbar()
+                const navbarhtml = await fetch(navbar).then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                });
+                document.getElementById('main-navbar').innerHTML = navbarhtml;
+            }
             if(page != '../pages/_homepage.html'){
                 const script = scripts[page];
                 if(script){

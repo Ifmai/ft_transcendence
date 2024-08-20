@@ -40,24 +40,20 @@ class UserIntraLoginView(APIView):
         
         loginEmail = infoResponse.get('email')
         if not User.objects.filter(email=loginEmail).exists():
-            userData = {
-                'username' : infoResponse.get('login'),
-                'email' : loginEmail,
-                'first_name' : infoResponse.get('first_name'),
-                'last_name' : infoResponse.get('last_name'),
-                'password' :  secrets.token_urlsafe(8)
-            }
-            register_response = requests.post('http://userservice:8001/register/', json=userData)
-            # #loginPhotoUrl = infoResponse["image"]["versions"]["large"] #Photoyu da profile aktarmak istiyom.
-            # user = User.objects.create_user(
-            #     username=loginUsername,
-            #     email=loginEmail,
-            #     first_name=loginFirstName,
-            #     last_name=loginLastName,
-            #     password=random_password
-            # )
-
-        user = User.objects.get(email=loginEmail)
+            random_password = secrets.token_urlsafe(8)
+            loginUsername = infoResponse.get('login')
+            loginFirstName = infoResponse.get('first_name')
+            loginLastName = infoResponse.get('last_name')
+            #loginPhotoUrl = infoResponse["image"]["versions"]["large"] #Photoyu da profile aktarmak istiyom.
+            user = User.objects.create_user(
+                username=loginUsername,
+                email=loginEmail,
+                first_name=loginFirstName,
+                last_name=loginLastName,
+                password=random_password
+            )
+        else:
+            user = User.objects.get(email=loginEmail)
         refresh = RefreshToken.for_user(user)
         return Response(
             {
