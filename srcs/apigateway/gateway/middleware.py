@@ -98,7 +98,7 @@ class APIGatewayMiddleware:
 			elif method == 'POST':
 				response = requests.post(url, headers=headers, cookies=cookie_jar, data=body)
 			elif method == 'PUT':
-				response = requests.post(url, headers=headers, cookies=cookie_jar, data=body)
+				response = requests.put(url, headers=headers, cookies=cookie_jar, data=body)
 			elif method == 'DELETE':
 				response = requests.delete(url, headers=headers, cookies=cookie_jar)
 
@@ -114,6 +114,8 @@ class APIGatewayMiddleware:
 			
 			http_response = HttpResponse(content=response.content, status=response.status_code, headers=dict(response.headers))
 			if path == '/api/users/jwtlogin/':
+				self.jwt_token_cookies(response, http_response)
+			elif path.startswith('/api/users/login42/'):
 				self.jwt_token_cookies(response, http_response)
 			if path == '/api/users/logout/':
 				self.jwt_token_delete(http_response)

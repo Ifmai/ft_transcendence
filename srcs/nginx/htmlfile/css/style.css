@@ -78,7 +78,7 @@ h2 {
 .input-field input:valid~label {
   font-size: 0.8rem;
   top: 10px;
-  transform: translateY(-120%);
+transform: translateY(-150%);
 }
 
 .forget {

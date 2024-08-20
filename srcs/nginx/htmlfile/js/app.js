@@ -35,6 +35,7 @@ const routers = {
     '/404' : "../pages/_404.html",
     "/" : "../pages/_homepage.html",
     "/login" : "../pages/_login.html",
+    "/wait" : "../pages/_waitlogin.html",
     "/register" : "../pages/_register.html",
     '/logout' : '../pages/_logout.html',
     '/profile' : '../pages/_profile.html',
@@ -49,6 +50,7 @@ const scripts = {
     "../pages/_profile.html" : profilePage,
     "../pages/_forgot_password.html" : forgotPassword,
     "../pages/_new_password.html" : newPasswordPage,
+    "../pages/_waitlogin.html" : intralogin,
 };
 
 async function selectNavbar(){

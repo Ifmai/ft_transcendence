@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.contrib import admin
-from user.api.Loginviews import UserCreateView, UserLogoutView, CheckRefreshTokenView
+from user.api.Loginviews import UserCreateView, UserLogoutView, CheckRefreshTokenView, UserIntraLoginView
 from user.api.RefreshpassViews import PasswordResetRequest, PasswordResetConfirm
 from user.api.Profileviews import ProfilViewList, ProfilCommentViewList, ProfilPhotoUpdateView
 from rest_framework.routers import DefaultRouter
@@ -13,6 +13,7 @@ router.register(r'user_commend', ProfilCommentViewList, basename='comment')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', UserCreateView.as_view(), name='register'),
+	path('login42/<str:code>/', UserIntraLoginView.as_view(), name='login42'),
 	path('logout/', UserLogoutView.as_view(), name='logout'),
 	path('profil_photo/', ProfilPhotoUpdateView.as_view(), name='photo-update'),
 	path('whois/', CheckRefreshTokenView.as_view(), name='check-refresh'),
