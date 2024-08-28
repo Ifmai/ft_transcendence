@@ -27,7 +27,8 @@ body::before {
 }
 
 .wrapper {
-  width: 400px;
+  max-width: 100%; /* Genişliğini arttırdık */
+  width: 100%; /* Genişlik sınırlaması kaldırdık */
   border-radius: 8px;
   padding: 30px;
   text-align: center;

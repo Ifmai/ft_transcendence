@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from user.models import Profil, ProfileComment
+from user.models import Profil, ProfileComment, UserFriendsList
 
 class UserSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(max_length=30, required=True)
@@ -52,3 +52,36 @@ class ProfileCommentSerializer(serializers.ModelSerializer):
 
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
+
+
+
+
+
+class UserFriendsListIdSerializer(serializers.ModelSerializer):
+    sender_id = serializers.PrimaryKeyRelatedField(source='sender', read_only=True)
+    receiver_id = serializers.PrimaryKeyRelatedField(source='receiver', read_only=True)
+
+    class Meta:
+        model = UserFriendsList
+        fields = ['id', 'sender', 'receiver', 'sender_id', 'receiver_id', 'friend_request', 'create_time', 'update_time']
+        read_only_fields = ['create_time', 'update_time']
+
+class UserRequestListSerializer(serializers.ModelSerializer):
+    sender_username = serializers.CharField(source='sender.username', read_only=True)
+
+    class Meta:
+        model = UserFriendsList
+        fields = ['id', 'sender_username']
+
+class UserFriendListSerializer(serializers.ModelSerializer):
+    friend_username = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserFriendsList
+        fields = ['id', 'friend_username']
+
+    def get_friend_username(self, obj):
+        # Kullanıcı bu kayıtların biri olarak yer alıyor, arkadaşın adını döndür
+        if obj.sender == self.context['request'].user:
+            return obj.receiver.username
+        return obj.sender.username

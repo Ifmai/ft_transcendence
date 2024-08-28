@@ -36,6 +36,7 @@ const routers = {
     "/register" : "../pages/_register.html",
     '/logout' : '../pages/_logout.html',
     '/profile' : '../pages/_profile.html',
+    '/chat' : '../pages/_chat.html',
     '/forgot-password' : '../pages/_forgot_password.html',
     '/new-password': '../pages/_new_password.html',
 };
@@ -45,6 +46,7 @@ const scripts = {
     "../pages/_register.html" : registerPage,
     "../pages/_logout.html": logoutPage,
     "../pages/_profile.html" : profilePage,
+    "../pages/_chat.html" : chatPage,
     "../pages/_forgot_password.html" : forgotPassword,
     "../pages/_new_password.html" : newPasswordPage,
     "../pages/_waitlogin.html" : intralogin,
@@ -95,7 +97,7 @@ const loadPage = async (page) => {
                 }
                 return response.text();
             });
-            document.getElementById('main-div').innerHTML = html;
+            document.getElementById('main-div').innerHTML = html;            
             if(page != '../pages/_waitlogin.html'){
                 const navbar = await selectNavbar()
                 const navbarhtml = await fetch(navbar).then((response) => {
@@ -114,6 +116,7 @@ const loadPage = async (page) => {
                     throw new Error('Sayfa bulunamadı: ' + page);
                 }
             }
+
         } catch (error) {
             console.error('Sayfa yüklenirken bir hata oluştu:', error);
             // Hata durumunda varsayılan 404 sayfasına yönlendirme

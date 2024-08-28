@@ -24,6 +24,7 @@ async function loginPage() {
 
             if (response.ok) {
                 loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html');
+                window.history.pushState({}, "", '/');
             } else {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -59,6 +60,7 @@ async function intralogin() {
         });
 		if(response.ok)
 			loadPage("../pages/_homepage.html");
+            window.history.pushState({}, "", '/');
 	} catch (error) {
 		console.error(error);
 	}

@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 from django.contrib.auth.models import User
 from PIL import Image
 
@@ -38,4 +37,18 @@ class ProfileComment(models.Model):
 
 	def __str__(self):
 		return str(self.user_profil.user.username)
-	
+
+class UserFriendsList(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_friend_requests')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_friend_requests')
+    
+    friend_request = models.BooleanField(default=False)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'UserFriendsList'
+        unique_together = ('sender', 'receiver')
+
+    def __str__(self):
+        return f'{self.sender.username} -> {self.receiver.username}'
