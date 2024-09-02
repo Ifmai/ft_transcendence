@@ -2,6 +2,56 @@ const getPath = () => window.location.pathname;
 const only_auth_pages = ["../pages/_profile.html"]
 const not_auth_pages = ["../pages/_login.html", "../pages/_register.html", "../pages/_forgot_password.html" ]
 
+let ws = null;
+
+// Kullanıcının oturum açıp açmadığını kontrol eden fonksiyon
+async function isAuthenticated() {
+    const status = await checkingauth();
+    return status === 200 || getCookie('access_token') !== null;
+}
+
+// WebSocket bağlantısını başlatma fonksiyonu
+async function initWebSocket() {
+    // WebSocket zaten açıksa, yeniden başlatma
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        console.log('WebSocket zaten açık.');
+        return;
+    }
+
+    // Kullanıcı oturum açmamışsa, WebSocket başlatma
+    if (!await isAuthenticated()) {
+        console.log('Kullanıcı oturum açmamış, WebSocket bağlantısı oluşturulmadı.');
+        return;
+    }
+
+    // Yeni WebSocket bağlantısı oluştur
+    ws = new WebSocket(`wss://lastdance.com.tr/ws/friend-list/?token=${getCookie('access_token')}`);
+    ws.onopen = function(event) {
+        console.log('WebSocket bağlantısı açıldı.');
+    };
+
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log('Gelen veri:', data);
+    };
+
+    ws.onclose = function(event) {
+        console.log('WebSocket bağlantısı kapandı.');
+    };
+
+    ws.onerror = function(event) {
+        console.error('WebSocket hata:', event);
+    };
+}
+
+// WebSocket bağlantısını kapatma fonksiyonu
+function closeWebSocket() {
+    if (ws) {
+        ws.close();
+        ws = null;
+    }
+}
+
 async function checkingauth() {
 	try {
 		const response = await fetch('https://lastdance.com.tr/api/users/whois/', {
@@ -116,7 +166,7 @@ const loadPage = async (page) => {
                     throw new Error('Sayfa bulunamadı: ' + page);
                 }
             }
-
+            await initWebSocket();
         } catch (error) {
             console.error('Sayfa yüklenirken bir hata oluştu:', error);
             // Hata durumunda varsayılan 404 sayfasına yönlendirme
@@ -131,4 +181,8 @@ window.route = route;
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Sayfa Yüklendi.");
     loadPage(selectPage());
+});
+
+window.addEventListener('beforeunload', () => {
+    closeWebSocket();
 });

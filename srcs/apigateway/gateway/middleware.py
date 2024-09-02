@@ -81,9 +81,11 @@ class APIGatewayMiddleware:
 		headers = dict(request.headers)
 		body = request.body
 		cookies = request.COOKIES
+
 		cookie_jar = RequestsCookieJar()
 		for key, value in cookies.items():
 			cookie_jar.set(key, value)
+
 
 		#Servis Servis bölücem burayı.
 		# if path.startswith('/api/users/'):

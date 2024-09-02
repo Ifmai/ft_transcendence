@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
         password = validated_data['password']
         email = validated_data['email']
         first_name = validated_data['first_name']
-        last_name = validated_data['last_name']  
+        last_name = validated_data['last_name']
         user = User.objects.create_user(
             username=username,
             email=email,
@@ -24,7 +24,6 @@ class UserSerializer(serializers.ModelSerializer):
             password=password,
         )
         return user
-
 
 class ProfilSerializer(serializers.ModelSerializer):
     user_first_name = serializers.CharField(source='user.first_name', read_only=True)
@@ -53,10 +52,6 @@ class ProfileCommentSerializer(serializers.ModelSerializer):
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
-
-
-
-
 class UserFriendsListIdSerializer(serializers.ModelSerializer):
     sender_id = serializers.PrimaryKeyRelatedField(source='sender', read_only=True)
     receiver_id = serializers.PrimaryKeyRelatedField(source='receiver', read_only=True)
@@ -81,7 +76,6 @@ class UserFriendListSerializer(serializers.ModelSerializer):
         fields = ['id', 'friend_username']
 
     def get_friend_username(self, obj):
-        # Kullanıcı bu kayıtların biri olarak yer alıyor, arkadaşın adını döndür
         if obj.sender == self.context['request'].user:
             return obj.receiver.username
         return obj.sender.username

@@ -31,6 +31,8 @@ ALLOWED_HOSTS = ['apigateway', 'userservice', 'lastdance.com.tr']
 # Application definition
 
 INSTALLED_APPS = [
+	'daphne',
+	'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +47,8 @@ INSTALLED_APPS = [
 	'django_filters',
 	'rest_framework_simplejwt',
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,8 +80,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'authService.wsgi.application'
+ASGI_APPLICATION = 'authService.asgi.application'
+CHANNEL_LAYERS = {
+	'default' : {
+		'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
 
-
+CORS_ALLOW_ALL_ORIGINS = True
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 

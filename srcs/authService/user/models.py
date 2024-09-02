@@ -2,14 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
 
-# Create your models here.
 class Profil(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')
 	bio = models.CharField(max_length=300, blank=True, null=True)
 	city = models.CharField(max_length=120, blank=True, null=True)
 	photo = models.ImageField(blank=True, null=True, upload_to='profil_photo/%Y/%m/')
 	two_factory = models.BooleanField(default=False)
-
+	is_online = models.BooleanField(default=False, null=True)
 	class Meta:
 		verbose_name_plural = 'Profils'
 
