@@ -9,12 +9,8 @@ import json
 
 class FriendListConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		#KENDİ AUTH MIDDLEWARE YAZMAK ZORUNDAYIM TOKEN KULLANIYOR BÜYÜK İHTİMALLE VEYA İDK SADECE ADMIN PAGE'E GİREN KİŞİYİ ALIYOR AMK.
-		print("selam kanka ", self.scope['user'], " bune bakalım : " , self.scope['user'].is_authenticated)
 		if self.scope['user'].is_authenticated:
-			print("Ben geldim kanka ")
 			self.user = self.scope['user']
-			print("USER AMK  : " , self.user)
 			self.room_group_name = f"friend_list_{self.user.username}"
 
 			await self.update_online_status(True)
@@ -79,5 +75,4 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 				'username': friend_user.username,
 				'is_online': is_online
 			})
-		print("Friends_Data : ", friends_data)
 		return friends_data

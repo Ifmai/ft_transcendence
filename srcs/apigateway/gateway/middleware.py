@@ -16,7 +16,6 @@ class APIGatewayMiddleware:
 		return self.get_response(request)
 
 	def refresh_access_token(self, refresh_token):
-		print("selam bro ")
 		url = 'http://userservice:8001/api/users/token/refresh/'
 		payload = {
 			'refresh': refresh_token
@@ -25,7 +24,6 @@ class APIGatewayMiddleware:
 			response = requests.post(url, data=payload)
 			return response
 		except requests.exceptions.RequestException as e:
-			print("error " , e)
 			return Response({'error: ': e})
 	
 	def jwt_token_delete(self, http_response):
