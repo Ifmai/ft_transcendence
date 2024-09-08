@@ -7,16 +7,17 @@ from user.api.serializers import UserFriendsListIdSerializer, UserRequestListSer
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
+import json
 
 class FriendsAccept(generics.UpdateAPIView, generics.DestroyAPIView):
     serializer_class = UserFriendsListIdSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        return UserFriendsList.objects.get(id=self.kwargs['id']);
+        return UserFriendsList.objects.get(id=self.kwargs['id'])
 
     def put(self, request, *args, **kwargs):
-        instance = self.get_object();
+        instance = self.get_object()
         instance.friend_request = True
         instance.save()
         serializer = self.get_serializer(instance)
@@ -56,6 +57,9 @@ class FriendsList(mixins.ListModelMixin, GenericViewSet):
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
+        asd = dict(self.request.GET)
+        # JSON formatına dönüştür ve yazdır
+        print("GELEN REQUEST:", json.dumps(asd, ensure_ascii=False))
         return UserFriendsList.objects.filter(
         Q(sender=self.request.user) | Q(receiver=self.request.user),
         friend_request=True

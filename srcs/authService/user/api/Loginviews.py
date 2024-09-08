@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from user.api.serializers import UserSerializer
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from dotenv import load_dotenv
@@ -77,6 +78,7 @@ class UserLogoutView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class CheckRefreshTokenView(APIView):
+
     def get(self, request, *args, **kwargs):
         try:
             cookies = request.COOKIES

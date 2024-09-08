@@ -8,6 +8,7 @@ class Profil(models.Model):
 	city = models.CharField(max_length=120, blank=True, null=True)
 	photo = models.ImageField(blank=True, null=True, upload_to='profil_photo/%Y/%m/')
 	two_factory = models.BooleanField(default=False)
+	otp_secret_key = models.CharField(max_length=64, blank=True, null=True)
 	is_online = models.BooleanField(default=False, null=True)
 	class Meta:
 		verbose_name_plural = 'Profils'

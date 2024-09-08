@@ -3,6 +3,7 @@ from user.api.Loginviews import UserCreateView, UserLogoutView, CheckRefreshToke
 from user.api.Friendsviews import FriendsAdd, FriendsList, FriendsRequestList, FriendsAccept
 from user.api.RefreshpassViews import PasswordResetRequest, PasswordResetConfirm
 from user.api.Profileviews import ProfilViewList, ProfilCommentViewList, ProfilPhotoUpdateView
+from user.api.User2FCA import Enabled2FCA
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -19,7 +20,7 @@ urlpatterns = [
 	path('reset/<str:refresh>/', PasswordResetConfirm.as_view(), name='password-reset-confirm'),
 	path('profil_photo/', ProfilPhotoUpdateView.as_view(), name='photo-update'),
 	path('whois/', CheckRefreshTokenView.as_view(), name='check-refresh'),
-
+	path('2fcaenable/', Enabled2FCA.as_view(), name='user2fca'),
 
 	path('', include(router.urls)),
 	path('addfriends/', FriendsAdd.as_view(), name='add-friends'),

@@ -1,126 +1,81 @@
-body {
-  color: #6F8BA4;
-  margin-top: 20px;
+#main-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 20px;
 }
 
-.section {
-  padding: 100px 0;
-  position: relative;
+.profile-container {
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  color: #fff;
 }
 
-.gray-bg {
-  background-color: rgba(245, 245, 245, 0.5); /* Şeffaf gri arka plan */
-}
-
-img {
-  max-width: 100%;
-  vertical-align: middle;
-  border-style: none;
-}
-
-/* About Me
----------------------*/
-.about-text h3 {
-  font-size: 45px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-@media (max-width: 767px) {
-  .about-text h3 {
-      font-size: 35px;
-  }
-}
-
-.about-text h6 {
-  font-weight: 600;
+.profile-container img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
   margin-bottom: 15px;
 }
 
-@media (max-width: 767px) {
-  .about-text h6 {
-      font-size: 18px;
-  }
-}
-
-.about-text p {
-  font-size: 18px;
-  max-width: 450px;
-}
-
-.about-text p mark {
-  font-weight: 600;
-  color: #20247b;
-}
-
-.about-list {
-  padding-top: 10px;
-}
-
-.about-list .media {
-  padding: 5px 0;
-}
-
-.about-list label {
-  color: #20247b;
-  font-weight: 600;
-  width: 88px;
-  margin: 0;
-  position: relative;
-}
-
-.about-list label:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 11px;
-  width: 1px;
-  height: 12px;
-  background: #20247b;
-  transform: rotate(15deg);
-  margin: auto;
-  opacity: 0.5;
-}
-
-.about-list p {
-  margin: 0;
-  font-size: 15px;
-}
-
-@media (max-width: 991px) {
-  .about-avatar {
-      margin-top: 30px;
-  }
-}
-
-.about-section .counter {
-  padding: 22px 20px;
-  background-color: rgba(255, 255, 255, 0.5); /* Şeffaf beyaz arka plan */
-  border-radius: 10px;
-  box-shadow: 0 0 30px rgba(31, 45, 61, 0.125);
-}
-
-.about-section .counter .count-data {
-  margin-top: 10px;
+.profile-container h2 {
+  font-size: 2rem;
   margin-bottom: 10px;
+  color: #fff;
 }
 
-.about-section .counter .count {
-  font-weight: 700;
-  color: #20247b;
-  margin: 0 0 5px;
+.profile-container p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: #efefef;
 }
 
-.about-section .counter p {
-  font-weight: 600;
-  margin: 0;
+.profile-container button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.theme-color {
-  color: #ffffff;
+.profile-container button:hover {
+  background-color: #0056b3;
 }
 
-.dark-color {
-  color: #20247b;
+.qr-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1000;
+}
+
+.qr-popup img {
+  width: 150px;
+  height: 150px;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
 }

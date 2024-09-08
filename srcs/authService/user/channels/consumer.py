@@ -32,7 +32,6 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 
 	async def notify_friends(self, status):
 		friends = await self.get_friends()
-		print("Friends List : ", friends)
 		for friend in friends:
 			room_group_name = f"friend_list_{friend['username']}"  # friend['username'] olarak güncellendi
 			await self.channel_layer.group_send(
@@ -58,7 +57,6 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 
 	async def get_friends(self):
 		request_user = self.scope['user']
-		print("Request User : " , request_user)
 		friends = await sync_to_async(lambda: list(
 			UserFriendsList.objects.filter(
 				(Q(sender=request_user) | Q(receiver=request_user)) & Q(friend_request=True)

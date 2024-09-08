@@ -79,7 +79,7 @@ class APIGatewayMiddleware:
 		headers = dict(request.headers)
 		body = request.body
 		cookies = request.COOKIES
-
+		print("COOKIES :", cookies)
 		cookie_jar = RequestsCookieJar()
 		for key, value in cookies.items():
 			cookie_jar.set(key, value)

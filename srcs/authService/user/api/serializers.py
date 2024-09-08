@@ -34,8 +34,15 @@ class ProfilSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profil
+        exclude = ['otp_secret_key']
+        #fields = ['id', 'user_name', 'user_email', 'bio', 'city', 'photo', 'two_factory','user_first_name', 'user_last_name']
+        #fields = '__all__'
+
+class Profile2FCASerializer(serializers.ModelSerializer):
+    user_email = serializers.CharField(source='user.email', read_only=True)
+    class Meta:
+        model = Profil
         fields = '__all__'
-        #fields = ['id', 'user_name', 'bio', 'city', 'photo', 'two_factory','user_first_name']
 
 class ProfilePhotoSerializer(serializers.ModelSerializer):
     class Meta:
