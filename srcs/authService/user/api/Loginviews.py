@@ -1,15 +1,54 @@
 from rest_framework import generics
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
+from user.models import Profil
+from django.contrib.auth import authenticate
 from user.api.serializers import UserSerializer
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+#from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from dotenv import load_dotenv
+import pyotp
 import os
 import requests
 import secrets
+
+class UserLoginView(TokenObtainPairView):
+    serializer_class = TokenObtainPairSerializer
+
+    def check_2fa_code(self, userSecretKey, code):
+        totp = pyotp.TOTP(userSecretKey)
+        totp.now()
+
+        if totp.verify(code) == True:
+            return True
+        else:
+            return False
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        code_2fa = request.data.get("code_2fa")
+        user_check = authenticate(username=username, password=password)
+        if user_check is not None:
+            user = User.objects.get(username=username)
+            userProfil = Profil.objects.get(user=user)
+            if userProfil.two_factory == True and code_2fa == "":
+                return Response({"2fa gereklidir"}, status=status.HTTP_202_ACCEPTED)
+            elif userProfil.two_factory == True and code_2fa is not None:
+                check_code = self.check_2fa_code(userProfil.otp_secret_key, code_2fa)
+                if  check_code == True:
+                    return super().post(request, *args, **kwargs)
+                else:
+                    return Response({"2fa kodu yanlış"}, status=status.HTTP_401_UNAUTHORIZED)
+            else:
+                return super().post(request, *args, **kwargs)
+        else:
+            return Response({"Hatalı giriş. Şifrenizi kontrol ediniz."}, status=status.HTTP_401_UNAUTHORIZED)                
+
 
 class UserCreateView(generics.CreateAPIView):
     serializer_class = UserSerializer

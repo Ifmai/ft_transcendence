@@ -59,7 +59,7 @@ h2 {
   top: 50%;
   left: 0;
   transform: translateY(-50%);
-  color: #fff;
+  color: #1c1919;
   font-size: 16px;
   pointer-events: none;
   transition: 0.15s ease;
@@ -72,7 +72,7 @@ h2 {
   border: none;
   outline: none;
   font-size: 16px;
-  color: #fff;
+  color: #000000;
 }
 
 .input-field input:focus~label,
@@ -135,4 +135,34 @@ button:hover {
   text-align: center;
   margin-top: 30px;
   color: #fff;
+}
+
+
+.qr-popup-login {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1000;
+}
+
+.qr-popup-login img {
+  width: 150px;
+  height: 150px;
+}
+
+.overlay-login {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
 }

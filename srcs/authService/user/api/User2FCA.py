@@ -4,6 +4,7 @@ from user.api.serializers import Profile2FCASerializer, ProfilSerializer
 from rest_framework.response import Response
 from qrcode.image.svg import SvgImage
 from rest_framework import generics
+from rest_framework import status
 from user.models import Profil
 import qrcode
 import pyotp
@@ -18,7 +19,7 @@ class Enabled2FCA(generics.UpdateAPIView):
 	def get_object(self):
 		return Profil.objects.get(user=self.request.user)
 
-	def put(self, request, *args, **kwargs):
+	def enable_2FCA(self,request, *args, **kwargs):
 		instance = self.get_object()
 		secret_key = pyotp.random_base32()
 		totp = pyotp.TOTP(secret_key)
@@ -36,7 +37,21 @@ class Enabled2FCA(generics.UpdateAPIView):
 		svg_content = svg_buffer.getvalue().decode()
 		svg_content = svg_content.replace('svg:', '')
 		instance.otp_secret_key = secret_key
+		instance.two_factory = True
 		instance.save()
-		return Response({
-            'qr_svg': svg_content
-        })
+		return Response({'qr_svg' : svg_content})
+
+	def disable_2FCA(self, request, *args, **kwargs):
+		instance = self.get_object()
+		instance.otp_secret_key = ""
+		instance.two_factory = False
+		instance.save()
+		return Response({"Disabled 2FCA."}, status=status.HTTP_200_OK)
+	
+	def put(self, request, *args, **kwargs):
+		select_action = request.data.get('action')
+		if select_action == "enable":
+			return self.enable_2FCA(self,request, args, kwargs)
+		elif select_action == 'disable':
+			return self.disable_2FCA(self,request, args, kwargs)
+		

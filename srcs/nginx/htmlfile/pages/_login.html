@@ -25,4 +25,14 @@
       </div>
     </form>
   </div>
-
+  <div class="overlay-login" id="overlay-login"></div>
+  <div class="qr-popup-login" id="qr-popup-login">
+    <div id="loginForm">
+        <div class="input-field">
+          <input type="text" required id="code-2fa">
+          <label>2FA Code</label>
+        </div>
+    </div>
+    <br>
+    <button type="button" id="two_factor_auth" onclick="closePopup2()">Enter</button>
+  </div>

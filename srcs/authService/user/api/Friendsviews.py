@@ -57,9 +57,6 @@ class FriendsList(mixins.ListModelMixin, GenericViewSet):
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        asd = dict(self.request.GET)
-        # JSON formatına dönüştür ve yazdır
-        print("GELEN REQUEST:", json.dumps(asd, ensure_ascii=False))
         return UserFriendsList.objects.filter(
         Q(sender=self.request.user) | Q(receiver=self.request.user),
         friend_request=True

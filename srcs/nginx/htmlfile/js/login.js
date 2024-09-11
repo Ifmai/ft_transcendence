@@ -1,38 +1,59 @@
 // login.js
 
+async function login(username, password, code_2fa) {
+    try {
+        const response = await fetch('https://lastdance.com.tr/api/users/jwtlogin/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                code_2fa: code_2fa
+            })
+        });
+        if (response.ok)
+            return response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 async function loginPage() {
     const loginBtn = document.getElementById('loginBtn');
     const intraBtn = document.getElementById('loginIntraBtn');
+    const twoFactorBtn = document.getElementById("two_factor_auth");
     loginBtn.addEventListener('click', async function(event) {
         event.preventDefault();
-        const email = document.getElementById('email-login').value;
+        const username = document.getElementById('email-login').value;
         const password = document.getElementById('password-login').value;
-        console.log('Email:', email);
-        console.log('Password:', password);
         try {
-            // API'ye istek gönderme
-            const response = await fetch('https://lastdance.com.tr/api/users/jwtlogin/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: email,
-                    password: password
-                })
-            });
-
-            if (response.ok) {
+            const response = await login(username, password, "");
+            if(response.status == 202){
+                document.getElementById('overlay-login').style.display = 'block';
+                document.getElementById('qr-popup-login').style.display = 'block';
+                twoFactorBtn.addEventListener('click', async function(event) {
+                    event.preventDefault();
+                    const code = document.getElementById("code-2fa").value;
+                    const response_2fca = await login(username, password, code);
+                    if(response_2fca.ok){
+                        loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html');
+                        window.history.pushState({}, "", '/');
+                    }else{
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                });
+            }else if(response.status == 200){
                 loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html');
                 window.history.pushState({}, "", '/');
-            } else {
+            }else{
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error(error);
         }
     });
-
     intraBtn.addEventListener('click', async function(event) {
         event.preventDefault();
         try{
@@ -65,3 +86,8 @@ async function intralogin() {
 		console.error(error);
 	}
 }
+
+function closePopup2() {
+    document.getElementById('overlay-login').style.display = 'none';
+    document.getElementById('qr-popup-login').style.display = 'none';
+  }
