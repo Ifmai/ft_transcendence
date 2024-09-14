@@ -9,6 +9,8 @@ import json
 
 class FriendListConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
+		print("selam orospu evladı.")
+		print("self scope : ", self.scope['user'])
 		if self.scope['user'].is_authenticated:
 			self.user = self.scope['user']
 			self.room_group_name = f"friend_list_{self.user.username}"
@@ -22,6 +24,7 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 			await self.notify_friends('online')
 	
 	async def disconnect(self, code):
+		pass
 		if self.user:
 			await self.update_online_status(False)
 			await self.notify_friends('offline')

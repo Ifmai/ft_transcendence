@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-+zo&y+uv@s7t#&juqo7-j04xt%+1jaba^yem7m1&$n@180&lvh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['apigateway', 'userservice', 'lastdance.com.tr']
+ALLOWED_HOSTS = ['apigateway', 'userservice', 'chatservice', 'lastdance.com.tr']
 
 # Application definition
 
@@ -53,7 +53,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -81,6 +80,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'authService.wsgi.application'
 ASGI_APPLICATION = 'authService.asgi.application'
+
 CHANNEL_LAYERS = {
 	'default' : {
 		'BACKEND': 'channels.layers.InMemoryChannelLayer'
@@ -163,8 +163,9 @@ ACCOUNT_EMAIL_REQUIRED = (False)
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'https://lastdance.com.tr',
+    'http://lastdance.com.tr',
+    'http://apigateway:8000',
     'http://userservice:8001',
-    'http://apigateway:8000'
 ]
 CSRF_COOKIE_NAME = 'csrftoken'  # CSRF çerezi için isim
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
@@ -174,8 +175,9 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'https://lastdance.com.tr',
+    'http://apigateway:8000',
     'http://userservice:8001',
-    'http://apigateway:8000'
+    'http://lastdance.com.tr',
 ]
 
 #JWT Token

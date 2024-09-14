@@ -79,7 +79,6 @@ class APIGatewayMiddleware:
 		headers = dict(request.headers)
 		body = request.body
 		cookies = request.COOKIES
-		print("COOKIES :", cookies)
 		cookie_jar = RequestsCookieJar()
 		for key, value in cookies.items():
 			cookie_jar.set(key, value)
@@ -106,6 +105,7 @@ class APIGatewayMiddleware:
 			if response.status_code == 401 and 'refresh_token' in cookies:
 				refresh_response = self.refresh_access_token(cookie_jar['refresh_token'])
 				if refresh_response.status_code == 200:
+					print(f"Bearer {refresh_response.json().get('access')}")
 					headers['Authorization'] = f"Bearer {refresh_response.json().get('access')}"
 					response = requests.request(method, url, headers=headers, cookies=cookie_jar, data=body)
 					http_response = HttpResponse(content=response.content, status=response.status_code, headers=dict(response.headers))

@@ -1,3 +1,4 @@
+//friends js başlangıç.
 async function add_friends(add_user) {
 	try {
 		const response = await fetch('https://lastdance.com.tr/api/users/addfriends/', {
@@ -103,8 +104,47 @@ async function friends_request_list() {
 		console.error(error);
 	}
 }
+//Friends js bitiş.
+
+//Chat başlangı.
+
+async function initWebSocket2() {
+    // WebSocket zaten açıksa, yeniden başlatma
+    if (chat_ws && chat_ws.readyState === WebSocket.OPEN) {
+        console.log('WebSocket zaten açık.');
+        return;
+    }
+
+    // Yeni WebSocket bağlantısı oluştur
+    chat_ws = new WebSocket(`wss://lastdance.com.tr/ws-chat/global-chat/?token=${getCookie('access_token')}`);
+    chat_ws.onopen = function(event) {
+        console.log('WebSocket bağlantısı açıldı.');
+    };
+
+    chat_ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log('Gelen veri:', data);
+    };
+
+    chat_ws.onclose = function(event) {
+        console.log('WebSocket bağlantısı kapandı.');
+    };
+
+    chat_ws.onerror = function(event) {
+        console.error('WebSocket hata:', event);
+    };
+}
+
+// WebSocket bağlantısını kapatma fonksiyonu
+function closeWebSocket2() {
+    if (chat_ws) {
+        chat_ws.close();
+        chat_ws = null;
+    }
+}
 
 async function chatPage() {
+	initWebSocket2();
 	const friendsBtn = document.getElementById('addFriends');
 	const requestsList = document.getElementById('requests-list');
 

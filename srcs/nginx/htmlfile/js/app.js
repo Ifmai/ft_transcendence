@@ -3,23 +3,17 @@ const only_auth_pages = ["../pages/_profile.html"]
 const not_auth_pages = ["../pages/_login.html", "../pages/_register.html", "../pages/_forgot_password.html" ]
 
 let ws = null;
-
-// Kullanıcının oturum açıp açmadığını kontrol eden fonksiyon
-async function isAuthenticated() {
-    const status = await checkingauth();
-    return status === 200 || getCookie('access_token') !== null;
-}
+let chat_ws = null;
+//let cleanupFunctions = [];
 
 // WebSocket bağlantısını başlatma fonksiyonu
 async function initWebSocket() {
-    // WebSocket zaten açıksa, yeniden başlatma
     if (ws && ws.readyState === WebSocket.OPEN) {
         console.log('WebSocket zaten açık.');
         return;
     }
-
-    // Kullanıcı oturum açmamışsa, WebSocket başlatma
-    if (!await isAuthenticated()) {
+    token = getCookie('access_token')
+    if(!token) {
         console.log('Kullanıcı oturum açmamış, WebSocket bağlantısı oluşturulmadı.');
         return;
     }
@@ -44,7 +38,7 @@ async function initWebSocket() {
     };
 }
 
-// WebSocket bağlantısını kapatma fonksiyonu
+//WebSocket bağlantısını kapatma fonksiyonu
 function closeWebSocket() {
     if (ws) {
         ws.close();
@@ -130,6 +124,7 @@ const route = async (event) => {
 }
 
 const loadPage = async (page) => {
+
     console.log("page : ", page);
     if(only_auth_pages.includes(page) && !getCookie('access_token') && await checkingauth() !== 200){
         loadPage('../pages/_homepage.html', '../partials/navbar.html')
@@ -185,4 +180,5 @@ document.addEventListener("DOMContentLoaded", function() {
 
 window.addEventListener('beforeunload', () => {
     closeWebSocket();
+    closeWebSocket2();
 });

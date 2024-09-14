@@ -137,7 +137,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'https://lastdance.com.tr',
-    'http://userservice:8001'
+    'http://userservice:8001',
+    'http://lastdance.com.tr',
 ]
 CSRF_COOKIE_NAME = 'csrftoken'  # CSRF çerezi için isim
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
@@ -149,11 +150,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'https://lastdance.com.tr',
-    'http://userservice:8001'
+    'http://userservice:8001',
+    'http://lastdance.com.tr',
 ]
 
 
 # HTTP yöntemlerine izin vermek için
 
 # Kimlik doğrulama bilgilerini iletmeye izin vermek için
-CORS_ALLOW_CREDENTIALS = True

@@ -20,6 +20,13 @@ volumes:
       o: bind
       device: /root/lastdance/srcs/authService
 
+  chat_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /root/lastdance/srcs/chatService
+
   api_data:
     driver: local
     driver_opts:
@@ -55,7 +62,7 @@ services:
       USER_DB_HOST: ${USER_DB_HOST}
       USER_DB_PORT: ${USER_DB_PORT}
     ports:
-      - "8001:8000"
+      - "8001:8001"
     volumes:
       - web_data:/authServices
     networks:
@@ -63,16 +70,36 @@ services:
     depends_on:
       - users_db
 
+  chat:
+    container_name: chatservice
+    build: ./chatService 
+    entrypoint: ./start.sh
+    command: python manage.py runserver 0.0.0.0:8002
+    environment:
+      USER_DB_USER: ${USER_DB_USER}
+      USER_DB_PASS: ${USER_DB_PASS}
+      USER_DB_NAME: ${USER_DB_NAME}
+      USER_DB_HOST: ${USER_DB_HOST}
+      USER_DB_PORT: ${USER_DB_PORT}
+    ports:
+      - "8002:8002"
+    volumes:
+      - chat_data:/chatServices
+    networks:
+      - lastdance
+    depends_on:
+      - user
+      - users_db
+
   front_end:
     container_name: front_end
     build: ./nginx
     restart: always
     volumes:
-      - /etc/letsencrypt/live/lastdance.com.tr/fullchain.pem:/etc/letsencrypt/live/lastdance.com.tr/fullchain.pem:ro
-      - /etc/letsencrypt/live/lastdance.com.tr/privkey.pem:/etc/letsencrypt/live/lastdance.com.tr/privkey.pem:ro
       - /root/lastdance/srcs/nginx/conf/default.conf:/etc/nginx/nginx.conf
-      - /root/lastdance/srcs/nginx/letsencrypt:/etc/letsencrypt
+      - /etc/letsencrypt:/etc/letsencrypt:rw
       - /root/lastdance/srcs/nginx/htmlfile:/usr/share/nginx/html
+      - /root/lastdance/srcs/nginx/log/:/var/log/nginx/
     ports:
       - '80:80'
       - '443:443'

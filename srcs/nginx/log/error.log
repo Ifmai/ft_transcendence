@@ -1,0 +1,57 @@
+2024/09/12 15:26:27 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:26:28 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:26:29 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:26:30 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:26:32 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:26:34 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:26:37 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:26:44 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:26:57 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:27:23 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:28:12 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:28:12 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:28:13 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:28:13 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:28:15 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:28:17 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:28:20 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:28:27 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:28:40 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:29:06 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:29:23 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:29:24 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:29:24 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:29:25 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:29:26 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:29:28 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:29:32 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:29:38 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:29:51 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:30:17 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:30:17 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:30:18 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:30:19 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:30:20 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:30:22 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:30:25 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:30:32 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:30:45 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:31:11 [emerg] 1#1: unknown "connection_upgrade" variable
+2024/09/12 15:35:56 [error] 31#31: *92 connect() failed (111: Connection refused) while connecting to upstream, client: 162.158.111.14, server: lastdance.com.tr, request: "GET /ws/friend-list/ HTTP/1.1", upstream: "http://172.18.0.3:8001/ws/friend-list/", host: "lastdance.com.tr"
+2024/09/12 15:39:45 [error] 31#31: *119 peer closed connection in SSL handshake while SSL handshaking to upstream, client: 116.130.185.158, server: lastdance.com.tr, request: "GET /ws/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1", upstream: "https://172.18.0.3:8001/ws/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php", host: "188.166.163.124:443"
+2024/09/12 15:43:15 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 162.158.87.81, server: lastdance.com.tr, request: "GET /ws/friend-list/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2MTU1OTMzLCJpYXQiOjE3MjYxNTUzMjksImp0aSI6ImU1MzYwZmI1NWQ5MjQxNjZiOTg3YTkwZjlkOWI4YjZmIiwidXNlcl9pZCI6Mn0.q4Qc658DXWLqUPqyDMU39rypjIlZ9elnTlktH_huHzE HTTP/1.1", upstream: "http://172.18.0.3:8001/ws/friend-list/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2MTU1OTMzLCJpYXQiOjE3MjYxNTUzMjksImp0aSI6ImU1MzYwZmI1NWQ5MjQxNjZiOTg3YTkwZjlkOWI4YjZmIiwidXNlcl9pZCI6Mn0.q4Qc658DXWLqUPqyDMU39rypjIlZ9elnTlktH_huHzE", host: "lastdance.com.tr"
+2024/09/12 15:43:17 [error] 30#30: *12 connect() failed (111: Connection refused) while connecting to upstream, client: 162.158.87.21, server: lastdance.com.tr, request: "GET /ws/friend-list/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2MTU1OTMzLCJpYXQiOjE3MjYxNTUzMjksImp0aSI6ImU1MzYwZmI1NWQ5MjQxNjZiOTg3YTkwZjlkOWI4YjZmIiwidXNlcl9pZCI6Mn0.q4Qc658DXWLqUPqyDMU39rypjIlZ9elnTlktH_huHzE HTTP/1.1", upstream: "http://172.18.0.3:8001/ws/friend-list/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2MTU1OTMzLCJpYXQiOjE3MjYxNTUzMjksImp0aSI6ImU1MzYwZmI1NWQ5MjQxNjZiOTg3YTkwZjlkOWI4YjZmIiwidXNlcl9pZCI6Mn0.q4Qc658DXWLqUPqyDMU39rypjIlZ9elnTlktH_huHzE", host: "lastdance.com.tr"
+2024/09/12 15:51:43 [error] 31#31: *59 connect() failed (111: Connection refused) while connecting to upstream, client: 172.70.242.67, server: lastdance.com.tr, request: "GET /ws-chat/global-chat/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2MTU2NTk4LCJpYXQiOjE3MjYxNTU5NzUsImp0aSI6IjFkMjg3MzkyMDgwODRjMTNiZDg3ZTcwN2JkZTZlM2E1IiwidXNlcl9pZCI6Mn0.LpZdgMBTc-gQqEWFNPOpnkVQnA8kqKh_as3twA17KvA HTTP/1.1", upstream: "http://172.18.0.4:8002/ws-chat/global-chat/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2MTU2NTk4LCJpYXQiOjE3MjYxNTU5NzUsImp0aSI6IjFkMjg3MzkyMDgwODRjMTNiZDg3ZTcwN2JkZTZlM2E1IiwidXNlcl9pZCI6Mn0.LpZdgMBTc-gQqEWFNPOpnkVQnA8kqKh_as3twA17KvA", host: "lastdance.com.tr"
+2024/09/12 18:13:04 [error] 31#31: *180 connect() failed (111: Connection refused) while connecting to upstream, client: 172.70.242.75, server: lastdance.com.tr, request: "GET /ws/friend-list/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2MTY1MDU3LCJpYXQiOjE3MjYxNjQ3MzMsImp0aSI6IjY3YmQxNjU3MjNkNzRmNmRhY2Q2OWVhYTIyMzVjZGU3IiwidXNlcl9pZCI6Mn0.G9-pYOBPAomP2Dwdgbw-EZvFPWOvhfNmaUZLW0bekm4 HTTP/1.1", upstream: "http://172.18.0.3:8001/ws/friend-list/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2MTY1MDU3LCJpYXQiOjE3MjYxNjQ3MzMsImp0aSI6IjY3YmQxNjU3MjNkNzRmNmRhY2Q2OWVhYTIyMzVjZGU3IiwidXNlcl9pZCI6Mn0.G9-pYOBPAomP2Dwdgbw-EZvFPWOvhfNmaUZLW0bekm4", host: "lastdance.com.tr"
+2024/09/12 18:18:37 [error] 31#31: *202 connect() failed (111: Connection refused) while connecting to upstream, client: 172.70.246.227, server: lastdance.com.tr, request: "GET /ws/friend-list/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2MTY1Mzk0LCJpYXQiOjE3MjYxNjUwNDMsImp0aSI6Ijg4MGI3MjdlZTZmMzRjZjhhYTU5MzU2MGQwZjRmMzVmIiwidXNlcl9pZCI6Mn0.3iAufNrxrNCiRQaDn8KYvWXYjgrkKpmD7tfBEUxqAuk HTTP/1.1", upstream: "http://172.18.0.3:8001/ws/friend-list/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2MTY1Mzk0LCJpYXQiOjE3MjYxNjUwNDMsImp0aSI6Ijg4MGI3MjdlZTZmMzRjZjhhYTU5MzU2MGQwZjRmMzVmIiwidXNlcl9pZCI6Mn0.3iAufNrxrNCiRQaDn8KYvWXYjgrkKpmD7tfBEUxqAuk", host: "lastdance.com.tr"
+2024/09/12 19:45:31 [error] 31#31: *332 peer closed connection in SSL handshake while SSL handshaking to upstream, client: 8.216.87.246, server: lastdance.com.tr, request: "GET /ws/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1", upstream: "https://172.18.0.3:8001/ws/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php", host: "188.166.163.124:443"
+2024/09/12 19:46:32 [error] 31#31: *332 upstream timed out (110: Operation timed out) while SSL handshaking to upstream, client: 8.216.87.246, server: lastdance.com.tr, request: "GET /ws/ec/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1", upstream: "https://172.18.0.3:8001/ws/ec/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php", host: "188.166.163.124:443"
+2024/09/12 19:47:33 [error] 31#31: *332 upstream timed out (110: Operation timed out) while SSL handshaking to upstream, client: 8.216.87.246, server: lastdance.com.tr, request: "GET /api/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1", upstream: "https://172.18.0.5:8000/api/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php", host: "188.166.163.124:443"
+2024/09/13 01:42:42 [error] 31#31: *743 peer closed connection in SSL handshake while SSL handshaking to upstream, client: 8.216.89.199, server: lastdance.com.tr, request: "GET /ws/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1", upstream: "https://172.18.0.3:8001/ws/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php", host: "188.166.163.124:443"
+2024/09/13 05:53:29 [error] 31#31: *945 upstream timed out (110: Operation timed out) while SSL handshaking to upstream, client: 78.153.140.151, server: lastdance.com.tr, request: "GET /api/.env HTTP/1.1", upstream: "https://172.18.0.5:8000/api/.env", host: "188.166.163.124"
+2024/09/13 05:54:31 [error] 31#31: *947 peer closed connection in SSL handshake while SSL handshaking to upstream, client: 78.153.140.151, server: lastdance.com.tr, request: "GET /api/.env HTTP/1.1", upstream: "https://172.18.0.5:8000/api/.env", host: "188.166.163.124"
+2024/09/13 09:52:01 [crit] 31#31: *1082 SSL_do_handshake() failed (SSL: error:0A0000C6:SSL routines::packet length too long error:0A000139:SSL routines::record layer failure) while SSL handshaking, client: 45.95.169.130, server: 0.0.0.0:443
+2024/09/13 16:47:32 [error] 31#31: *1272 open() "/usr/share/nginx/html/css/.env" failed (2: No such file or directory), client: 74.234.51.105, server: lastdance.com.tr, request: "GET /css/.env HTTP/1.1", host: "188.166.163.124", referrer: "https://www.google.com/"
+2024/09/14 04:19:11 [error] 30#30: *282 peer closed connection in SSL handshake while SSL handshaking to upstream, client: 8.219.181.180, server: lastdance.com.tr, request: "GET /ws/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1", upstream: "https://172.18.0.3:8001/ws/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php", host: "188.166.163.124:443"
+2024/09/14 04:20:12 [error] 30#30: *282 peer closed connection in SSL handshake while SSL handshaking to upstream, client: 8.219.181.180, server: lastdance.com.tr, request: "GET /ws/ec/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1", upstream: "https://172.18.0.3:8001/ws/ec/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php", host: "188.166.163.124:443"
+2024/09/14 04:21:13 [error] 30#30: *282 peer closed connection in SSL handshake while SSL handshaking to upstream, client: 8.219.181.180, server: lastdance.com.tr, request: "GET /api/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1", upstream: "https://172.18.0.6:8000/api/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php", host: "188.166.163.124:443"

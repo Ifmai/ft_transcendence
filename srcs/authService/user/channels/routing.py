@@ -1,7 +1,7 @@
 # routing.py
 from django.urls import re_path
-from . import consumer
+from user.channels.consumer import FriendListConsumer
 
 websocket_urlpatterns = [
-    re_path(r'ws/friend-list/$', consumer.FriendListConsumer.as_asgi()),
+    re_path(r'ws/friend-list/', FriendListConsumer.as_asgi()),
 ]

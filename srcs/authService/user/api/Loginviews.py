@@ -5,7 +5,7 @@ from user.models import Profil
 from django.contrib.auth import authenticate
 from user.api.serializers import UserSerializer
 from rest_framework.response import Response
-#from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -121,9 +121,15 @@ class CheckRefreshTokenView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             cookies = request.COOKIES
+            headers = dict(request.headers)
+            print("headers ")
             refresh_token = cookies.get('refresh_token')
+            access_token = headers.get('acces')
             if not refresh_token:
                 return Response({'error': 'Refresh token required.'}, status=status.HTTP_202_ACCEPTED)
-            return Response({'okaii'}, status=status.HTTP_200_OK)
+            elif not access_token and refresh_token:
+                return Response({"okaii"}, status=status.HTTP_401_UNAUTHORIZED)    
+            else:
+                return Response({'okaii'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
