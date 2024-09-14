@@ -86,3 +86,4 @@ class UserFriendListSerializer(serializers.ModelSerializer):
         if obj.sender == self.context['request'].user:
             return obj.receiver.username
         return obj.sender.username
+

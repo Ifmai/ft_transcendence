@@ -15,7 +15,7 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 			self.user = self.scope['user']
 			self.room_group_name = f"friend_list_{self.user.username}"
 
-			await self.update_online_status(True)
+			await self.update_online_status('ON')
 			await self.channel_layer.group_add(
             	self.room_group_name,
             	self.channel_name
@@ -26,7 +26,7 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 	async def disconnect(self, code):
 		pass
 		if self.user:
-			await self.update_online_status(False)
+			await self.update_online_status('OF')
 			await self.notify_friends('offline')
 			await self.channel_layer.group_discard(
 				self.room_group_name,
@@ -53,10 +53,11 @@ class FriendListConsumer(AsyncWebsocketConsumer):
             'status': event['status'],
         }))
 
-	async def update_online_status(self, is_online):
+	async def update_online_status(self, change_status):
 		user = self.scope['user']
+		
 		if user.is_authenticated:
-			await sync_to_async(Profil.objects.filter(user=user).update)(is_online=is_online)
+			await sync_to_async(Profil.objects.filter(user=user).update)(status=change_status)
 
 	async def get_friends(self):
 		request_user = self.scope['user']
@@ -70,10 +71,10 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 		for friend in friends:
 			friend_user = await sync_to_async(lambda: friend.sender if friend.sender != request_user else friend.receiver)()
 			friend_profile = await sync_to_async(lambda: Profil.objects.get(user=friend_user.id))()
-			is_online = friend_profile.is_online
+			status = friend_profile.status
 			friends_data.append({
 				'id': friend_user.id,
 				'username': friend_user.username,
-				'is_online': is_online
+				'is_online': status
 			})
 		return friends_data

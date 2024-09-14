@@ -43,7 +43,6 @@ INSTALLED_APPS = [
 	'user.apps.UserConfig',
     'rest_framework',
     'corsheaders',
-    'django.contrib.sites',
 	'django_filters',
 	'rest_framework_simplejwt',
 ]
@@ -154,7 +153,6 @@ REST_FRAMEWORK = {
 	'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
-SITE_ID = 1
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_EMAIL_REQUIRED = (False)

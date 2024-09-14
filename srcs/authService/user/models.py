@@ -1,6 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
+from enum import Enum
+
+class Status(Enum):
+	ONLINE = 'ON'
+	OFFLINE = 'OF'
+	INGAME = 'IG'
 
 class Profil(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')
@@ -9,7 +15,17 @@ class Profil(models.Model):
 	photo = models.ImageField(blank=True, null=True, upload_to='profil_photo/%Y/%m/')
 	two_factory = models.BooleanField(default=False)
 	otp_secret_key = models.CharField(max_length=64, blank=True, null=True)
-	is_online = models.BooleanField(default=False, null=True)
+	STATUS_CHOICES = [
+		(Status.ONLINE.value, 'ONLINE'),
+		(Status.OFFLINE.value, 'OFFLINE'),
+		(Status.INGAME.value, 'INGAME')
+    ]
+	alias_name = models.CharField(max_length=100, null=True, blank=True)
+	wins = models.IntegerField(default=0, blank=False, null=False)
+	losses = models.IntegerField(default=0, blank=False, null=False)
+	status = models.CharField(max_length=2, choices=STATUS_CHOICES, default=Status.OFFLINE.value)
+	championships = models.IntegerField(default=0, blank=False, null=False)
+
 	class Meta:
 		verbose_name_plural = 'Profils'
 
