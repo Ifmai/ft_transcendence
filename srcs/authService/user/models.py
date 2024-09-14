@@ -1,12 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
-from enum import Enum
+from .enums import State, Status, StatusChoices
 
-class Status(Enum):
-	ONLINE = 'ON'
-	OFFLINE = 'OF'
-	INGAME = 'IG'
 
 class Profil(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')
@@ -68,3 +64,45 @@ class UserFriendsList(models.Model):
 
     def __str__(self):
         return f'{self.sender.username} -> {self.receiver.username}'
+
+class PlayerMatch(models.Model):
+    id = models.AutoField(primary_key=True)
+    match = models.ForeignKey('Match', on_delete=models.CASCADE, null=False, blank=False)
+    player = models.ForeignKey(Profil, on_delete=models.CASCADE, null=False, blank=False)
+    score = models.IntegerField(default=0, null=False, blank=False)
+    won = models.BooleanField(default=False, null=False, blank=False)
+
+    def __str__(self):
+        return f"Score: {self.score}"
+
+
+class Match(models.Model):
+    id = models.AutoField(primary_key=True)
+    tournament = models.ForeignKey('Tournament', on_delete=models.CASCADE, null=True, blank=False)
+    round = models.IntegerField(default=1)
+    state = models.CharField(max_length=3, choices=State.choices(), null=False, blank=False, default=State.UNPLAYED.value)
+
+    def __str__(self):
+        return f"Match Round: {self.round}"
+
+class PlayerTournament(models.Model):
+	id = models.AutoField(primary_key=True)
+	tournament = models.ForeignKey('Tournament', on_delete=models.CASCADE, null=False, blank=False)
+	player = models.ForeignKey(Profil, on_delete=models.CASCADE, null=False, blank=False)
+	creator = models.BooleanField(default=False, null=False, blank=False)
+
+	def __str__(self):
+		return f'{self.player_id} -> {self.creator}'
+
+class Tournament(models.Model):
+	id = models.AutoField(primary_key=True)
+	name = models.CharField(max_length=30, null=False, blank=False, unique=False)
+	round = models.IntegerField(default=1)
+	status = models.CharField(max_length=2,
+						choices=StatusChoices.choices(),
+						default=StatusChoices.PENDING.value,
+						null=False,
+						blank=False)
+
+	def __str__(self):
+		return f"Tournament ID: {self.id}"
