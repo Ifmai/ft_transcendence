@@ -9,6 +9,7 @@ clean:down
 	@docker system prune -a -f
 	docker volume prune -f
 	docker network prune -f
+	docker compose down --volumes --remove-orphans
 
 re:clean up
 

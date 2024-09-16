@@ -75,7 +75,7 @@ services:
       - lastdance
     depends_on:
       - users_db
-      - apigateway
+      - user
 
   user:
     container_name: userservice
@@ -116,7 +116,6 @@ services:
       - lastdance
     depends_on:
       - user
-      - users_db
 
   front_end:
     container_name: front_end

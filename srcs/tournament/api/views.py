@@ -61,13 +61,9 @@ class TournamentView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request):
-		print("alooooooo")
-		print("Request User : ", request.user)
 		# Get Player Data
 		user_id = request.user.id
-		print("Profil : ", Profil.objects.all())
 		player = Profil.objects.get(user_id=user_id)
-
 		serializer = TournamentSerializer()
 		current_tournament = serializer.is_player_in_tournament(player.id)
 

@@ -47,7 +47,7 @@ class ProfileComment(models.Model):
 
     class Meta:
         verbose_name_plural = 'ProfileCommand'
-        db_table = 'api_profil'
+        db_table = 'api_profil_comment'
 
     def __str__(self):
         return str(self.user_profil.user.username)

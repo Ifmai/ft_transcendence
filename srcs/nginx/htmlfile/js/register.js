@@ -6,8 +6,8 @@ async function registerPage(){
         const email = document.getElementById('register-email').value;
         const firt_name = document.getElementById('register-fName').value;
         const last_name = document.getElementById('register-lName').value;
-        const pass1 = document.getElementById('register-pass1').value;
-        const pass2 = document.getElementById('register-pass2').value;
+        const pass1 = document.getElementById('register-password').value;
+        const pass2 = document.getElementById('register-confirm-password').value;
         console.log('user name:', username);
         console.log('Email:', email);
         console.log('pass1:', pass1);
