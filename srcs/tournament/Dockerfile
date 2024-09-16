@@ -16,6 +16,6 @@ RUN apt-get update && apt-get install -y curl
 RUN pip install --upgrade pip
 RUN apt-get install -y --no-install-recommends postgresql-client
 RUN pip install --no-cache-dir -r /tournament-app/requirements.txt
-RUN chmod +x /tools/microservice-run.sh
+#RUN chmod +x /tools/microservice-run.sh
 
 ENTRYPOINT [ "bash", "./tools/microservice-run.sh" ]

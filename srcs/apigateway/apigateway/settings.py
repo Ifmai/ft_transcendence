@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-dyleu*ply7t2eb_#65*%^)m1*y3as^gn(3^wk5pjmok+aj^wf#
 DEBUG = True
 
 #ALLOWED_HOSTS = ['lastdance.com.tr', 'apigateway', 'userservice']
-ALLOWED_HOSTS = ['lastdance.com.tr','188.166.163.124', 'localhost', '127.0.0.1', 'example.com:443']
+ALLOWED_HOSTS = ['lastdance.com.tr','188.166.163.124', 'localhost', '127.0.0.1', 'tournament-app']
 
 
 # Application definition

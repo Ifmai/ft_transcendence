@@ -87,10 +87,12 @@ class APIGatewayMiddleware:
 		#Servis Servis bölücem burayı.
 		# if path.startswith('/api/users/'):
 		# 	return self.handle_users_service(path, method, headers, body, cookie_jar)
+		print("GELEN KANKA ", path)
 		if path.startswith('/api/users/'):
 			url = f'http://userservice:8001{path}'
-		else:
-			return None
+		elif path.startswith('/api/tournament/'):
+			url = f'http://tournament-app:8003{path}'
+		print("url kanka : ", url)
 		try:
 			if method == 'GET':
 				response = requests.get(url, headers=headers, cookies=cookie_jar)
