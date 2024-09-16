@@ -1,0 +1,63 @@
+<div class="pp-container">
+    <h1 class="pp-h1">Player Profile</h1>
+
+    <div class="pp-card">
+        <h2 class="pp-card-title">Personal Information</h2>
+        <img src="/placeholder.svg?height=128&width=128" alt="Player Avatar" class="pp-avatar">
+        <div class="pp-form-group">
+            <label for="pp-firstName" class="pp-label">First Name</label>
+            <input type="text" id="pp-firstName" class="pp-input" value="Sam">
+        </div>
+        <div class="pp-form-group">
+            <label for="pp-lastName" class="pp-label">Last Name</label>
+            <input type="text" id="pp-lastName" class="pp-input" value="Flynn">
+        </div>
+        <div class="pp-form-group">
+            <label for="pp-city" class="pp-label">City</label>
+            <input type="text" id="pp-city" class="pp-input" value="The Grid">
+        </div>
+        <div class="pp-form-group">
+            <label for="pp-bio" class="pp-label">Bio</label>
+            <textarea id="pp-bio" class="pp-textarea"
+                rows="4">Son of Kevin Flynn. Entered the Grid to find my father and save both worlds.</textarea>
+        </div>
+    </div>
+
+    <div class="pp-card">
+        <h2 class="pp-card-title">Game Statistics</h2>
+        <div class="pp-stats-grid">
+            <div>
+                <div class="pp-stat-value">15</div>
+                <div class="pp-stat-label">Win Streak</div>
+            </div>
+            <div>
+                <div class="pp-stat-value">127</div>
+                <div class="pp-stat-label">Total Wins</div>
+            </div>
+            <div>
+                <div class="pp-stat-value">23</div>
+                <div class="pp-stat-label">Total Losses</div>
+            </div>
+            <div>
+                <div class="pp-stat-value">5.2</div>
+                <div class="pp-stat-label">KDA Ratio</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pp-card">
+        <h2 class="pp-card-title">Account Security</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Two-Factor Authentication</span>
+            <label class="pp-switch">
+                <input type="checkbox" id="pp-twoFactorAuth">
+                <span class="pp-slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div style="text-align: center;">
+        <button class="pp-button" onclick="ppSaveChanges()">Save Changes</button>
+        <button class="pp-button pp-button-outline" onclick="ppCancel()">Cancel</button>
+    </div>
+</div>

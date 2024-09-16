@@ -21,13 +21,13 @@ async function login(username, password, code_2fa) {
 }
 
 async function loginPage() {
-    const loginBtn = document.getElementById('loginBtn');
-    const intraBtn = document.getElementById('loginIntraBtn');
+    const loginBtn = document.getElementById('login-submit-button');
+    const intraBtn = document.getElementById('login-intra-button');
     const twoFactorBtn = document.getElementById("two_factor_auth");
     loginBtn.addEventListener('click', async function(event) {
         event.preventDefault();
-        const username = document.getElementById('email-login').value;
-        const password = document.getElementById('password-login').value;
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
         try {
             const response = await login(username, password, "");
             if(response.status == 202){
@@ -38,14 +38,14 @@ async function loginPage() {
                     const code = document.getElementById("code-2fa").value;
                     const response_2fca = await login(username, password, code);
                     if(response_2fca.ok){
-                        loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html');
+                        loadPage(selectPage('/'));
                         window.history.pushState({}, "", '/');
                     }else{
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
                 });
             }else if(response.status == 200){
-                loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html');
+                loadPage(selectPage('/'));
                 window.history.pushState({}, "", '/');
             }else{
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -79,9 +79,12 @@ async function intralogin() {
                 'Content-Type': 'application/json',
             },
         });
-		if(response.ok)
-			loadPage("../pages/_homepage.html");
+		if(response.ok){
+            loadPage(selectPage('/'));
             window.history.pushState({}, "", '/');
+        }else{
+            console.log("ananın amı");
+        }
 	} catch (error) {
 		console.error(error);
 	}

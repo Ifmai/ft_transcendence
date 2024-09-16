@@ -1,0 +1,359 @@
+#idx-body {
+	font-family: Arial, sans-serif;
+	background-color: #1a202c;
+	color: #63b3ed;
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+	overflow-x: hidden;
+}
+
+.idx-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 5.5rem 1rem;
+}
+
+.idx-header {
+	text-align: center;
+	margin-bottom: 4rem;
+}
+
+.idx-h1 {
+	font-size: 3.75rem;
+	font-weight: bold;
+	margin-bottom: 1rem;
+	letter-spacing: 0.05em;
+}
+
+.idx-h1 span {
+	color: #ed8936;
+}
+
+.idx-subtitle {
+	font-size: 1.25rem;
+	color: #90cdf4;
+}
+
+.idx-paddle-3d {
+	width: 16rem;
+	height: 16rem;
+	margin: 0 auto 4rem;
+	perspective: 1000px;
+}
+
+.idx-paddle {
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(to bottom right, #3182ce, #63b3ed);
+	border-radius: 0.5rem;
+	box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.5);
+	position: relative;
+	transform-style: preserve-3d;
+	animation: idx-rotatePaddle 20s linear infinite;
+}
+
+.idx-paddle::before {
+	content: '';
+	position: absolute;
+	inset: 0.5rem;
+	background-color: #2d3748;
+	border-radius: 0.25rem;
+}
+
+.idx-paddle::after {
+	content: '';
+	position: absolute;
+	inset: 1rem;
+	background: linear-gradient(to bottom right, #ed8936, #f6ad55);
+	border-radius: 50%;
+	box-shadow: inset 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes idx-rotatePaddle {
+	0% { transform: rotateY(0deg); }
+	100% { transform: rotateY(360deg); }
+}
+
+.idx-game-modes {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 2rem;
+	max-width: 64rem;
+	margin: 0 auto;
+}
+
+.idx-game-mode {
+	background-color: rgba(45, 55, 72, 0.5);
+	padding: 1.5rem;
+	border-radius: 0.5rem;
+	border: 1px solid #3182ce;
+	box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+	transition: transform 0.3s ease;
+	position: relative;
+	overflow: hidden;
+}
+
+.idx-game-mode:hover {
+	transform: scale(1.05);
+}
+
+.idx-game-mode::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to right, #3182ce, #ed8936);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.idx-game-mode:hover::before {
+	opacity: 0.2;
+}
+
+.idx-game-mode h2 {
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+	position: relative;
+}
+
+.idx-game-mode p {
+	margin-bottom: 1rem;
+	color: #90cdf4;
+	position: relative;
+}
+
+.idx-game-mode a {
+	background: none;
+	border: none;
+	color: #ed8936;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	font-weight: bold;
+	padding: 0;
+	transition: color 0.3s ease;
+	position: relative;
+	text-decoration: none;
+}
+
+.idx-game-mode a:hover {
+	color: #f6ad55;
+}
+
+.idx-game-mode a::after {
+	content: '→';
+	margin-left: 0.5rem;
+}
+
+.idx-cta {
+	text-align: center;
+	margin-top: 4rem;
+}
+
+.idx-cta h2 {
+	font-size: 1.875rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+}
+
+.idx-cta button {
+	background-color: #ed8936;
+	color: #1a202c;
+	font-weight: bold;
+	padding: 0.75rem 1.5rem;
+	border-radius: 9999px;
+	border: none;
+	font-size: 1.125rem;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.idx-cta button:hover {
+	background-color: #f6ad55;
+}
+
+.idx-footer {
+	text-align: center;
+	margin-top: 4rem;
+	color: #90cdf4;
+	font-size: 0.875rem;
+}
+
+.idx-grid-overlay {
+	position: fixed;
+	inset: 0;
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	grid-template-rows: repeat(6, 1fr);
+	gap: 1rem;
+	padding: 1rem;
+	pointer-events: none;
+	z-index: -1;
+}
+
+.idx-grid-cell {
+	border: 1px solid #3182ce;
+	opacity: 0.1;
+}
+
+.idx-ping-pong-net {
+	position: fixed;
+	top: 0;
+	left: 50%;
+	width: 1px;
+	height: 100%;
+	background-color: #3182ce;
+	opacity: 0.2;
+	box-shadow: 0 0 10px #3182ce;
+}
+
+.idx-ping-pong-ball {
+	position: fixed;
+	width: 1rem;
+	height: 1rem;
+	background-color: #ed8936;
+	border-radius: 50%;
+	box-shadow: 0 0 10px #ed8936;
+	pointer-events: none;
+}
+
+.idx-navbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	background-color: rgba(26, 32, 44, 0.8);
+	backdrop-filter: blur(10px);
+	z-index: 1000;
+	padding: 1rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+#idx-navbar-toggle {
+	display: none;
+	background: none;
+	border: none;
+	color: #63b3ed;
+	font-size: 1.5rem;
+	cursor: pointer;
+}
+
+#idx-navbar-toggle {
+	display: block;
+}
+
+.idx-navbar-logo {
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: #63b3ed;
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+}
+
+.idx-navbar-logo span {
+	color: #ed8936;
+}
+
+.idx-navbar-logo::before {
+	content: '▲';
+	display: inline-block;
+	margin-right: 0.5rem;
+	font-size: 1rem;
+	animation: idx-rotateLogo 4s linear infinite;
+}
+
+@keyframes idx-rotateLogo {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+#idx-navbar-links {
+	display: flex;
+	gap: 1.5rem;
+}
+
+.idx-navbar-link {
+	color: #63b3ed;
+	text-decoration: none;
+	font-weight: bold;
+	transition: color 0.3s ease;
+	position: relative;
+	padding: 0.5rem 0;
+}
+
+.idx-navbar-link::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	background-color: #ed8936;
+	transform: scaleX(0);
+	transition: transform 0.3s ease;
+}
+
+.idx-navbar-link:hover {
+	color: #ed8936;
+}
+
+.idx-navbar-link:hover::after {
+	transform: scaleX(1);
+}
+
+.idx-navbar-cta {
+	background-color: #ed8936;
+	color: #1a202c;
+	padding: 0.5rem 1rem;
+	border-radius: 9999px;
+	text-decoration: none;
+	font-weight: bold;
+	transition: background-color 0.3s ease;
+}
+
+.idx-navbar-cta:hover {
+	background-color: #f6ad55;
+}
+
+#idx-navbar-toggle {
+	display: none;
+	background: none;
+	border: none;
+	color: #63b3ed;
+	font-size: 1.5rem;
+	cursor: pointer;
+}
+
+@media (max-width: 768px) {
+	#idx-navbar-links {
+		display: none;
+		flex-direction: column;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		background-color: rgba(26, 32, 44, 0.95);
+		padding: 1rem;
+	}
+
+	#idx-navbar-links.active {
+		display: flex;
+	}
+
+	#idx-navbar-toggle {
+		display: block;
+	}
+
+	.idx-h1 {
+		font-size: 3rem;
+	}
+
+	.idx-game-modes {
+		grid-template-columns: 1fr;
+	}
+}

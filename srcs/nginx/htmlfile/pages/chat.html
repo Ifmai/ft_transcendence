@@ -1,0 +1,29 @@
+<div class="chat-main-container">
+	<div class="chat-friend-list" id="friendList">
+		<!-- Friends will be dynamically added here -->
+		<button class="chat-friend-request-button" id="friendRequestButton">Friend Requests</button>
+	</div>
+	<div class="chat-area">
+		<div class="chat-messages" id="chatMessages">
+			<!-- Messages will be dynamically added here -->
+		</div>
+		<div class="chat-input">
+			<input type="text" id="messageInput" placeholder="Type your message...">
+			<button id="sendButton">Send</button>
+		</div>
+	</div>
+</div>
+
+<div class="chat-friend-request-popup" id="friendRequestPopup">
+	<h3>Friend Requests</h3>
+	<div id="friendRequests">
+		<!-- Friend requests will be dynamically added here -->
+	</div>
+	<div class="chat-new-friend-request">
+		<h3>Send Friend Request</h3>
+		<input type="text" id="newFriendInput" placeholder="Enter username">
+		<button id="sendFriendRequestButton">Send Request</button>
+	</div>
+</div>
+
+<div class="chat-overlay" id="overlay"></div>

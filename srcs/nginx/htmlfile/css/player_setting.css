@@ -1,0 +1,150 @@
+.pp-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 2rem 1rem;
+}
+
+.pp-h1 {
+	font-size: 2.5rem;
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+.pp-card {
+	background-color: rgba(45, 55, 72, 0.5);
+	border: 1px solid #3182ce;
+	border-radius: 0.5rem;
+	padding: 1.5rem;
+	margin-bottom: 2rem;
+}
+
+.pp-card-title {
+	font-size: 1.5rem;
+	font-weight: bold;
+	margin-bottom: 1rem;
+}
+
+.pp-form-group {
+	margin-bottom: 1rem;
+}
+
+.pp-label {
+	display: block;
+	margin-bottom: 0.5rem;
+}
+
+.pp-input, .pp-textarea {
+	width: 100%;
+	padding: 0.5rem;
+	background-color: #2d3748;
+	border: 1px solid #3182ce;
+	border-radius: 0.25rem;
+	color: #63b3ed;
+}
+
+.pp-avatar {
+	width: 128px;
+	height: 128px;
+	border-radius: 50%;
+	object-fit: cover;
+	margin-bottom: 1rem;
+}
+
+.pp-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	gap: 1rem;
+	text-align: center;
+}
+
+.pp-stat-value {
+	font-size: 2rem;
+	font-weight: bold;
+	color: #ed8936;
+}
+
+.pp-stat-label {
+	font-size: 0.875rem;
+}
+
+.pp-switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+}
+
+.pp-switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.pp-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #2d3748;
+	transition: .4s;
+	border-radius: 34px;
+}
+
+.pp-slider:before {
+	position: absolute;
+	content: "";
+	height: 26px;
+	width: 26px;
+	left: 4px;
+	bottom: 4px;
+	background-color: #63b3ed;
+	transition: .4s;
+	border-radius: 50%;
+}
+
+.pp-switch input:checked + .pp-slider {
+	background-color: #ed8936;
+}
+
+.pp-switch input:checked + .pp-slider:before {
+	transform: translateX(26px);
+}
+
+.pp-button {
+	background-color: #ed8936;
+	color: #1a202c;
+	border: none;
+	padding: 0.5rem 1rem;
+	border-radius: 0.25rem;
+	font-weight: bold;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.pp-button:hover {
+	background-color: #f6ad55;
+}
+
+.pp-button-outline {
+	background-color: transparent;
+	border: 1px solid #3182ce;
+	color: #63b3ed;
+}
+
+.pp-button-outline:hover {
+	background-color: #3182ce;
+	color: #1a202c;
+}
+
+
+@media (max-width: 768px) {
+	.pp-navbar-links {
+		display: none;
+	}
+
+	.pp-stats-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
