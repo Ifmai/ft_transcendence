@@ -34,11 +34,18 @@ volumes:
       o: bind
       device: /root/lastdance/srcs/apigateway
 
+  tournament:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /root/lastdance/srcs/tournament
+
 services:
 
   apigateway:
     container_name: apigateway
-    build: ./apigateway 
+    build: ./apigateway
     entrypoint: ./start.sh
     command: python manage.py runserver 0.0.0.0:8000
     ports:
@@ -50,9 +57,30 @@ services:
     depends_on:
       - user
 
+  tournament:
+    container_name: tournament-app
+    build: ./tournament
+    entrypoint: ./start.sh
+    command: python manage.py runserver 0.0.0.0:8003
+    environment:
+      USER_DB_USER: ${USER_DB_USER}
+      USER_DB_PASS: ${USER_DB_PASS}
+      USER_DB_NAME: ${USER_DB_NAME}
+      USER_DB_HOST: ${USER_DB_HOST}
+      USER_DB_PORT: ${USER_DB_PORT}
+    ports:
+      - "8003:8003"
+    volumes:
+      - tournament:/tournament-app
+    networks:
+      - lastdance
+    depends_on:
+      - users_db
+      - apigateway
+
   user:
     container_name: userservice
-    build: ./authService 
+    build: ./authService
     entrypoint: ./start.sh
     command: python manage.py runserver 0.0.0.0:8001
     environment:
@@ -69,10 +97,11 @@ services:
       - lastdance
     depends_on:
       - users_db
+      - apigateway
 
   chat:
     container_name: chatservice
-    build: ./chatService 
+    build: ./chatService
     entrypoint: ./start.sh
     command: python manage.py runserver 0.0.0.0:8002
     environment:
