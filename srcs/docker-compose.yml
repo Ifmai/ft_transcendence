@@ -60,7 +60,6 @@ services:
   tournament:
     container_name: tournament-app
     build: ./tournament
-    entrypoint: ./start.sh
     command: python manage.py runserver 0.0.0.0:8003
     environment:
       USER_DB_USER: ${USER_DB_USER}
@@ -97,7 +96,6 @@ services:
       - lastdance
     depends_on:
       - users_db
-      - apigateway
 
   chat:
     container_name: chatservice
