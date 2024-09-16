@@ -6,6 +6,8 @@ from .enums import *
 from .models import Tournament, Profil, PlayerTournament, Match, PlayerMatch
 from .serializers import TournamentSerializer
 from itertools import cycle
+from rest_framework.permissions import IsAuthenticated
+
 
 def create_match(tournament, player1, player2):
 	new_match = Match.objects.create(tournament= tournament,
@@ -56,9 +58,14 @@ def update_tournament(tournament_id):
 			prepare_next_round(tournament, current_round_matches)
 
 class TournamentView(APIView):
+	permission_classes = [IsAuthenticated]
+
 	def get(self, request):
+		print("alooooooo")
+		print("Request User : ", request.user)
 		# Get Player Data
 		user_id = request.user.id
+		print("Profil : ", Profil.objects.all())
 		player = Profil.objects.get(user_id=user_id)
 
 		serializer = TournamentSerializer()

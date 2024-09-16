@@ -33,6 +33,18 @@ const tournaments = [
 
 async function tournamentPage(){
 	// Populate tournament list
+	try {
+		const response = await fetch('/api/tournament/', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${getCookie('access_token')}`  // Token'ı Authorization başlığına ekedik.
+			},
+			credentials: 'include',
+		});
+	} catch (error) {
+		console.error("patladık abi");
+	}
 	const tourlist = document.getElementById('tournamentList');
 	tournaments.forEach(tournament => {
 		const tournamentItem = document.createElement('div');
