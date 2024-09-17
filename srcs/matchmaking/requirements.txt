@@ -1,4 +1,7 @@
 django==4.0.0
 channels==3.0.4
+<<<<<<< HEAD
 djangorestframework-simplejwt==5.3.1
 PyJWT==2.3.0
+=======
+>>>>>>> a7dc6ceee3faf8dc422e38a12afc9cd491455406
