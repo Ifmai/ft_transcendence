@@ -32,23 +32,23 @@ const tournaments = [
 ];
 
 async function tournamentPage(){
-	// Populate tournament list
-	// try {
-	// 	const response = await fetch('/api/tournament/', {
-	// 		method: 'POST',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 			'Authorization': `Bearer ${getCookie('access_token')}`  // Token'ı Authorization başlığına ekedik.
-	// 		},
-	// 		body: JSON.stringify({
-	// 			'action': 'create',
-	// 			'alias_name': "alpTekOrduKral",
-	// 			'tournament_name': 'Alp vs Ali'
-	// 		})
-	// 	});
-	// } catch (error) {
-	// 	console.error("patladık abi");
-	// }
+	 //Populate tournament list
+	 try {
+	 	const response = await fetch('/api/tournament/', {
+	 		method: 'POST',
+	 		headers: {
+	 			'Content-Type': 'application/json',
+	 			'Authorization': `Bearer ${getCookie('access_token')}`  // Token'ı Authorization başlığına ekedik.
+	 		},
+	 		body: JSON.stringify({
+	 			'action': 'create',
+	 			'alias_name': "alpTekOrduKral",
+	 			'tournament_name': 'Alp vs Ali'
+	 		})
+	 	});
+	 } catch (error) {
+	 	console.error("patladık abi");
+	 }
 	const tourlist = document.getElementById('tournamentList');
 	tournaments.forEach(tournament => {
 		const tournamentItem = document.createElement('div');
@@ -60,13 +60,13 @@ async function tournamentPage(){
 		`;
 		tourlist.appendChild(tournamentItem);
 	});
-	
+
 	// Create Tournament button functionality
 	document.getElementById('createTournamentBtn').addEventListener('click', (e) => {
 		e.preventDefault();
 		alert('Create Tournament functionality to be implemented.');
 	});
-	
+
 	// Join Tournament button functionality
 	tourlist.addEventListener('click', (e) => {
 		if (e.target.classList.contains('trn-button')) {

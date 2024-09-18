@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ['lastdance.com.tr','188.166.163.124', 'localhost', '127.0.0.1',
 # Application definition
 
 INSTALLED_APPS = [
-	'daphne',
+    'daphne',
 	'channels',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+
 	'rest_framework',
 	'gateway.apps.GatewayConfig',
     'corsheaders',
