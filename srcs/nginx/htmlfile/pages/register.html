@@ -15,6 +15,14 @@
                 <input type="email" id="register-email" name="email" required>
             </div>
             <div class="register-form-group">
+                <label for="register-first-name">First Name</label>
+                <input type="text" id="register-first-name" name="first" required>
+            </div>
+            <div class="register-form-group">
+                <label for="register-last-name">Last Name</label>
+                <input type="text" id="register-last-name" name="last" required>
+            </div>
+            <div class="register-form-group">
                 <label for="register-password">Password</label>
                 <input type="password" id="register-password" name="password" required>
             </div>
@@ -24,7 +32,7 @@
             </div>
             <button type="button" class="register-submit-button" id="registerBtn">Register</button>
             <div class="register-form-footer">
-                <p>Already have an account? <a href="login.html">Login here</a></p>
+                <p>Already have an account? <a href="/login" onclick="route()">Login here</a></p>
             </div>
         </form>
     </main>

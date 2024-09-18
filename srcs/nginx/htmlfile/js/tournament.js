@@ -31,24 +31,19 @@ const tournaments = [
 	{ name: "ISO Challenge", creator: "Quorra" }
 ];
 
-async function tournamentPage(){
-	 //Populate tournament list
-	 try {
-	 	const response = await fetch('/api/tournament/', {
-	 		method: 'POST',
-	 		headers: {
-	 			'Content-Type': 'application/json',
-	 			'Authorization': `Bearer ${getCookie('access_token')}`  // Token'ı Authorization başlığına ekedik.
-	 		},
-	 		body: JSON.stringify({
-	 			'action': 'create',
-	 			'alias_name': "alpTekOrduKral",
-	 			'tournament_name': 'Alp vs Ali'
-	 		})
-	 	});
-	 } catch (error) {
-	 	console.error("patladık abi");
-	 }
+async function tournamentPage() {
+	//tournament list get fetch
+	// try {
+	// 	const response = await fetch('/api/tournament/', {
+	// 		method: 'GET',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Authorization': `Bearer ${getCookie('access_token')}`  // Token'ı Authorization başlığına ekedik.
+	// 		},
+	// 	});
+	// } catch (error) {
+	// 	console.error("patladık abi");
+	// }
 	const tourlist = document.getElementById('tournamentList');
 	tournaments.forEach(tournament => {
 		const tournamentItem = document.createElement('div');

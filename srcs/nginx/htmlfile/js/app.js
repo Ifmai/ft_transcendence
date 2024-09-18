@@ -33,7 +33,7 @@ function getCookie(name) {
 }
 
 async function emptyFunc() {
-    console.log("yüklendi tükürdüğüm");
+    console.log("yüklendi aga");
 }
 
 //'/404' : "../pages/error.html",
@@ -46,8 +46,8 @@ const routers = {
     '/profile' : '../pages/public-player.html',
     '/leaderboard': '../pages/leaderboard.html',
     '/chat' : '../pages/chat.html',
-    '/forgot-password' : '../pages/_forgot_password.html',
-    '/new-password': '../pages/_new_password.html',
+    '/forgot-password' : '../pages/forgot-password.html',
+    '/new-password': '../pages/new-password.html',
     '/logout' : '../pages/home_page.html',
     '/play' : '../pages/play_select.html',
     '/tournament' : '../pages/tournament.html'
@@ -82,7 +82,6 @@ async function selectNavbar(){
 }
 
 function selectPage(path){
-    console.log("gelen path : ", path);
     const route = routers[path];
     const script = scripts[path];
     return {
@@ -134,7 +133,7 @@ const loadPage = async (page) => {
                 });
             }
             const script = page.exec_script;
-            if(page.page != "../pages/home_page.html"){
+            if(page.page != "../pages/home_page.html" || script === logoutPage){
                 if(script){
                     script();
                 }else{

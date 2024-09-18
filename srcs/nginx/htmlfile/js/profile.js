@@ -73,7 +73,7 @@ async function profilePage() {
 			photoLabel.src = data[0]["photo"];
 			wincount.textContent = win;
 			losecount.textContent = lose;
-			kdacount.textContent = "%"+ (win / (win + lose)) * 100;
+			kdacount.textContent = isNaN(win / (win + lose)) ? "0%" : "%" + ((win / (win + lose)) * 100);
 			champcount.textContent = data[0]["championships"];
 			//   check_data = data[0]["two_factory"];
 			//   firstClick = check_data ? false : true;

@@ -83,7 +83,7 @@ async function intralogin() {
             loadPage(selectPage('/'));
             window.history.pushState({}, "", '/');
         }else{
-            console.log("ananın amı");
+            console.log("login problemi var 42 apida");
         }
 	} catch (error) {
 		console.error(error);

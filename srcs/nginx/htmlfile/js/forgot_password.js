@@ -38,7 +38,7 @@ async function forgotPassword() {
                 })
             });
             if (response.ok) {
-                loadPage('../pages/_homepage.html', '../partials/_navbarlogin.html');
+                loadPage(selectPage('/'));
             } else {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -74,7 +74,7 @@ async function newPasswordPage() {
             if (response.ok) {
                 alert("Şifre başarıyla sıfırlandı.");
                 window.history.pushState({}, "", "/login");
-                loadPage(selectPage());
+                loadPage(selectPage('/login'));
             } else {
                 alert("Şifre sıfırlama hatası: " + data.error);
             }

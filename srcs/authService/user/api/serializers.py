@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from user.models import Profil, ProfileComment, UserFriendsList
+from rest_framework.response import Response
+from rest_framework import status
 
 class UserSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(max_length=30, required=True)
