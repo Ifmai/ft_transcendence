@@ -1,9 +1,10 @@
 #!/bin/sh
 
-until pg_isready -h ${USER_DB_HOST} -U ${USER_DB_USER} -p ${USER_DB_PORT}; do
+until pg_isready -h users_db -U authuser -p 5432; do
   >&2 echo "Veritabanı Api42 hazır değil - bekleniyor..."
   sleep 2
 done
+
 
 >&2 echo "Veritabanı hazır."
 
