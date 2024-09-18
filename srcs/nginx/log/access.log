@@ -17540,3 +17540,4 @@
 162.158.87.211 - - [18/Sep/2024:23:15:28 +0000] "GET /favicon.ico HTTP/1.1" 200 1822 "https://lastdance.com.tr/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
 172.70.243.192 - - [18/Sep/2024:23:15:28 +0000] "GET /api/users/whois/ HTTP/1.1" 202 35 "https://lastdance.com.tr/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
 162.158.111.27 - - [18/Sep/2024:23:15:28 +0000] "GET /partials/_navbar.html HTTP/1.1" 200 437 "https://lastdance.com.tr/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+95.242.213.153 - - [18/Sep/2024:23:24:42 +0000] "GET / HTTP/1.0" 200 1822 "-" "-"
