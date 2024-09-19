@@ -255,6 +255,10 @@
 	align-items: center;
 }
 
+#logo-click {
+	cursor: pointer;
+}
+
 .idx-navbar-logo span {
 	color: #ed8936;
 }
