@@ -249,3 +249,34 @@
 2024/09/18 23:03:01 [error] 30#30: *32 connect() failed (111: Connection refused) while connecting to upstream, client: 47.254.122.160, server: lastdance.com.tr, request: "GET /ws/ec/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1", upstream: "https://172.18.0.3:8001/ws/ec/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php", host: "188.166.163.124:443"
 2024/09/18 23:04:04 [error] 30#30: *32 peer closed connection in SSL handshake while SSL handshaking to upstream, client: 47.254.122.160, server: lastdance.com.tr, request: "GET /api/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1", upstream: "https://172.18.0.7:8000/api/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php", host: "188.166.163.124:443"
 2024/09/18 23:05:05 [error] 30#30: *32 peer closed connection in SSL handshake while SSL handshaking to upstream, client: 47.254.122.160, server: lastdance.com.tr, request: "GET /admin/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1", upstream: "https://172.18.0.3:8001/admin/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php", host: "188.166.163.124:443"
+2024/09/19 13:35:53 [error] 30#30: *175 open() "/usr/share/nginx/html/js/NewWindow_2_all.js" failed (2: No such file or directory), client: 185.180.140.112, server: lastdance.com.tr, request: "GET /js/NewWindow_2_all.js HTTP/1.1", host: "188.166.163.124"
+2024/09/19 15:06:29 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:06:30 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:06:30 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:06:31 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:06:32 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:06:34 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:06:38 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:06:44 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:06:57 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:07:08 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:07:08 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:07:09 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:07:10 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:07:11 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:07:13 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:07:16 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:07:23 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:19
+2024/09/19 15:12:41 [error] 30#30: *20 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.37, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/404"
+2024/09/19 15:12:41 [error] 30#30: *21 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.36, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/404"
+2024/09/19 15:12:42 [error] 30#30: *17 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.37, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/404"
+2024/09/19 15:12:42 [error] 30#30: *19 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.37, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/404"
+2024/09/19 15:12:42 [error] 30#30: *20 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.37, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/404"
+2024/09/19 15:12:42 [error] 30#30: *21 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.36, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/404"
+2024/09/19 15:15:10 [error] 30#30: *34 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.31, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/sdajf%C4%B1osdfh"
+2024/09/19 15:15:50 [error] 30#30: *52 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.42, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/sdajf%C4%B1osdfh"
+2024/09/19 15:15:51 [error] 30#30: *53 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.42, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/sdajf%C4%B1osdfh"
+2024/09/19 15:15:58 [error] 30#30: *54 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.43, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/hoasdohasd"
+2024/09/19 15:16:03 [error] 30#30: *49 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.43, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/404"
+2024/09/19 15:17:23 [error] 30#30: *75 open() "/etc/nginx/html/pages/404.html" failed (2: No such file or directory), client: 172.70.250.25, server: lastdance.com.tr, request: "GET /pages/404.html HTTP/1.1", host: "lastdance.com.tr", referrer: "https://lastdance.com.tr/404"
+2024/09/19 15:42:59 [error] 31#31: *119 open() "/usr/share/nginx/html/js/NewWindow_2_all.js" failed (2: No such file or directory), client: 45.156.130.7, server: lastdance.com.tr, request: "GET /js/NewWindow_2_all.js HTTP/1.1", host: "188.166.163.124"

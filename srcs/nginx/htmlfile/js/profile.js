@@ -55,6 +55,7 @@ async function profilePage() {
 		if (response.ok) {
 			const data = await response.json();
 			console.log("gelen data : ", data);
+			const userProfile = document.getElementById('player-profile');
 			const nameLabel = document.getElementById('pub-profile-name');
 			const locLabel = document.getElementById('pub-profile-location');
 			const bioLabel = document.getElementById('pub-profile-bio');
@@ -66,14 +67,16 @@ async function profilePage() {
 
 			const win = parseInt(data[0]["wins"]);
 			const lose = parseInt(data[0]["losses"]);
+			const percentage = win / (win + lose) * 100;
 			console.log("win : ", win, " lose : ", lose);
-			nameLabel.textContent = data[0]["user"];
+			userProfile.textContent = "Profile " + data[0]["user"];
+			nameLabel.textContent = data[0]["user_first_name"] + " " + data[0]["user_last_name"];
 			locLabel.textContent = "📍 " + data[0]["city"];
 			bioLabel.textContent = data[0]["bio"];
 			photoLabel.src = data[0]["photo"];
 			wincount.textContent = win;
 			losecount.textContent = lose;
-			kdacount.textContent = isNaN(win / (win + lose)) ? "0%" : "%" + ((win / (win + lose)) * 100);
+			kdacount.textContent = isNaN(percentage) ? "0%" : percentage.toFixed(1) + "%";
 			champcount.textContent = data[0]["championships"];
 			//   check_data = data[0]["two_factory"];
 			//   firstClick = check_data ? false : true;
