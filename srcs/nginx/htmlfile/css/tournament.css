@@ -85,6 +85,63 @@
 .trn-button.trn-create:hover {
 	background-color: #4299e1;
 }
+
+
+
+.trn-popup-overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 1001;
+	justify-content: center;
+	align-items: center;
+}
+
+.trn-popup {
+	background-color: #2d3748;
+	padding: 2rem;
+	border-radius: 0.5rem;
+	text-align: center;
+	max-width: 400px;
+	width: 100%;
+}
+
+.trn-popup-title {
+	font-size: 1.5rem;
+	margin-bottom: 1rem;
+	color: #ed8936;
+}
+
+.trn-popup-input {
+	width: 95%;
+	padding: 0.5rem;
+	margin-bottom: 1rem;
+	border: 1px solid #4a5568;
+	background-color: #2d3748;
+	color: #fff;
+	border-radius: 0.25rem;
+}
+
+.trn-popup-button {
+	background-color: #ed8936;
+	color: #1a202c;
+	font-weight: bold;
+	padding: 0.75rem 1.5rem;
+	border-radius: 9999px;
+	border: none;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.trn-popup-button:hover {
+	background-color: #f6ad55;
+}
+
 @media (max-width: 768px) {
 	.trn-title {
 		font-size: 3rem;

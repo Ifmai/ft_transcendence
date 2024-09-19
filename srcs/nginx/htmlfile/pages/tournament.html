@@ -6,11 +6,28 @@
 
     <main>
         <div style="text-align: center;">
-            <a href="#" class="trn-button trn-create" id="createTournamentBtn">Create Tournament</a>
+            <a href="#" class="trn-button trn-create" id="trn-createTournamentBtn">Create Tournament</a>
+            <br><br>
         </div>
         <br>
-        <div class="trn-tournament-list" id="tournamentList">
+        <div class="trn-tournament-list" id="trn-tournamentList">
             <!-- Tournament items will be added here by JavaScript -->
         </div>
     </main>
+
+<div class="trn-popup-overlay" id="trn-joinPopupOverlay">
+    <div class="trn-popup">
+        <h2 class="trn-popup-title">Join Tournament</h2>
+        <input type="text" id="trn-joinNicknameInput" class="trn-popup-input" placeholder="Enter your nickname">
+        <button id="trn-joinButton" class="trn-popup-button">Join Game</button>
+    </div>
+</div>
+
+<div class="trn-popup-overlay" id="trn-createPopupOverlay">
+    <div class="trn-popup">
+        <h2 class="trn-popup-title">Create Tournament</h2>
+        <input type="text" id="trn-createTournamentInput" class="trn-popup-input" placeholder="Enter tournament name">
+        <input type="text" id="trn-createNicknameInput" class="trn-popup-input" placeholder="Enter your nickname">
+        <button id="trn-createButton" class="trn-popup-button">Create Tournament</button>
+    </div>
 </div>
