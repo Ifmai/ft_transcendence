@@ -7,6 +7,12 @@ from .models import Tournament, Profil, PlayerTournament, Match, PlayerMatch
 from .serializers import TournamentSerializer
 from itertools import cycle
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListAPIView
+
+class TournamentList(ListAPIView):
+	serializer_class = TournamentSerializer
+	queryset = Tournament.objects.all()
+	permission_classes = [IsAuthenticated]
 
 
 def create_match(tournament, player1, player2):
