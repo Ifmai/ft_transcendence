@@ -23,12 +23,11 @@ class Profil(models.Model):
     championships = models.IntegerField(default=0, blank=False, null=False)
 
     class Meta:
-        verbose_name_plural = 'Profils'
         db_table = 'api_profil'
 
     def __str__(self):
         return self.user.username
-    
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if self.photo:
@@ -46,7 +45,6 @@ class ProfileComment(models.Model):
     update_time = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name_plural = 'ProfileCommand'
         db_table = 'api_profil_comment'
 
     def __str__(self):
@@ -55,13 +53,12 @@ class ProfileComment(models.Model):
 class UserFriendsList(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_friend_requests')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_friend_requests')
-    
+
     friend_request = models.BooleanField(default=False)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name_plural = 'UserFriendsList'
         unique_together = ('sender', 'receiver')
         db_table = "api_user_friend_list"
 

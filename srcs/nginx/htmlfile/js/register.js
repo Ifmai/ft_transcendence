@@ -4,17 +4,14 @@ async function registerPage(){
     registerBtn.addEventListener('click', async function(event) {
         const username = document.getElementById('register-username').value;
         const email = document.getElementById('register-email').value;
-        const firt_name = document.getElementById('register-fName').value;
-        const last_name = document.getElementById('register-lName').value;
+        const firt_name = document.getElementById('register-first-name').value;
+        const last_name = document.getElementById('register-last-name').value;
         const pass1 = document.getElementById('register-password').value;
         const pass2 = document.getElementById('register-confirm-password').value;
-        console.log('user name:', username);
-        console.log('Email:', email);
-        console.log('pass1:', pass1);
-        console.log('pass2:', pass2);
+
+        //if sorgusu konucak pass 1 ve pass 2 aynımı diye.
 
         try {
-            // API'ye istek gönderme
             const response = await fetch('https://lastdance.com.tr/api/users/register/', {
                 method: 'POST',
                 headers: {
@@ -31,10 +28,8 @@ async function registerPage(){
             console.log('Status Code:', response.status);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const responseData = await response.json();
-            console.log(responseData);
-            loadPage('../pages/_login.html', '../partials/_navbar.html')
+            }else
+                loadPage(selectPage('/'));
         } catch (error) {
             console.error('Error:', error);
         }
