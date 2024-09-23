@@ -22,7 +22,7 @@ class MatchMakerConsumerTest(TransactionTestCase):
 
     async def test_websocket_connect_with_valid_token(self):
         communicator = WebsocketCommunicator(
-            application, f"/ws/matchmaking/10/5/?token={self.token}"
+            application, f"/ws/matchmaking/10/2/?token={self.token}"
         )
 
         connected, subprotocol = await communicator.connect()
@@ -30,7 +30,7 @@ class MatchMakerConsumerTest(TransactionTestCase):
 
         response = await communicator.receive_json_from()
 
-        self.assertEqual(response, {'message': 'Connected', 'status': 200, 'match_id': 5})
+        self.assertEqual(response, {'message': 'Connected', 'status': 200, 'match_id': 2})
 
         self.assertEqual(self.user.username, 'testuser')
 
@@ -46,7 +46,7 @@ class MatchMakerConsumerTest(TransactionTestCase):
 
         response = await communicator.receive_json_from()
 
-        self.assertEqual(response, {'message': 'Connected', 'status': 200, 'match_id': 5})
+        self.assertEqual(response, {'message': 'User not authenticated', 'status': 403})
 
         # Ensure the user is not set (since the token is invalid)
         self.assertIsNone(communicator.scope.get('user'))
