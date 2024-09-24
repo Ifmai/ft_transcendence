@@ -106,5 +106,11 @@ class MatchMakerConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({'message': 'Connected', 'status': 200, 'match_id': match_id}))
 
 	async def disconnect(self, close_code):
-		pass
+		if self.scope['user']:
+			player_id = self.scope['user'].id
+		else:
+			return
+		room, room_id = await find_channels_room(player_id, self.channel_name)
+		if room:
+			await self.channel_layer.group_discard(room_id, self.channel_name)
 
