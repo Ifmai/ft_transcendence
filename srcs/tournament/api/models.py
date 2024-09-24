@@ -28,11 +28,11 @@ class Profil(models.Model):
 
     def __str__(self):
         return self.user.username
-    
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if self.photo:
-            img = Image.open(self.photo.path)
+            img = Image.open(self.photo.path) 
             if img.height > 600 or img.width > 600:
                 output_size = (600,600)
                 img.thumbnail(output_size)
@@ -55,7 +55,7 @@ class ProfileComment(models.Model):
 class UserFriendsList(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_friend_requests')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_friend_requests')
-    
+
     friend_request = models.BooleanField(default=False)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
@@ -104,7 +104,7 @@ class PlayerTournament(models.Model):
         db_table = "api_player_tournament"
 
     def __str__(self):
-        return f'{self.player_id} -> {self.creator}'
+        return f'{self.player.user.username} -> {self.creator}'
 
 class Tournament(models.Model):
     id = models.AutoField(primary_key=True)

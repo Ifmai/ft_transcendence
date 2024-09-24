@@ -39,3 +39,13 @@ class TournamentSerializer(serializers.ModelSerializer):
 	def get_creator(self, tournament):
 		player = self.context.get("player")
 		return PlayerTournament.objects.filter(tournament_id=tournament, player_id=player, creator=True).exists()
+
+class TournamentListSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='tournament.name', read_only=True)
+    tournaments_id = serializers.CharField(source='tournament.id', read_only=True)
+    tournaments_status = serializers.CharField(source='tournament.status', read_only=True)
+    creator_user = serializers.CharField(source='player.alias_name', read_only=True)
+
+    class Meta:
+        model = PlayerTournament
+        fields = ['name', 'tournaments_id', 'tournaments_status', 'creator_user']
