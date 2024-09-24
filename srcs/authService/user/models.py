@@ -101,7 +101,7 @@ class PlayerTournament(models.Model):
         db_table = "api_player_tournament"
 
     def __str__(self):
-        return f'{self.player_id} -> {self.creator}'
+        return f'{self.player.user.username} -> {self.creator}'
 
 class Tournament(models.Model):
     id = models.AutoField(primary_key=True)

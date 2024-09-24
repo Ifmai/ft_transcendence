@@ -1,38 +1,6 @@
-const tournaments = [
-	{ name: "TRON Masters", creator: "GridMaster" },
-	{ name: "Neon Showdown", creator: "LightCycle" },
-	{ name: "Disc Wars", creator: "Rinzler" },
-	{ name: "Bit Bash", creator: "CLU" },
-	{ name: "ISO Challenge", creator: "Quorra" },
-	{ name: "End of Line Club", creator: "Zuse" },
-	{ name: "Disc Wars", creator: "Rinzler" },
-	{ name: "Bit Bash", creator: "CLU" },
-	{ name: "ISO Challenge", creator: "Quorra" },
-	{ name: "Disc Wars", creator: "Rinzler" },
-	{ name: "Bit Bash", creator: "CLU" },
-	{ name: "ISO Challenge", creator: "Quorra" },
-	{ name: "Disc Wars", creator: "Rinzler" },
-	{ name: "Bit Bash", creator: "CLU" },
-	{ name: "ISO Challenge", creator: "Quorra" },
-	{ name: "Disc Wars", creator: "Rinzler" },
-	{ name: "Bit Bash", creator: "CLU" },
-	{ name: "ISO Challenge", creator: "Quorra" },
-	{ name: "Disc Wars", creator: "Rinzler" },
-	{ name: "Bit Bash", creator: "CLU" },
-	{ name: "ISO Challenge", creator: "Quorra" },
-	{ name: "Disc Wars", creator: "Rinzler" },
-	{ name: "Bit Bash", creator: "CLU" },
-	{ name: "ISO Challenge", creator: "Quorra" },
-	{ name: "Disc Wars", creator: "Rinzler" },
-	{ name: "Bit Bash", creator: "CLU" },
-	{ name: "ISO Challenge", creator: "Quorra" },
-	{ name: "Disc Wars", creator: "Rinzler" },
-	{ name: "Bit Bash", creator: "CLU" },
-	{ name: "ISO Challenge", creator: "Quorra" }
-];
+const tournaments = [];
 
-async function tournamentPage() {
-
+async function add_tournaments(){
 	const tournamentList = document.getElementById('trn-tournamentList');
 	tournaments.forEach(tournament => {
 		const tournamentItem = document.createElement('div');
@@ -40,11 +8,75 @@ async function tournamentPage() {
 		tournamentItem.innerHTML = `
 			<h2 class="trn-tournament-name">${tournament.name}</h2>
 			<p class="trn-tournament-creator">Created by: ${tournament.creator}</p>
-			<a href="#" class="trn-button">Join Tournament</a>
+			<a href="#" class="trn-button" id='${tournament.id}'>Join Tournament</a>
 		`;
 		tournamentList.appendChild(tournamentItem);
 	});
+	tournamentList.addEventListener('click', (e) => {
+		if (e.target.classList.contains('trn-button')) {
+			console.log("tıklanan buton id : ", e.target.id);
+			e.preventDefault();
+			const tournamentName = e.target.closest('.trn-tournament-item').querySelector('.trn-tournament-name').textContent;
+			document.getElementById('trn-joinPopupOverlay').style.display = 'flex';
+			document.querySelector('#trn-joinPopupOverlay .trn-popup-title').textContent = `Join Tournament: ${tournamentName}`;
+		}
+	});
+}
 
+async function get_tournaments_list(){
+	try {
+		const response = await fetch('/api/tournament/get/', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${getCookie('access_token')}`
+			}
+		});
+		if(response.ok){
+			data = await response.json();
+			console.log("data : ", data);
+			const formattedTournaments = data.map(item => ({
+				id : item.tournaments_id,
+				name: item.name,
+				creator: item.creator_user
+			}));
+			tournaments.push(...formattedTournaments);
+			await add_tournaments();
+		}else
+			throw new Error(`HTTP error! Status: ${response.status}`);
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+async function create_tournament(tournamentname, nickname){
+	try {
+		const response = await fetch('/api/tournament/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${getCookie('access_token')}`
+			},
+			body: JSON.stringify({
+                'tournament_name': tournamentname,
+                'alias_name': nickname,
+				'action' : 'create'
+            })
+		});
+		if(!response.ok)
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		else{
+			const data = await response.json();
+			console.log("Oluştu kanka  : ", data);
+		}
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+async function tournamentPage() {
+	await get_tournaments_list();
+	
 	// Create Tournament button functionality
 	document.getElementById('trn-createTournamentBtn').addEventListener('click', (e) => {
 		e.preventDefault();
@@ -52,17 +84,9 @@ async function tournamentPage() {
 	});
 
 	// Join Tournament button functionality
-	tournamentList.addEventListener('click', (e) => {
-		if (e.target.classList.contains('trn-button')) {
-			e.preventDefault();
-			const tournamentName = e.target.closest('.trn-tournament-item').querySelector('.trn-tournament-name').textContent;
-			document.getElementById('trn-joinPopupOverlay').style.display = 'flex';
-			document.querySelector('#trn-joinPopupOverlay .trn-popup-title').textContent = `Join Tournament: ${tournamentName}`;
-		}
-	});
 
 	// Join Game button functionality
-	document.getElementById('trn-joinButton').addEventListener('click', () => {
+	document.getElementById('trn-joinButton').addEventListener('click', async () => {
 		const nickname = document.getElementById('trn-joinNicknameInput').value;
 		if (nickname) {
 			alert(`Joining tournament with nickname: ${nickname}`);
@@ -74,11 +98,13 @@ async function tournamentPage() {
 	});
 
 	// Create Tournament button functionality
-	document.getElementById('trn-createButton').addEventListener('click', () => {
+	document.getElementById('trn-createButton').addEventListener('click', async () => {
 		const tournamentName = document.getElementById('trn-createTournamentInput').value;
 		const nickname = document.getElementById('trn-createNicknameInput').value;
+		console.log("ismi : ", tournamentName, " nickname : ", nickname);
 		if (tournamentName && nickname) {
-			alert(`Creating tournament: ${tournamentName} with nickname: ${nickname}`);
+			await create_tournament(tournamentName, nickname);
+			await get_tournaments_list();
 			document.getElementById('trn-createPopupOverlay').style.display = 'none';
 			document.getElementById('trn-createTournamentInput').value = '';
 			document.getElementById('trn-createNicknameInput').value = '';

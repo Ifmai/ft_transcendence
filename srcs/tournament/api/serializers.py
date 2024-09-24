@@ -71,3 +71,13 @@ class MatchSerializer(serializers.ModelSerializer):
 		player_matches = PlayerMatch.objects.filter(match_id=match.id)
 		serializer = PlayerMatchSerializer(player_matches, many=True)
 		return serializer.data
+
+class TournamentListSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='tournament.name', read_only=True)
+    tournaments_id = serializers.CharField(source='tournament.id', read_only=True)
+    tournaments_status = serializers.CharField(source='tournament.status', read_only=True)
+    creator_user = serializers.CharField(source='player.alias_name', read_only=True)
+
+    class Meta:
+        model = PlayerTournament
+        fields = ['name', 'tournaments_id', 'tournaments_status', 'creator_user']

@@ -4,14 +4,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from .enums import *
 from .models import Tournament, Profil, PlayerTournament, Match, PlayerMatch
-from .serializers import TournamentSerializer
+from .serializers import TournamentSerializer, TournamentListSerializer
 from itertools import cycle
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
 
 class TournamentList(ListAPIView):
-	serializer_class = TournamentSerializer
-	queryset = Tournament.objects.all()
+	serializer_class = TournamentListSerializer
+	queryset = PlayerTournament.objects.all()
 	permission_classes = [IsAuthenticated]
 
 
