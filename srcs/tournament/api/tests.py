@@ -5,6 +5,7 @@ from django.urls import reverse
 from .models import Tournament, Profil, PlayerTournament, Match, PlayerMatch, User
 from .enums import StatusChoices, TOURNAMENT_SIZE, State
 from .views import create_match, update_tournament
+from .serializers import TournamentSerializer, MatchSerializer
 
 class TournamentViewTestCase(TestCase):
     def setUp(self):
@@ -21,12 +22,15 @@ class TournamentViewTestCase(TestCase):
         self.finished_tournament = Tournament.objects.create(name="Finished Tournament", status=StatusChoices.FINISHED.value)
         self.progressing_tournament = Tournament.objects.create(name="Progressing Tournament", status=StatusChoices.IN_PROGRESS.value)
 
+
         self.players = []
         for i in range(TOURNAMENT_SIZE):
             user = User.objects.create_user(username=f'player{i}', password='testpass', email=f'player{i}@gmail.com')
             player = Profil.objects.create(user=user, alias_name=f'player{i}zort')
             PlayerTournament.objects.create(player=player, tournament=self.tournament, creator=False)
             self.players.append(player)
+
+        self.context = {"player": self.players[0]}
 
     def test_get_pending_tournaments(self):
         response = self.client.get(reverse('tournament-view'))
@@ -177,3 +181,15 @@ class TournamentViewTestCase(TestCase):
         # Check that the tournament is finished
         self.tournament.refresh_from_db()
         self.assertEqual(self.tournament.status, StatusChoices.FINISHED.value)
+
+    def test_get_matches(self):
+        # Create matches before fetching
+        self.match1 = create_match(self.tournament, self.players[0], self.players[1])
+        self.match2 = create_match(self.tournament, self.players[2], self.players[3])
+
+        self.assertEqual(Match.objects.filter(tournament=self.tournament).count(), 2)
+        serializer = TournamentSerializer(context=self.context)
+        matches_data = serializer.get_matches(self.tournament)
+
+        expected_data = MatchSerializer([self.match1, self.match2], context=self.context, many=True).data
+        self.assertEqual(matches_data, expected_data)
