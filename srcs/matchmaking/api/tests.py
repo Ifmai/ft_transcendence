@@ -7,6 +7,9 @@ from matchmaking.asgi import application
 from .models import Match
 from .enums import *
 from .consumers import match_played
+import uuid
+from .consumers import game_rooms
+from asgiref.sync import sync_to_async
 
 User = get_user_model()
 
@@ -64,3 +67,67 @@ class MatchMakerConsumerTest(TransactionTestCase):
         non_existent_id = 9999
         result = await match_played(non_existent_id)
         self.assertFalse(result, "match_played should return False for a non-existent match.")
+
+    async def test_websocket_connect_to_played_match(self):
+        communicator = WebsocketCommunicator(
+            application, f"/ws/matchmaking/10/1/?token={self.token}"  # match_id 1 is already played
+    )
+
+        connected, subprotocol = await communicator.connect()
+        self.assertTrue(connected)
+
+        response = await communicator.receive_json_from()
+        self.assertEqual(response, {'message': "Match's Already Been Played", 'status': 400})
+
+        await communicator.disconnect()
+
+    async def test_join_full_room(self):
+    # Create a room with 2 players
+        global game_rooms
+        room_id = str(uuid.uuid4())
+        game_rooms[room_id] = {
+        "players": [{self.user.id: 'channel_1'}, {self.user.id + 1: 'channel_2'}],
+        "match_id": self.unplayed_match.id,
+        "capacity": 2
+    }
+
+        communicator = WebsocketCommunicator(
+            application, f"/ws/matchmaking/2/{self.unplayed_match.id}/?token={self.token}"
+    )
+
+        connected, subprotocol = await communicator.connect()
+        self.assertTrue(connected)
+
+        response = await communicator.receive_json_from()
+        self.assertEqual(response, {'message': 'No room found', 'status': 400})
+
+        await communicator.disconnect()
+
+    async def test_game_start_after_capacity_reached(self):
+        communicator1 = WebsocketCommunicator(
+            application, f"/ws/matchmaking/2/{self.unplayed_match.id}/?token={self.token}"
+        )
+        connected1, subprotocol1 = await communicator1.connect()
+        self.assertTrue(connected1)
+
+        second_user = await sync_to_async(User.objects.create_user)(
+            username='seconduser', password='testpassword')
+        refresh = RefreshToken.for_user(second_user)
+        second_token = str(refresh.access_token)
+
+        communicator2 = WebsocketCommunicator(
+            application, f"/ws/matchmaking/2/{self.unplayed_match.id}/?token={second_token}"
+            )
+        connected2, subprotocol2 = await communicator2.connect()
+        self.assertTrue(connected2)
+
+        response1 = await communicator1.receive_json_from()
+        response2 = await communicator2.receive_json_from()
+
+        self.assertEqual(response1['message'], 'Connected')
+        self.assertEqual(response2['message'], 'Connected')
+
+        self.assertNotIn(self.unplayed_match.id, game_rooms)
+
+        await communicator1.disconnect()
+        await communicator2.disconnect()
