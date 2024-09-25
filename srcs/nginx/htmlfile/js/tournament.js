@@ -63,12 +63,12 @@ async function create_tournament(tournamentname, nickname){
 				'action' : 'create'
             })
 		});
-		if(!response.ok)
-			throw new Error(`HTTP error! Status: ${response.status}`);
-		else{
-			const data = await response.json();
-			console.log("Oluştu kanka  : ", data);
+		if(response.ok){
+			console.log("kanka neden mesela?");
+			loadPage(selectPage('/tournament'));
 		}
+		else
+			throw new Error(`HTTP error! Status: ${response.status}`);
 	} catch (error) {
 		console.error(error);
 	}
@@ -104,7 +104,7 @@ async function tournamentPage() {
 		console.log("ismi : ", tournamentName, " nickname : ", nickname);
 		if (tournamentName && nickname) {
 			await create_tournament(tournamentName, nickname);
-			await get_tournaments_list();
+			//await get_tournaments_list();
 			document.getElementById('trn-createPopupOverlay').style.display = 'none';
 			document.getElementById('trn-createTournamentInput').value = '';
 			document.getElementById('trn-createNicknameInput').value = '';
