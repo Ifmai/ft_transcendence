@@ -93,6 +93,7 @@ services:
       - "8002:8002"
     volumes:
       - chat_data:/chatServices
+      - /root/lastdance/srcs/authService/uploads/:/chatServices/uploads/
     networks:
       - lastdance
     depends_on:
