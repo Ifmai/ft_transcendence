@@ -27,18 +27,33 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    user_first_name_update = serializers.CharField(source='user.first_name', write_only=True)
+    user_last_name_update = serializers.CharField(source='user.last_name', write_only=True)
+    user = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Profil
+        exclude = ['otp_secret_key']
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', None)
+        if user_data:
+            instance.user.first_name = user_data.get('first_name', instance.user.first_name)
+            instance.user.last_name = user_data.get('last_name', instance.user.last_name)
+            instance.user.save()
+        return super().update(instance, validated_data)
+
 class ProfilSerializer(serializers.ModelSerializer):
     user_first_name = serializers.CharField(source='user.first_name', read_only=True)
     user_last_name = serializers.CharField(source='user.last_name', read_only=True)
-    user_email = serializers.CharField(source='user.email', read_only=True)
     user = serializers.StringRelatedField(read_only=True)
     photo = serializers.ImageField(read_only=True)
 
     class Meta:
         model = Profil
         exclude = ['otp_secret_key']
-        #fields = ['id', 'user_name', 'user_email', 'bio', 'city', 'photo', 'two_factory','user_first_name', 'user_last_name']
-        #fields = '__all__'
+
 
 class Profile2FCASerializer(serializers.ModelSerializer):
     user_email = serializers.CharField(source='user.email', read_only=True)
@@ -49,7 +64,7 @@ class Profile2FCASerializer(serializers.ModelSerializer):
 class ProfilePhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profil
-        fields = ('photo')
+        fields = ['photo']
 
 class ProfileCommentSerializer(serializers.ModelSerializer):
     user_profil = serializers.StringRelatedField(read_only=True)

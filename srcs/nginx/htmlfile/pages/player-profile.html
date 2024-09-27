@@ -3,7 +3,14 @@
 
     <div class="pp-card">
         <h2 class="pp-card-title">Personal Information</h2>
-        <img src="/placeholder.svg?height=128&width=128" alt="Player Avatar" class="pp-avatar">
+        <img src="/placeholder.svg?height=128&width=128" alt="Player Avatar" class="pp-avatar" id="pp-avatar-settings">
+        
+        <!-- Profil fotoğrafı yükleme kısmı -->
+        <div class="pp-form-group">
+            <label for="pp-photo-upload" class="pp-label">Upload Profile Photo</label>
+            <input type="file" id="pp-photo-upload" class="pp-input" accept="image/*">
+        </div>
+
         <div class="pp-form-group">
             <label for="pp-firstName" class="pp-label">First Name</label>
             <input type="text" id="pp-firstName" class="pp-input" value="Sam">
@@ -23,28 +30,11 @@
         </div>
     </div>
 
-    <div class="pp-card">
-        <h2 class="pp-card-title">Game Statistics</h2>
-        <div class="pp-stats-grid">
-            <div>
-                <div class="pp-stat-value">15</div>
-                <div class="pp-stat-label">Win Streak</div>
-            </div>
-            <div>
-                <div class="pp-stat-value">127</div>
-                <div class="pp-stat-label">Total Wins</div>
-            </div>
-            <div>
-                <div class="pp-stat-value">23</div>
-                <div class="pp-stat-label">Total Losses</div>
-            </div>
-            <div>
-                <div class="pp-stat-value">5.2</div>
-                <div class="pp-stat-label">KDA Ratio</div>
-            </div>
-        </div>
+    <div style="text-align: center;">
+        <button class="pp-button" id="pp-submit" type="button">Save Changes</button>
+        <button class="pp-button pp-button-outline" id="pp-cancel" type="button">Cancel</button>
     </div>
-
+    <br><br>
     <div class="pp-card">
         <h2 class="pp-card-title">Account Security</h2>
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -55,9 +45,18 @@
             </label>
         </div>
     </div>
-
-    <div style="text-align: center;">
-        <button class="pp-button" onclick="ppSaveChanges()">Save Changes</button>
-        <button class="pp-button pp-button-outline" onclick="ppCancel()">Cancel</button>
-    </div>
 </div>
+
+<div id="twofa-popup" >
+    <h2>Two-Factor Authentication</h2>
+    <div id="qr-code-container"></div>
+    <div class="pp-form-group">
+        <label for="twofa-code" class="pp-label">Enter Code</label>
+        <input type="text" id="twofa-code" class="pp-input" placeholder="Enter the code">
+    </div>
+    <button class="pp-button" id="twofa-submit" type="button">Submit</button>
+    <button class="pp-button pp-button-outline" id="twofa-cancel" type="button">Cancel</button>
+</div>
+
+<!-- Overlay -->
+<div id="overlay"></div>

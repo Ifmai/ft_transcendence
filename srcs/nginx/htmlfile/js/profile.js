@@ -27,22 +27,8 @@ async function action_2fca(action) {
 	}
 }
 
-async function profilePage() {
-	let firstClick = true;
-	//   const btn2Fa = document.getElementById("2fa-btn");
-	//   btn2Fa.addEventListener('click', async function () {
-	//     if (firstClick) {
-	//       firstClick = await action_2fca("enable");
-	//       this.textContent = 'Disable 2FA';
-	//     } else {
-	//       firstClick = await action_2fca("disable");
-	//       alert('2FA disabled.');
-	//       this.textContent = 'Enable 2FA';
-	//     }
-	//   });
-
+async function getProfile() {
 	try {
-		// Profil bilgilerini çekmek için fetch isteği gönder
 		const response = await fetch('/api/users/user_profil/', {
 			method: 'GET',
 			headers: {
@@ -51,10 +37,23 @@ async function profilePage() {
 			},
 			credentials: 'include',
 		});
+		if (response.ok)
+			return response;
+		else{
+			return response.status;
+		}
+	} catch (error) {
+		return error;
+	}
+}
 
+async function profilePage() {
+	const response = await getProfile();
+	try {
 		if (response.ok) {
 			const data = await response.json();
 			console.log("gelen data : ", data);
+			window.history.replaceState({}, "", `/profile?user=${data[0]['user']}`);
 			const userProfile = document.getElementById('player-profile');
 			const nameLabel = document.getElementById('pub-profile-name');
 			const locLabel = document.getElementById('pub-profile-location');
@@ -64,11 +63,10 @@ async function profilePage() {
 			const losecount = document.getElementById('profile-lose');
 			const kdacount = document.getElementById('profile-kda');
 			const champcount = document.getElementById('profile-champ');
-
+	
 			const win = parseInt(data[0]["wins"]);
 			const lose = parseInt(data[0]["losses"]);
 			const percentage = win / (win + lose) * 100;
-			console.log("win : ", win, " lose : ", lose);
 			userProfile.textContent = "Profile " + data[0]["user"];
 			nameLabel.textContent = data[0]["user_first_name"] + " " + data[0]["user_last_name"];
 			locLabel.textContent = "📍 " + data[0]["city"];
@@ -78,23 +76,10 @@ async function profilePage() {
 			losecount.textContent = lose;
 			kdacount.textContent = isNaN(percentage) ? "0%" : percentage.toFixed(1) + "%";
 			champcount.textContent = data[0]["championships"];
-			//   check_data = data[0]["two_factory"];
-			//   firstClick = check_data ? false : true;
-			//   if(firstClick == true)
-			//     btn2Fa.textContent = 'Enable 2FA'
-			//   else
-			//     btn2Fa.textContent = 'Disable 2FA'
-			console.log("first click : ", firstClick);
-			console.log('Profil Bilgileri:', data);
 		} else {
 			console.log('Profil bilgilerini çekerken bir hata oluştu:', response.status);
 		}
 	} catch (error) {
-		console.error('Profil bilgilerini çekerken bir hata oluştu:', error);
-	}
+		console.error(error);
+	}	
 }
-
-// function closePopup() {
-//   document.getElementById('overlay').style.display = 'none';
-//   document.getElementById('qr-popup').style.display = 'none';
-// }

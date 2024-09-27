@@ -98,3 +98,14 @@
 		grid-template-columns: repeat(2, 1fr);
 	}
 }
+
+.pub-settings-link {
+    font-size: 1.5rem; /* İstediğin boyutta ayarlayabilirsin */
+    color: #ed8936; /* Bağlantı rengi */
+    text-decoration: none; /* Alt çizgiyi kaldır */
+    transition: color 0.3s; /* Geçiş efekti */
+}
+
+.pub-settings-link:hover {
+    color: #3182ce; /* Hover rengi */
+}
