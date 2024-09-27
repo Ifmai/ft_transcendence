@@ -20,17 +20,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-z@qguau_4taej0sws1#1-+&)*cellgei(ebu@l&$m7%)*c6w0$'
+SECRET_KEY = 'django-insecure-+zo&y+uv@s7t#&juqo7-j04xt%+1jaba^yem7m1&$n@180&lvh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['apigateway', 'userservice', 'chatservice' 'lastdance.com.tr']
+ALLOWED_HOSTS = ['apigateway', 'userservice', 'chatservice', 'lastdance.com.tr']
 
 # Application definition
 
 INSTALLED_APPS = [
-	'daphne',
 	'channels',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,10 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 	
 	'chat.apps.ChatConfig',
-    'corsheaders',
-	'django.contrib.sites',
-	'django_filters',
-	'rest_framework_simplejwt'
+    'rest_framework',
+	'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -133,6 +130,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'api/users/media/'
+MEDIA_ROOT = 'uploads'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -157,10 +156,6 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
-
-SITE_ID = 1
-
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_EMAIL_REQUIRED = (False)
 
@@ -175,12 +170,4 @@ CSRF_TRUSTED_ORIGINS = [
 CSRF_COOKIE_NAME = 'csrftoken'  # CSRF çerezi için isim
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 
-#Cors
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8000',
-    'https://lastdance.com.tr',
-    'http://userservice:8001',
-    'http://apigateway:8000',
-	'http://chatservice:8002'
-]
+

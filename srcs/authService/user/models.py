@@ -117,3 +117,43 @@ class Tournament(models.Model):
         db_table = "api_tournament"
     def __str__(self):
         return f"Tournament ID: {self.id}"
+
+class ChatRooms(models.Model):
+    roomName = models.CharField(null=False,blank=False, max_length=100)
+    roomActive = models.BooleanField(default=True)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.roomName}"
+
+    class Meta:
+        db_table = 'api_chat_rooms'
+
+class ChatMessage(models.Model):
+    MSG_TYPE = [
+        ('chat', 'Chat'),
+        ('activity', 'Activity'),
+    ]
+    chatRoom = models.ForeignKey(ChatRooms, on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    type = models.CharField(max_length=20, choices=MSG_TYPE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.chatRoom.roomName}"
+
+    class Meta:
+        db_table = 'api_chat_message'
+
+class ChatUserList(models.Model):
+    chatRoom = models.ForeignKey(ChatRooms, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.chatRoom.roomName} , {self.user.username}"
+
+    class Meta:
+        db_table = 'api_chat_users_list'

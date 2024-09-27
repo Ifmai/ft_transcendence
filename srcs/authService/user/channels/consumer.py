@@ -9,7 +9,6 @@ import json
 
 class FriendListConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		print("selam orospu evladı.")
 		print("self scope : ", self.scope['user'])
 		if self.scope['user'].is_authenticated:
 			self.user = self.scope['user']
