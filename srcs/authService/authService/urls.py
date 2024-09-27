@@ -18,13 +18,15 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib import admin
 from user.api.Loginviews import UserLoginView
-
+from user.api.Profileviews import serve_dynamic_image, serve_dynamic_media
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('user.api.urls')),
 	path('api/users/jwtlogin/', UserLoginView.as_view(), name='token_obtain_pair'),
     path('api/users/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/users/static/<str:filename>/', serve_dynamic_image, name='serve_dynamic_image'),
+    path('api/users/media/profil_photo/<str:filename>/', serve_dynamic_media, name='serve_dynamic_media'),
 ]
 
 from django.conf import settings
