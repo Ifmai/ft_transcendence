@@ -113,6 +113,7 @@ services:
       - "8003:8003"
     volumes:
       - tournament:/tournament-app
+      - /root/lastdance/srcs/authService/uploads/:/tournament-app/uploads/
     networks:
       - lastdance
     depends_on:
