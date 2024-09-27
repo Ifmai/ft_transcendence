@@ -1,4 +1,4 @@
-const tournaments = [];
+let tournaments = [];
 
 async function add_tournaments(){
 	const tournamentList = document.getElementById('trn-tournamentList');
@@ -75,6 +75,7 @@ async function create_tournament(tournamentname, nickname){
 }
 
 async function tournamentPage() {
+	cleanupFunctions.push(cleanTournament);
 	await get_tournaments_list();
 	
 	// Create Tournament button functionality
@@ -121,4 +122,8 @@ async function tournamentPage() {
 			}
 		});
 	});
+}
+
+function cleanTournament(){
+	tournaments = [];
 }

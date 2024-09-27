@@ -5,7 +5,7 @@ const not_auth_pages = ["../pages/login.html", "../pages/register.html", "../pag
 let ws = null;
 let chat_ws = null;
 //let loadFunctions = []
-//let cleanupFunctions = [];
+let cleanupFunctions = [];
 
 async function checkingauth() {
 	try {
@@ -100,6 +100,9 @@ const route = async (event) => {
 }
 
 const loadPage = async (page) => {
+    if (cleanupFunctions.length > 0) {
+        cleanupFunctions.forEach(func => func());
+    }
     console.log("page : ", page);
     if(only_auth_pages.includes(page.page) && !getCookie('access_token') && await checkingauth() !== 200){
         loadPage(selectPage('/'));
