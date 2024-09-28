@@ -1,5 +1,3 @@
-//friends js başlangıç.
-//let friendRequests = null;
 let friends = [
 ];
 
