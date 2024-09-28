@@ -49,6 +49,7 @@ async function chatPage() {
     // var data;
     // if (get_user_data.ok)
     //     data = await get_user_data.json();
+    friendList();
     initWebSocket2();
     sendBtn = document.getElementById('sendButton');
     messageInput.addEventListener('keypress', (e) => {
