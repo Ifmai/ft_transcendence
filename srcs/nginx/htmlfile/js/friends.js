@@ -14,7 +14,7 @@ async function populateFriendList(friend) {
 
     const friendElement = document.createElement('div');
     friendElement.className = 'chat-friend';
-    friendElement.id = friend.username;
+    friendElement.id = friend.room_name;
     friendElement.innerHTML = `
             <img src="${friend.photo}" alt="${friend.username}" class="chat-friend-avatar">
             <span class="chat-friend-name">${friend.username}</span>
@@ -46,14 +46,14 @@ function addFriendRequest(request) {
     friendRequests.appendChild(requestElement);
 }
 
-function sendListRequest() {
+async function sendListRequest() {
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ 
             'type': 'list_request',
         }));
     } else {
-        console.log('Bağlantı yok, bekliyorum...');
-        setTimeout(sendListRequest, 1000); // 1 saniye bekle ve tekrar dene
+        console.log('Waiting connection...');
+        setTimeout(sendListRequest, 1000);
     }
 }
 
@@ -64,8 +64,14 @@ async function friendList() {
     const friendRequestPopup = document.getElementById('friendRequestPopup');
     const newFriendInput = document.getElementById('newFriendInput');
     const overlay = document.getElementById('overlay');
+    const container = document.getElementById('friendList');
 
     sendListRequest();
+    container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('chat-friend')) {
+            console.log("Target Div ID : ", e.target.id);
+        }
+    });
 
     friendRequests.addEventListener('click', (e) => {
         if (e.target.classList.contains('chat-friend-request-accept') || e.target.classList.contains('chat-friend-request-reject')) {
@@ -141,7 +147,8 @@ async function initWebSocket() {
             const friend = {
                 'username': data['user'],
                 'photo': data['photo'],
-                'status': data['status']
+                'status': data['status'],
+                'room_name': data['room_name']
             }
             friends.push(friend);
             populateFriendList(friend);

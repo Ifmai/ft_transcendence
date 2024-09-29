@@ -1,6 +1,6 @@
 # consumers.py
 from channels.generic.websocket import AsyncWebsocketConsumer
-from user.models import Profil, UserFriendsList
+from user.models import Profil, UserFriendsList, ChatRooms, ChatUserList
 from django.contrib.auth.models import User
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
@@ -57,6 +57,10 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 			f_request = UserFriendsList.objects.get(sender=sender, receiver=receiver, friend_request=False)
 
 			if r_response == 'accept':
+				room_name = sorted([sender.username, receiver.username])[0] + '.' +sorted([sender.username, receiver.username])[1]
+				new_room = ChatRooms.objects.create(roomName=room_name)
+				room_user_one = ChatUserList.objects.create(chatRoom=new_room, user=sender)
+				room_user_two = ChatUserList.objects.create(chatRoom=new_room, user=receiver)
 				f_request.friend_request = True
 				f_request.save()
 				return "accepted"
@@ -96,7 +100,6 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 				'username': sender_user.username,
 				'photo': sender_profil.photo.url
 			})
-		print("Request List : ", request_list)
 		return request_list
 
 	async def friend_request_list(self):
@@ -142,12 +145,15 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 	async def list_request(self):
 		friend_list = await self.get_friends()
 		for friend in friend_list:
+			room_name = sorted([friend['username'], self.user.username])[0] + '.' +sorted([friend['username'], self.user.username])[1]
+			#room = ChatRooms.objects.get(roomName=room_name)
 			await self.send(
 				text_data=json.dumps({
 					"type": 'activity',
 					"user" : friend['username'],
 					"status": friend['is_online'],
-					"photo": friend['photo']
+					"photo": friend['photo'],
+					"room_name": room_name
 				})
 			)
 
