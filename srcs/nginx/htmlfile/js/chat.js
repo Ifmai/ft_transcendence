@@ -1,3 +1,12 @@
+let now_chat_room;
+
+async function get_chat_history() {  
+    chat_ws.send(JSON.stringify({
+        'type': 'new_chat',
+        'chat_room' : now_chat_room
+    }));
+}
+
 function addMessage(sender, content, avatar) {
     const messageElement = document.createElement('div');
     messageElement.className = 'chat-message';
@@ -23,6 +32,7 @@ function escapeHtml(unsafe) {
 
 
 async function chatPage() {
+    now_chat_room = 'global-chat';
     friendList();
     initWebSocket2();
     sendBtn = document.getElementById('sendButton');
@@ -36,6 +46,7 @@ async function chatPage() {
         if (message) {
             chat_ws.send(JSON.stringify({ 
                 'type' : 'chat_message',
+                'chat_room': now_chat_room, 
                 'message': message ,
             }));
             messageInput.value = '';
@@ -56,8 +67,15 @@ async function initWebSocket2() {
 
     chat_ws.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        if(data['type'] == 'chat')
-            addMessage(data['sender'], data['message'], data['photo']);
+        if(data['type'] == 'chat'){
+            if(data['chat_room'] == now_chat_room)
+                addMessage(data['sender'], data['message'], data['photo']);
+        }
+        else if(data['type'] == 'history'){
+            if(data['chat_room'] == now_chat_room)
+                addMessage(data['sender'], data['message'], data['sender_photo']);
+        }
+        console.log('gelen data : ', data);
     };
 
     chat_ws.onclose = function (event) {

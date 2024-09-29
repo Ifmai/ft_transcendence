@@ -146,7 +146,6 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 		friend_list = await self.get_friends()
 		for friend in friend_list:
 			room_name = sorted([friend['username'], self.user.username])[0] + '.' +sorted([friend['username'], self.user.username])[1]
-			#room = ChatRooms.objects.get(roomName=room_name)
 			await self.send(
 				text_data=json.dumps({
 					"type": 'activity',

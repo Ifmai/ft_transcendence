@@ -69,7 +69,11 @@ async function friendList() {
     sendListRequest();
     container.addEventListener('click', (e) => {
         if (e.target.classList.contains('chat-friend')) {
-            console.log("Target Div ID : ", e.target.id);
+            const chat_box = document.getElementById('chatMessages');
+            chat_box.innerHTML = '';
+            now_chat_room = e.target.id;
+            if(e.target.id != 'global-chat')
+                get_chat_history(e.target.id);
         }
     });
 
