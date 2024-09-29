@@ -18,7 +18,7 @@ async function populateFriendList(friend) {
     friendElement.innerHTML = `
             <img src="${friend.photo}" alt="${friend.username}" class="chat-friend-avatar">
             <span class="chat-friend-name">${friend.username}</span>
-            <div class="chat-friend-status ${friend.status}" id="${friend.username}"></div>
+            <div class="chat-friend-status ${friend.status}" id="status.${friend.username}"></div>
         `;
     friendList.insertBefore(friendElement, friendList.lastElementChild);
 }
@@ -138,8 +138,9 @@ async function initWebSocket() {
             populateFriendList(friend);
         }
         else if (data['type'] == 'friend_status'){
-            const statusDiv = document.getElementById(data['username']);
+            const statusDiv = document.getElementById('status.' + data['username']);
             const newStatus = data['status']
+            console.log("Status div : ", statusDiv);
             if (statusDiv) {
                 statusDiv.className = newStatus === 'ON' ? 'chat-friend-status ON' : 'chat-friend-status OF';
             }
