@@ -46,6 +46,17 @@ function addFriendRequest(request) {
     friendRequests.appendChild(requestElement);
 }
 
+function sendListRequest() {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ 
+            'type': 'list_request',
+        }));
+    } else {
+        console.log('Bağlantı yok, bekliyorum...');
+        setTimeout(sendListRequest, 1000); // 1 saniye bekle ve tekrar dene
+    }
+}
+
 async function friendList() {
     const friendRequests = document.getElementById('friendRequests');
     const sendFriendRequestButton = document.getElementById('sendFriendRequestButton');
@@ -54,9 +65,7 @@ async function friendList() {
     const newFriendInput = document.getElementById('newFriendInput');
     const overlay = document.getElementById('overlay');
 
-    ws.send(JSON.stringify({ 
-        'type' : 'list_request',
-    }));
+    sendListRequest();
 
     friendRequests.addEventListener('click', (e) => {
         if (e.target.classList.contains('chat-friend-request-accept') || e.target.classList.contains('chat-friend-request-reject')) {
