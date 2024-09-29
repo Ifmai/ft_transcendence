@@ -1,6 +1,5 @@
 from django.urls import path, include
 from user.api.Loginviews import UserCreateView, UserLogoutView, CheckRefreshTokenView, UserIntraLoginView
-from user.api.Friendsviews import FriendsAdd, FriendsList, FriendsRequestList, FriendsAccept
 from user.api.RefreshpassViews import PasswordResetRequest, PasswordResetConfirm
 from user.api.Profileviews import ProfilViewList, ProfilCommentViewList, ProfilPhotoUpdateView
 from user.api.User2FCA import Enabled2FCA
@@ -9,8 +8,6 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'user_profil', ProfilViewList, basename='profil_content')
 router.register(r'user_commend', ProfilCommentViewList, basename='comment')
-router.register(r'friends', FriendsList, basename='friends')
-router.register(r'friends_requests', FriendsRequestList, basename='friends_requests')
 
 urlpatterns = [
     path('register/', UserCreateView.as_view(), name='register'),
@@ -23,6 +20,4 @@ urlpatterns = [
 	path('2fcaenable/', Enabled2FCA.as_view(), name='user2fca'),
 
 	path('', include(router.urls)),
-	path('addfriends/', FriendsAdd.as_view(), name='add-friends'),
-	path('acceptfriends/<int:id>/', FriendsAccept.as_view(), name='accept-friends'),
 ]

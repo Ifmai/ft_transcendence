@@ -168,46 +168,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-async function initWebSocket() {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        console.log('WebSocket zaten açık.');
-        return;
-    }
-    token = getCookie('access_token')
-    if(!token) {
-        console.log('Kullanıcı oturum açmamış, WebSocket bağlantısı oluşturulmadı.');
-        return;
-    }
-
-    // Yeni WebSocket bağlantısı oluştur
-    ws = new WebSocket(`wss://lastdance.com.tr/ws/friend-list/?token=${getCookie('access_token')}`);
-    ws.onopen = function(event) {
-        console.log('WebSocket bağlantısı açıldı.');
-    };
-
-    ws.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        console.log('Gelen veri:', data);
-    };
-
-    ws.onclose = function(event) {
-        console.log('WebSocket bağlantısı kapandı.');
-    };
-
-    ws.onerror = function(event) {
-        console.error('WebSocket hata:', event);
-    };
-}
-
-//WebSocket bağlantısını kapatma fonksiyonu
-function closeWebSocket() {
-    if (ws) {
-        ws.close();
-        ws = null;
-    }
-}
-
-
 window.addEventListener('beforeunload', () => {
     closeWebSocket();
     closeWebSocket2();

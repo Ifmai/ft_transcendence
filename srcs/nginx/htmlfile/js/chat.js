@@ -1,11 +1,3 @@
-// // Friend list data
-
-
-// // Chat functionality
-// const chatMessages = document.getElementById('chatMessages');
-// const messageInput = document.getElementById('messageInput');
-// const sendButton = document.getElementById('sendButton');
-
 function addMessage(sender, content, avatar) {
     const messageElement = document.createElement('div');
     messageElement.className = 'chat-message';
@@ -20,20 +12,6 @@ function addMessage(sender, content, avatar) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// sendButton.addEventListener('click', () => {
-//     const message = messageInput.value.trim();
-//     if (message) {
-//         addMessage('You', message, '/placeholder.svg?height=40&width=40');
-//         messageInput.value = '';
-//     }
-// });
-
-
-// // Add some initial messages
-// addMessage('Flynn', 'Welcome to the TRONPONG chat!', '/placeholder.svg?height=40&width=40');
-// addMessage('Quorra', 'Hey everyone! Ready for some intense matches?', '/placeholder.svg?height=40&width=40');
-// addMessage('Tron', 'Remember, stay in the grid and watch out for those light cycles!', '/placeholder.svg?height=40&width=40');
-
 function escapeHtml(unsafe) {
     return unsafe
       .replace(/&/g, "&amp;")
@@ -45,10 +23,7 @@ function escapeHtml(unsafe) {
 
 
 async function chatPage() {
-    // const get_user_data = await getProfile();
-    // var data;
-    // if (get_user_data.ok)
-    //     data = await get_user_data.json();
+    friendList();
     initWebSocket2();
     sendBtn = document.getElementById('sendButton');
     messageInput.addEventListener('keypress', (e) => {
@@ -67,8 +42,6 @@ async function chatPage() {
         }
     });
 }
-
-
 
 async function initWebSocket2() {
     if (chat_ws && chat_ws.readyState === WebSocket.OPEN) {

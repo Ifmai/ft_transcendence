@@ -13,7 +13,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def add_user_to_group(self, user, group_name):
-        print("group name  : ", group_name)
         room, created = ChatRooms.objects.get_or_create(roomName=group_name)
         ChatUserList.objects.get_or_create(chatRoom=room, user=user)
 

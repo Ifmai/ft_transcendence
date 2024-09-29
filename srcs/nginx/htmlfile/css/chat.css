@@ -248,3 +248,20 @@
 	background-color: rgba(0, 0, 0, 0.5);
 	z-index: 1000;
 }
+
+.chat-friend-status {
+    width: 10px; /* Simge boyutu */
+    height: 10px;
+    border-radius: 50%; /* Yuvarlak şekil */
+    display: inline-block; /* Yan yana dizilmesi için */
+    margin-left: 5px; /* Diğer elemanlardan biraz uzakta durması için */
+    margin-right: 5px; /* Diğer elemanlardan biraz uzakta durması için */
+}
+
+.ON {
+    background-color: green; /* Yeşil simge */
+}
+
+.OF {
+    background-color: red; /* Kırmızı simge */
+}
