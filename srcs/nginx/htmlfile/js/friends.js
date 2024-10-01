@@ -14,11 +14,11 @@ async function populateFriendList(friend) {
 
     const friendElement = document.createElement('div');
     friendElement.className = 'chat-friend';
-    friendElement.id = friend.username;
+    friendElement.id = friend.room_name;
     friendElement.innerHTML = `
             <img src="${friend.photo}" alt="${friend.username}" class="chat-friend-avatar">
             <span class="chat-friend-name">${friend.username}</span>
-            <div class="chat-friend-status ${friend.status}" id="${friend.username}"></div>
+            <div class="chat-friend-status ${friend.status}" id="status.${friend.username}"></div>
         `;
     friendList.insertBefore(friendElement, friendList.lastElementChild);
 }
@@ -46,6 +46,17 @@ function addFriendRequest(request) {
     friendRequests.appendChild(requestElement);
 }
 
+async function sendListRequest() {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ 
+            'type': 'list_request',
+        }));
+    } else {
+        console.log('Waiting connection...');
+        setTimeout(sendListRequest, 1000);
+    }
+}
+
 async function friendList() {
     const friendRequests = document.getElementById('friendRequests');
     const sendFriendRequestButton = document.getElementById('sendFriendRequestButton');
@@ -53,10 +64,18 @@ async function friendList() {
     const friendRequestPopup = document.getElementById('friendRequestPopup');
     const newFriendInput = document.getElementById('newFriendInput');
     const overlay = document.getElementById('overlay');
+    const container = document.getElementById('friendList');
 
-    ws.send(JSON.stringify({ 
-        'type' : 'list_request',
-    }));
+    sendListRequest();
+    container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('chat-friend')) {
+            const chat_box = document.getElementById('chatMessages');
+            chat_box.innerHTML = '';
+            now_chat_room = e.target.id;
+            if(e.target.id != 'global-chat')
+                get_chat_history(e.target.id);
+        }
+    });
 
     friendRequests.addEventListener('click', (e) => {
         if (e.target.classList.contains('chat-friend-request-accept') || e.target.classList.contains('chat-friend-request-reject')) {
@@ -132,14 +151,16 @@ async function initWebSocket() {
             const friend = {
                 'username': data['user'],
                 'photo': data['photo'],
-                'status': data['status']
+                'status': data['status'],
+                'room_name': data['room_name']
             }
             friends.push(friend);
             populateFriendList(friend);
         }
         else if (data['type'] == 'friend_status'){
-            const statusDiv = document.getElementById(data['username']);
+            const statusDiv = document.getElementById('status.' + data['username']);
             const newStatus = data['status']
+            console.log("Status div : ", statusDiv);
             if (statusDiv) {
                 statusDiv.className = newStatus === 'ON' ? 'chat-friend-status ON' : 'chat-friend-status OF';
             }

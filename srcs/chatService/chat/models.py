@@ -119,7 +119,7 @@ class Tournament(models.Model):
         return f"Tournament ID: {self.id}"
 
 class ChatRooms(models.Model):
-    roomName = models.CharField(null=False,blank=False, max_length=100)
+    roomName = models.CharField(null=False,blank=False, max_length=100, unique=True)
     roomActive = models.BooleanField(default=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
