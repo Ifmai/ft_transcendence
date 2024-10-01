@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Dance</title>
+</head>
+<body>
+    <h1>Pong WebSocket Test</h1>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const token = getCookie('access_token');
+		console.log('Token:', token); // empty token
+
+        const wsUrl = `ws://localhost:8000/ws/pong/game_room_42/2/5/?token=${token}`;
+        const socket = new WebSocket(wsUrl);
+
+		const keysPressed = [];
+		const keys = {
+		38: "up",
+		40: "down",
+		87: "w",
+		83: "s",
+		};
+
+        socket.onopen = function(event) {
+            console.log('WebSocket connection opened:', event);
+        };
+        socket.onerror = function(error) {
+            console.error('WebSocket error:', error);
+        };
+        socket.onclose = function(event) {
+            console.log('WebSocket connection closed:', event);
+        }
+        socket.onmessage = function(event) {
+            const gameState = JSON.parse(event.data);
+            updateGameState(gameState);
+        };
+
+        function updateGameState(gameState) {
+            // Update the front-end with the new game state ,update the positions of players, scores, etc.
+            console.log('Game State:', gameState);
+        }
+
+		window.addEventListener('keydown', function(event) {
+            keysPressed[event.keyCode] = true;
+
+			if (socket && socket.readyState === WebSocket.OPEN && event.keyCode in keys) {
+				socket.send(JSON.stringify({ type: "keyPress", keyCode: event.keyCode, state: "down" }));
+			}
+		});
+
+		window.addEventListener('keyup', function(event) {
+			keysPressed[event.keyCode] = false;
+			if (socket && socket.readyState === WebSocket.OPEN && event.keyCode in keys) {
+				socket.send(JSON.stringify({ type: "keyPress", keyCode: event.keyCode, state: "up" }));
+			}
+		});
+	</script>
+</body>
+</html>
