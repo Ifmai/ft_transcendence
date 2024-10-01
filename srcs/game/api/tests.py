@@ -26,6 +26,4 @@ class PongConsumerTest(TransactionTestCase):
 
         response = await communicator.receive_json_from()
 
-        self.assertEqual(response, {'message': 'Connected', 'status': 200, 'room_id': 'game_room_42'})
-
         self.assertEqual(self.user.username, 'testuser')

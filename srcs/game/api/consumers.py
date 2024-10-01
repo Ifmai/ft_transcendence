@@ -1,6 +1,8 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+rooms = dict()
+
 class GameState:
     def __init__(self, capacity):
         self.capacity = capacity
@@ -9,13 +11,13 @@ class GameState:
 
     def _initialize_paddles(self, capacity):
         paddles = {
-            'left': {'position': 0, 'velocity': 0},
-            'right': {'position': 0, 'velocity': 0}
+            'left': {'position': 0, 'velocity': "15"},
+            'right': {'position': 0, 'velocity': 15}
         }
         if capacity == 4:
             paddles.update({
-                'up': {'position': 0, 'velocity': 0},
-                'down': {'position': 0, 'velocity': 0}
+                'up': {'position': 0, 'velocity': 15},
+                'down': {'position': 0, 'velocity': 15}
             })
         return paddles
 
@@ -46,7 +48,55 @@ class PongConsumer(AsyncWebsocketConsumer):
 			room_id = self.scope['url_route']['kwargs'].get('room_id')
 			self.capacity =  self.scope['url_route']['kwargs'].get('capacity')
 			self.match_id = self.scope['url_route']['kwargs'].get('match_id')
+			self.game_state = GameState(self.capacity)
 		except KeyError as e:
 			print(f"Error getting scope: {e}")
 
-		await self.send(text_data=json.dumps({'message': 'Connected', 'status': 200, 'room_id': room_id}))
+		if room_id not in rooms:
+			rooms[room_id] = []
+
+		rooms[room_id].append(self.channel_name)
+
+		await self.channel_layer.group_add(
+			room_id,
+			self.channel_name
+		)
+
+		await self.send_initial_state()
+
+		if len(rooms[room_id]) == self.game_state.capacity:
+			await self.start_game(room_id)
+
+	async def send_initial_state(self):
+		# Send initial game state to the clients
+		await self.send(text_data=json.dumps(self.game_state.__dict__))
+
+	async def broadcast_game_state(self):
+		room_id = self.scope['url_route']['kwargs'].get('room_id')
+		await self.channel_layer.group_send(
+			room_id,
+			{
+				'type': 'pong_message',
+				'message': self.game_state.__dict__
+			}
+		)
+	async def disconnect(self, close_code):
+		room_id = self.scope['url_route']['kwargs'].get('room_id')
+
+		if room_id in rooms:
+			rooms[room_id].remove(self.channel_name)
+
+			if len(rooms[room_id]) == 0:
+				del rooms[room_id]
+		await self.channel_layer.group_discard(
+			room_id,
+			self.channel_name
+		)
+	async def pong_message(self, event):
+		# Send updated game state to the clients
+		await self.send(text_data=json.dumps(event['message']))
+
+	async def receive(self, text_data):
+		data = json.loads(text_data)
+		if data['type'] == 'keyPress':
+			print(data)
