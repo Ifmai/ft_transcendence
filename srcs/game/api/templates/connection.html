@@ -26,7 +26,8 @@
         const token = getCookie('access_token');
 		console.log('Token:', token); // empty token
 
-        const wsUrl = `ws://localhost:8000/ws/pong/game_room_42/2/5/?token=${token}`;
+        // const wsUrl = `ws://localhost:8000/ws/pong/game_room_42/2/5/?token=${token}`;
+		const wsUrl = `ws://localhost:8000/ws/pong/game_room_42/2/?token=${token}`;
         const socket = new WebSocket(wsUrl);
 
 		const keysPressed = [];

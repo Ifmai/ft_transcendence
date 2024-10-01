@@ -2,6 +2,7 @@
 	margin: 0;
 	padding: 0;
 }
+
 body {
 	overflow: hidden;
 }
@@ -14,8 +15,10 @@ h1 {
 	top: 60px;
 }
 
-#PlayerScore {
+#LeftPlayer {
 	left: 35%;
 }
 
-
+#RightPlayer {
+	right: 35%;
+}

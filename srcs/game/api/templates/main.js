@@ -7,17 +7,19 @@ window.onload = function() {
 	canvas.height = window.innerHeight;
 
 	// WebSocket connection
-	const wsUrl = `ws://localhost:8000/ws/pong/game_room_42/2/5/?token=${getCookie('access_token')}`;
+	// const wsUrl = `ws://localhost:8000/ws/pong/game_room_42/2/5/?token=${getCookie('access_token')}`;
+	const wsUrl = `ws://localhost:8000/ws/pong/game_room_42/2/?token=${getCookie('access_token')}`;
 	const socket = new WebSocket(wsUrl);
 
 	const keysPressed = [];
+
 	const keys = {
 		38: "up",
 		40: "down",
 		87: "w",
 		83: "s",
 	};
-	// WebSocket events
+
 	socket.onopen = function(event) {
 		console.log('WebSocket connection opened:', event);
 	};
@@ -35,13 +37,20 @@ window.onload = function() {
 		console.log('WebSocket connection closed:', event);
 	};
 
-	// Event listeners for key presses
+
 	window.addEventListener('keydown', function(event) {
 		keysPressed[event.keyCode] = true;
+
+		if (socket && socket.readyState === WebSocket.OPEN && event.keyCode in keys) {
+			socket.send(JSON.stringify({ type: "keyPress", keyCode: event.keyCode, state: "down" }));
+		}
 	});
 
 	window.addEventListener('keyup', function(event) {
 		keysPressed[event.keyCode] = false;
+		if (socket && socket.readyState === WebSocket.OPEN && event.keyCode in keys) {
+			socket.send(JSON.stringify({ type: "keyPress", keyCode: event.keyCode, state: "up" }));
+		}
 	});
 
 	// Initialize the Pong game
