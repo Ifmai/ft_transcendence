@@ -7,7 +7,7 @@ class GameState:
     def __init__(self, capacity):
         self.capacity = capacity
         self.paddles = self._initialize_paddles(capacity)
-        self.ball = self._initialize_ball()
+        self.ball = None
 
     def _initialize_paddles(self, capacity):
         paddles = {
@@ -21,8 +21,13 @@ class GameState:
             })
         return paddles
 
-    def _initialize_ball(self):
-        return {'positionX': 0, 'positionY': 0, 'velocityX': 0.5, 'velocityY': 0.5}
+    def _initialize_ball(self, width, height):
+        return {
+            'positionX': width / 2,
+            'positionY': height / 2,
+            'velocityX': 0.5,
+            'velocityY': 0.5
+        }
 
     def update_ball_position(self):
         # Update the ball's position
@@ -98,5 +103,10 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
-		if data['type'] == 'keyPress':
+		if data['type'] == 'initialize':
+			width = data['width']
+			height = data['height']
+			self.game_state.ball = self.game_state._initialize_ball(width, height)
+			await self.send_initial_state()
+		elif data['type'] == 'keyPress':
 			print(data)
