@@ -5,8 +5,8 @@ class Game {
 		this.height = height;
 		this.ball = new Ball(width / 2, height / 2, 20, 10, 10);
 		this.paddles = {
-			left: { x: 10, y: height / 2 - 50, width: 10, height: 100 },
-			right: { x: width - 20, y: height / 2 - 50, width: 10, height: 100 }
+			left: new Paddle(10, height / 2 - 50, 12, 100, 15),
+			right: new Paddle(width - 20, height / 2 - 50, 12, 100, 15)
 		};
 	}
 
@@ -14,13 +14,18 @@ class Game {
 		// Sync with the game state received from the server
 		if (gameState.ball)
 			this.ball.updateState(gameState.ball);
-		this.paddles = gameState.paddles;
+		if (gameState.paddles) {
+			this.paddles.left.updateState(gameState.paddles.left);
+			this.paddles.right.updateState(gameState.paddles.right);
+		}
 	}
 
 	render(){
 		this.context.fillStyle = "rgba(0, 0, 0, 0.4)";
 		this.context.fillRect(0, 0, this.width, this.height);
 		this.ball.draw(this.context)
+		this.paddles.left.draw(this.context)
+		this.paddles.right.draw(this.context)
 		drawGameFrame(this);
 	}
 

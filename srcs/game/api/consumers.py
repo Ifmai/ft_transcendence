@@ -6,18 +6,18 @@ rooms = dict()
 class GameState:
     def __init__(self, capacity):
         self.capacity = capacity
-        self.paddles = self._initialize_paddles(capacity)
+        self.paddles = None
         self.ball = None
 
-    def _initialize_paddles(self, capacity):
+    def _initialize_paddles(self, capacity, width, height):
         paddles = {
-            'left': {'position': 0, 'velocity': "15"},
-            'right': {'position': 0, 'velocity': 15}
+            'left': {'positionY':  height / 2 - 50, 'velocity': "15"},
+            'right': {'positionY': height / 2 - 50, 'velocity': 15}
         }
         if capacity == 4:
             paddles.update({
-                'up': {'position': 0, 'velocity': 15},
-                'down': {'position': 0, 'velocity': 15}
+                'up': {'positionY': height / 2 - 50, 'velocity': 15},
+                'down': {'positionY': height / 2 - 50, 'velocity': 15}
             })
         return paddles
 
@@ -107,6 +107,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 			width = data['width']
 			height = data['height']
 			self.game_state.ball = self.game_state._initialize_ball(width, height)
+			self.game_state.paddles = self.game_state._initialize_paddles(self.capacity, width, height)
 			await self.send_initial_state()
 		elif data['type'] == 'keyPress':
 			print(data)
