@@ -22,6 +22,11 @@ window.onload = function() {
 
 	socket.onopen = function(event) {
 		console.log('WebSocket connection opened:', event);
+		socket.send(JSON.stringify({
+			type: 'initialize',
+			width: canvas.width,
+			height: canvas.height
+		}));
 	};
 
 	socket.onmessage = function(event) {
