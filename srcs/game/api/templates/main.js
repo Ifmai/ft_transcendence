@@ -6,8 +6,30 @@ window.onload = function() {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 
-	// WebSocket connection
-	// const wsUrl = `ws://localhost:8000/ws/pong/game_room_42/2/5/?token=${getCookie('access_token')}`;
+	let your_token_value = "zort;zort123";
+
+	// Set the cookie
+	document.cookie = `access_token=${your_token_value}; path=/;`;
+
+	// Debugging: Log the document cookie
+	console.log("document cookie: ", document.cookie);
+
+	// Function to get the cookie value
+	function getCookie(name) {
+		let cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			const cookies = document.cookie.split(';');
+			for (let i = 0; i < cookies.length; i++) {
+				const cookie = cookies[i].trim();
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) === (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
 	const wsUrl = `ws://localhost:8000/ws/pong/game_room_42/2/?token=${getCookie('access_token')}`;
 	const socket = new WebSocket(wsUrl);
 
@@ -68,20 +90,6 @@ window.onload = function() {
 
 	gameLoop();
 
-	function getCookie(name) {
-		let cookieValue = null;
-		if (document.cookie && document.cookie !== '') {
-			const cookies = document.cookie.split(';');
-			for (let i = 0; i < cookies.length; i++) {
-				const cookie = cookies[i].trim();
-				if (cookie.substring(0, name.length + 1) === (name + '=')) {
-					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-					break;
-				}
-			}
-		}
-		return cookieValue;
-	}
 
 	function updateGameState(gameState) {
 		// Update game logic based on server-side game state

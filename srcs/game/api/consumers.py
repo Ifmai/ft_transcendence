@@ -1,7 +1,17 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
+from .models import Profil
 
 rooms = dict()
+
+PADDLE_TEMPLATE = {
+    'left': {'speed': 30, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
+    'right': {'speed': 30, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
+    'up': {'speed': 30, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False},
+    'down': {'speed': 30, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False}
+}
 
 class GameState:
     def __init__(self, capacity):
@@ -54,23 +64,48 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.capacity =  self.scope['url_route']['kwargs'].get('capacity')
 			self.match_id = self.scope['url_route']['kwargs'].get('match_id')
 			self.game_state = GameState(self.capacity)
+			self.user = self.scope['user']
 		except KeyError as e:
 			print(f"Error getting scope: {e}")
 
-		if room_id not in rooms:
-			rooms[room_id] = []
-
-		rooms[room_id].append(self.channel_name)
+		if (self.user):
+			try:
+				player_db = await database_sync_to_async(Profil.objects.get)(user_id=self.user.id)
+			except Profil.DoesNotExist:
+				print("User not found")
 
 		await self.channel_layer.group_add(
 			room_id,
 			self.channel_name
 		)
 
+		if room_id not in rooms:
+			rooms[room_id] = []
+
+		print(self.scope['user'])
+
+		rooms[room_id].append(self.channel_name)
+		# await self.assign_paddle(room_id, player_db)
+
 		await self.send_initial_state()
 
 		if len(rooms[room_id]) == self.game_state.capacity:
 			await self.start_game(room_id)
+
+	async def assign_paddle(self, room_id, player_db):
+		"""Assign a paddle to the player based on available slots."""
+		paddle_positions = ['left', 'right', 'up', 'down']
+		for position in paddle_positions[:self.capacity]:
+			if position not in rooms[room_id]:
+				rooms[room_id][position] = {
+					'player': self.channel_name,
+					'user_id': self.user.id,
+					'info': PADDLE_TEMPLATE[position].copy(),
+					'username': player_db.alias_name,
+					'avatar': player_db.photo
+				}
+				await self.send(str(paddle_positions.index(position) + 1))
+				break
 
 	async def send_initial_state(self):
 		# Send initial game state to the clients
