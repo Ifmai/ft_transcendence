@@ -1,36 +1,6 @@
-const getPath = () => window.location.pathname;
-const only_auth_pages = ["../pages/profile.html", '../pages/public-player.html', '../pages/leaderboard.html', '../pages/chat.html', '../pages/play_select.html', '../pages/tournament.html', '../pages/tournament_bracket.html']
-const not_auth_pages = ["../pages/login.html", "../pages/register.html", "../pages/forgot-password.html" , '../pages/new-password.html', "../pages/waitlogin.html"]
 
 let ws = null;
 let chat_ws = null;
-//let loadFunctions = []
-let cleanupFunctions = [];
-
-async function checkingauth() {
-	try {
-		const response = await fetch('https://lastdance.com.tr/api/users/whois/', {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-			}
-		});
-		return response.status
-	} catch (error) {
-		return 500;
-	}
-}
-
-function getToken(token) {
-    return localStorage.getItem(token);
-}
-
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
-}
 
 async function emptyFunc() {
     console.log("yüklendi aga");
@@ -100,19 +70,9 @@ const route = async (event) => {
 }
 
 const loadPage = async (page) => {
-    if (cleanupFunctions.length > 0) {
-        cleanupFunctions.forEach(func => func());
-    }
-    console.log("page : ", page);
-    if(only_auth_pages.includes(page.page) && !getCookie('access_token') && await checkingauth() !== 200){
-        loadPage(selectPage('/'));
-        window.history.replaceState({}, "", "/");
-    }
-    else if(not_auth_pages.includes(page.page) && getCookie('access_token')){
-        loadPage(selectPage('/'));
-        window.history.replaceState({}, "", "/");
-    }
-    else{
+    await cleanupFunctionsHandle();
+    const truePage = await load_page_check(page.page);
+    if(truePage){
         try {
             const html = await fetch(page.page).then((response) => {
                 if (!response.ok) {
@@ -146,12 +106,11 @@ const loadPage = async (page) => {
                 if(script){
                     script();
                 }else{
-                    throw new Error('Sayfa bulunamadı: ' + page.exec_script + '. Script yok.');
+                    throw new Error('Script bulunamadı: ' + page.page + '. Script yok.');
                 }
             }
             await initWebSocket();
         } catch (error) {
-            console.error('Sayfa yüklenirken bir hata oluştu:', error);
             window.history.pushState({}, "", '/404');
             const newContent = await fetch("../pages/404.html").then(response => response.text());
             document.documentElement.innerHTML = newContent;
@@ -163,12 +122,5 @@ window.onpopstate = () => loadPage(selectPage(getPath()));
 window.route = route;
 
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("Sayfa Yüklendi.");
     loadPage(selectPage(getPath()));
-});
-
-
-window.addEventListener('beforeunload', () => {
-    closeWebSocket();
-    closeWebSocket2();
 });

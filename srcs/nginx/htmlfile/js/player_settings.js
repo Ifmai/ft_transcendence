@@ -119,12 +119,10 @@ async function ppSaveChanges() {
 	}
 }
 
-// Cancel function
 function ppCancel() {
 	loadPage(selectPage('/profile'));
 	window.history.replaceState({}, "", "/profile");
 }
-
 
 async function upload_value(){
 	const response = await getProfile();

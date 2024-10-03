@@ -13,14 +13,6 @@ const winners = {
 	final: null
 };
 
-
-
-function checkAllReady() {
-	if (players.every(player => player.ready)) {
-		startTournament();
-	}
-}
-
 function startTournament() {
 	winners.semifinal1 = Math.random() < 0.5 ? players[0] : players[1];
 	winners.semifinal2 = Math.random() < 0.5 ? players[2] : players[3];
@@ -104,6 +96,12 @@ function closeWebSocket_tournament(tournamnet_id) {
         ws_tournament = null;
     }
 }
+
+// function checkAllReady() {
+// 	if (players.every(player => player.ready)) {
+// 		startTournament();
+// 	}
+// }
 
 // function toggleReady(playerId) {
 // 	const player = players.find(p => p.id === playerId);

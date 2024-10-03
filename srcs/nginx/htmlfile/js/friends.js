@@ -7,13 +7,13 @@ let pendingRequests = [
 async function populateFriendList(friend) {
     const friendList = document.getElementById('friendList');
 
-    const existingFriend = friendList.querySelector(`#${friend.username}`);
+    const existingFriend = friendList.querySelector(`.${friend.username}`);
     if (existingFriend) {
         return;
     }
 
     const friendElement = document.createElement('div');
-    friendElement.className = 'chat-friend';
+    friendElement.className = 'chat-friend ' + friend.username;
     friendElement.id = friend.room_name;
     friendElement.innerHTML = `
             <img src="${friend.photo}" alt="${friend.username}" class="chat-friend-avatar">
@@ -127,78 +127,3 @@ async function friendList() {
 }
 
 
-async function initWebSocket() {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        console.log('WebSocket zaten açık.');
-        return;
-    }
-    token = getCookie('access_token')
-    if(!token) {
-        console.log('Kullanıcı oturum açmamış, WebSocket bağlantısı oluşturulmadı.');
-        return;
-    }
-
-    // Yeni WebSocket bağlantısı oluştur
-    ws = new WebSocket(`wss://lastdance.com.tr/ws/friend-list/?token=${getCookie('access_token')}`);
-    ws.onopen = function(event) {
-        console.log('WebSocket bağlantısı açıldı.');
-    };
-
-    ws.onmessage = async function(event) {
-        const data = JSON.parse(event.data);
-        if(data['type'] == 'activity'){
-            friends = []
-            const friend = {
-                'username': data['user'],
-                'photo': data['photo'],
-                'status': data['status'],
-                'room_name': data['room_name']
-            }
-            friends.push(friend);
-            populateFriendList(friend);
-        }
-        else if (data['type'] == 'friend_status'){
-            const statusDiv = document.getElementById('status.' + data['username']);
-            const newStatus = data['status']
-            console.log("Status div : ", statusDiv);
-            if (statusDiv) {
-                statusDiv.className = newStatus === 'ON' ? 'chat-friend-status ON' : 'chat-friend-status OF';
-            }
-        }
-        else if(data['type'] == 'request_list'){
-            pendingRequests = []
-            const friend = {
-                'username': data['user'],
-                'photo': data['photo']
-            }
-            pendingRequests.push(friend);
-            addFriendRequest(friend);
-        }
-        else if(data['type'] == 'friend_request_response'){
-            if(data['Response'] == 'accepted'){
-                ws.send(JSON.stringify({ 
-                    'type' : 'list_request',
-                }));
-            }
-            ws.send(JSON.stringify({ 
-                'type' : 'friend_request_list',
-            }));
-        }
-    };
-
-    ws.onclose = function(event) {
-        console.log('WebSocket bağlantısı kapandı.');
-    };
-
-    ws.onerror = function(event) {
-        console.error('WebSocket hata:', event);
-    };
-}
-
-//WebSocket bağlantısını kapatma fonksiyonu
-function closeWebSocket() {
-    if (ws) {
-        ws.close();
-        ws = null;
-    }
-}

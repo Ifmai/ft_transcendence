@@ -34,7 +34,8 @@ function escapeHtml(unsafe) {
 async function chatPage() {
     now_chat_room = 'global-chat';
     friendList();
-    initWebSocket2();
+    chat_ws_init();
+    cleanupFunctions.push(closeWebSocket_chat);
     sendBtn = document.getElementById('sendButton');
     messageInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -54,15 +55,15 @@ async function chatPage() {
     });
 }
 
-async function initWebSocket2() {
+async function chat_ws_init() {
     if (chat_ws && chat_ws.readyState === WebSocket.OPEN) {
-        console.log('WebSocket zaten açık.');
+        console.log('Chat WebSocket zaten açık.');
         return;
     }
 
     chat_ws = new WebSocket(`wss://lastdance.com.tr/ws-chat/global-chat/?token=${getCookie('access_token')}`);
     chat_ws.onopen = function (event) {
-        console.log('WebSocket bağlantısı açıldı.');
+        console.log('Chat WebSocket bağlantısı açıldı.');
     };
 
     chat_ws.onmessage = function (event) {
@@ -75,19 +76,18 @@ async function initWebSocket2() {
             if(data['chat_room'] == now_chat_room)
                 addMessage(data['sender'], data['message'], data['sender_photo']);
         }
-        console.log('gelen data : ', data);
     };
 
     chat_ws.onclose = function (event) {
-        console.log('WebSocket bağlantısı kapandı.');
+        console.log('Chat WebSocket bağlantısı kapandı. Chat soketi.');
     };
 
     chat_ws.onerror = function (event) {
-        console.error('WebSocket hata:', event);
+        console.error('Chat WebSocket hata:', event);
     };
 }
 
-function closeWebSocket2() {
+function closeWebSocket_chat() {
     if (chat_ws) {
         chat_ws.close();
         chat_ws = null;
