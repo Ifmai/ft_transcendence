@@ -41,6 +41,13 @@ volumes:
       o: bind
       device: /root/lastdance/srcs/tournament
 
+  match-making:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /root/lastdance/srcs/matchmaking
+
 services:
 
   apigateway:
@@ -120,6 +127,27 @@ services:
     depends_on:
       - user
 
+  match_making:
+    container_name: match_making
+    build: ./matchmaking
+    command: python manage.py runserver 0.0.0.0:8004
+    environment:
+      USER_DB_USER: ${USER_DB_USER}
+      USER_DB_PASS: ${USER_DB_PASS}
+      USER_DB_NAME: ${USER_DB_NAME}
+      USER_DB_HOST: ${USER_DB_HOST}
+      USER_DB_PORT: ${USER_DB_PORT}
+    ports:
+      - "8004:8004"
+    volumes:
+      - match-making:/match-making
+      - /root/lastdance/srcs/authService/uploads/:/match-making/uploads/
+    networks:
+      - lastdance
+    depends_on:
+      - user
+      - tournament
+
   front_end:
     container_name: front_end
     build: ./nginx
@@ -139,7 +167,7 @@ services:
 
   users_db:
     container_name: users_db
-    image: postgres:latest
+    image: postgres:16.4
     restart: always
     environment:
       POSTGRES_USER: authuser

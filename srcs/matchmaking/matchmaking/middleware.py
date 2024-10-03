@@ -23,7 +23,6 @@ class JwtAuthMiddleware(BaseMiddleware):
 
         if token:
             user = await get_user(token[0])
-            #print("user : ", user)
             scope["user"] = user
         else:
             scope["user"] = None

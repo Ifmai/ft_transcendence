@@ -62,7 +62,10 @@ async def get_room(player_id, capacity, channel_name, match_id):
 
 class MatchMakerConsumer(AsyncWebsocketConsumer):
 	async def game_start_message(self, event):
-		await self.send(text_data=event['room_id'])
+		await self.send(text_data=json.dumps({
+			'room_id': event['room_id'],
+			'text' : event['text']
+		}))
 
 	async def receive(self, text_data):
 		try:
@@ -84,7 +87,7 @@ class MatchMakerConsumer(AsyncWebsocketConsumer):
 		if self.scope['user']:
 			player_id = self.scope['user'].id
 		else:
-			await self.send(text_data=json.dumps({'message': 'User not authenticated', 'status': 403}))
+			await self.send(text_data=json.dumps({'message': 'User not authenticated', 'status': 401}))
 			await self.close()
 			return
 
