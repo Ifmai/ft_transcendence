@@ -13,26 +13,7 @@ const winners = {
 	final: null
 };
 
-// function toggleReady(playerId) {
-// 	const player = players.find(p => p.id === playerId);
-// 	player.ready = !player.ready;
-// 	updatePlayerUI(player);
-// 	checkAllReady();
-// }
 
-// function updatePlayerUI(player) {
-// 	const statusElement = document.getElementById(`player${player.id}-status`);
-// 	const readyButton = document.getElementById(`player${player.id}-ready`);
-// 	if (player.ready) {
-// 		statusElement.classList.add('ready');
-// 		readyButton.classList.add('active');
-// 		readyButton.textContent = 'Hazır!';
-// 	} else {
-// 		statusElement.classList.remove('ready');
-// 		readyButton.classList.remove('active');
-// 		readyButton.textContent = 'Hazır';
-// 	}
-// }
 
 function checkAllReady() {
 	if (players.every(player => player.ready)) {
@@ -41,15 +22,12 @@ function checkAllReady() {
 }
 
 function startTournament() {
-	// Simulate semifinal matches
 	winners.semifinal1 = Math.random() < 0.5 ? players[0] : players[1];
 	winners.semifinal2 = Math.random() < 0.5 ? players[2] : players[3];
 
-	// Update UI for semifinal winners
 	document.getElementById('semifinal1').innerHTML = `<h3>${winners.semifinal1.name}</h3>`;
 	document.getElementById('semifinal2').innerHTML = `<h3>${winners.semifinal2.name}</h3>`;
 
-	// Simulate final match
 	setTimeout(() => {
 		winners.final = Math.random() < 0.5 ? winners.semifinal1 : winners.semifinal2;
 		document.getElementById('champion').innerHTML = `<h3>Şampiyon: ${winners.final.name}</h3>`;
@@ -74,7 +52,6 @@ async function initWebSocket_tournament() {
         return;
     }
 
-    // Yeni WebSocket bağlantısı oluştur
     ws_tournament = new WebSocket(`wss://lastdance.com.tr/ws-match/matchmaking/2/${getCodeURL('tournament')}/?token=${getCookie('access_token')}`);
     ws_tournament.onopen = function(event) {
         console.log('WebSocket bağlantısı açıldı.');
@@ -95,11 +72,56 @@ async function initWebSocket_tournament() {
     };
 }
 
-//WebSocket bağlantısını kapatma fonksiyonu
+async function leave_tournament(tournamnet_id) {
+    try {
+		const response = await fetch('/api/tournament/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${getCookie('access_token')}`
+			},
+			body: JSON.stringify({
+                'tournament_id': tournamnet_id,
+				'action' : 'leave'
+            })
+		});
+		if(response.ok){
+			const data = await response.json();
+            console.log("gelen data : " , data);
+		}
+		else
+			throw new Error(`HTTP error! Status: ${response.status}`);
+	} catch (error) {
+		console.error(error);
+	}
+}
+
 function closeWebSocket_tournament(tournamnet_id) {
     if (ws_tournament) {
         console.log('tournament id : ', tournamnet_id);
+        leave_tournament(tournamnet_id);
         ws_tournament.close();
         ws_tournament = null;
     }
 }
+
+// function toggleReady(playerId) {
+// 	const player = players.find(p => p.id === playerId);
+// 	player.ready = !player.ready;
+// 	updatePlayerUI(player);
+// 	checkAllReady();
+// }
+
+// function updatePlayerUI(player) {
+// 	const statusElement = document.getElementById(`player${player.id}-status`);
+// 	const readyButton = document.getElementById(`player${player.id}-ready`);
+// 	if (player.ready) {
+// 		statusElement.classList.add('ready');
+// 		readyButton.classList.add('active');
+// 		readyButton.textContent = 'Hazır!';
+// 	} else {
+// 		statusElement.classList.remove('ready');
+// 		readyButton.classList.remove('active');
+// 		readyButton.textContent = 'Hazır';
+// 	}
+// }
