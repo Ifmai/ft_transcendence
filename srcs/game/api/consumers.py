@@ -82,8 +82,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 		if room_id not in rooms:
 			rooms[room_id] = []
 
-		print(self.scope['user'])
-
 		rooms[room_id].append(self.channel_name)
 		# await self.assign_paddle(room_id, player_db)
 
