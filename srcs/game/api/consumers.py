@@ -75,24 +75,23 @@ class PongConsumer(AsyncWebsocketConsumer):
 			except Profil.DoesNotExist:
 				print("User not found")
 
-		print(self.scope['user'].__dict__)
-		print("player data: ",player_db.__dict__)
-
 		await self.channel_layer.group_add(
 			room_id,
 			self.channel_name
 		)
 
 		if room_id not in rooms:
-			rooms[room_id] = []
+			rooms[room_id] = {}
 
-		rooms[room_id].append(self.channel_name)
-		# await self.assign_paddle(room_id, player_db)
+		print("Before: ", rooms[room_id])
+		# rooms[room_id].append(self.channel_name)
+		await self.assign_paddle(room_id, player_db)
+		print("After: ", rooms[room_id])
 
 		await self.send_initial_state()
 
-		if len(rooms[room_id]) == self.game_state.capacity:
-			await self.start_game(room_id)
+		# if len(rooms[room_id]) == self.game_state.capacity:
+		# 	await self.start_game(room_id)
 
 	async def assign_paddle(self, room_id, player_db):
 		"""Assign a paddle to the player based on available slots."""
@@ -113,8 +112,8 @@ class PongConsumer(AsyncWebsocketConsumer):
 		# Send initial game state to the clients
 		await self.send(text_data=json.dumps(self.game_state.__dict__))
 
-	async def broadcast_game_state(self):
-		room_id = self.scope['url_route']['kwargs'].get('room_id')
+	async def broadcast_game_state(self, room_id):
+		"""Broadcast the game state to all players in the room."""
 		await self.channel_layer.group_send(
 			room_id,
 			{
@@ -124,10 +123,11 @@ class PongConsumer(AsyncWebsocketConsumer):
 		)
 	async def disconnect(self, close_code):
 		room_id = self.scope['url_route']['kwargs'].get('room_id')
-
 		if room_id in rooms:
-			rooms[room_id].remove(self.channel_name)
-
+			for position in rooms[room_id]:
+				if (rooms[room_id][position]['player'] == self.channel_name):
+					rooms[room_id].pop(position)
+					break
 			if len(rooms[room_id]) == 0:
 				del rooms[room_id]
 		await self.channel_layer.group_discard(

@@ -7,7 +7,6 @@ async function fetchToken() {
         }
 
         const data = await response.json();
-
         if (!data.access_token) {
             throw new Error('Token not found in the response');
         }
