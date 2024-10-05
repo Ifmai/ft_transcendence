@@ -68,11 +68,15 @@ class PongConsumer(AsyncWebsocketConsumer):
 		except KeyError as e:
 			print(f"Error getting scope: {e}")
 
+		player_db = None
 		if (self.user):
 			try:
 				player_db = await database_sync_to_async(Profil.objects.get)(user_id=self.user.id)
 			except Profil.DoesNotExist:
 				print("User not found")
+
+		print(self.scope['user'].__dict__)
+		print("player data: ",player_db.__dict__)
 
 		await self.channel_layer.group_add(
 			room_id,
@@ -99,7 +103,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 					'player': self.channel_name,
 					'user_id': self.user.id,
 					'info': PADDLE_TEMPLATE[position].copy(),
-					'username': player_db.alias_name,
+					'alias': player_db.alias_name,
 					'avatar': player_db.photo
 				}
 				await self.send(str(paddle_positions.index(position) + 1))
