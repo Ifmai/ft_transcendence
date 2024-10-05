@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from .models import Profil
+import asyncio
 
 rooms = dict()
 
@@ -60,7 +61,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		await self.accept()
 		try:
-			room_id = self.scope['url_route']['kwargs'].get('room_id')
+			self.room_id = self.scope['url_route']['kwargs'].get('room_id')
 			self.capacity =  self.scope['url_route']['kwargs'].get('capacity')
 			self.match_id = self.scope['url_route']['kwargs'].get('match_id')
 			self.game_state = GameState(self.capacity)
@@ -76,29 +77,26 @@ class PongConsumer(AsyncWebsocketConsumer):
 				print("User not found")
 
 		await self.channel_layer.group_add(
-			room_id,
+			self.room_id,
 			self.channel_name
 		)
 
-		if room_id not in rooms:
-			rooms[room_id] = {}
-
-		print("Before: ", rooms[room_id])
-		# rooms[room_id].append(self.channel_name)
-		await self.assign_paddle(room_id, player_db)
-		print("After: ", rooms[room_id])
-
+		if self.room_id not in rooms:
+			rooms[self.room_id] = {}
+		print("Before", rooms[self.room_id])
+		await self.assign_paddle(player_db)
+		print("After", rooms[self.room_id])
 		await self.send_initial_state()
 
-		# if len(rooms[room_id]) == self.game_state.capacity:
-		# 	await self.start_game(room_id)
+		if len(rooms[self.room_id]) == self.game_state.capacity:
+			await self.start_game()
 
-	async def assign_paddle(self, room_id, player_db):
+	async def assign_paddle(self, player_db):
 		"""Assign a paddle to the player based on available slots."""
 		paddle_positions = ['left', 'right', 'up', 'down']
 		for position in paddle_positions[:self.capacity]:
-			if position not in rooms[room_id]:
-				rooms[room_id][position] = {
+			if position not in rooms[self.room_id]:
+				rooms[self.room_id][position] = {
 					'player': self.channel_name,
 					'user_id': self.user.id,
 					'info': PADDLE_TEMPLATE[position].copy(),
@@ -110,33 +108,37 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 	async def send_initial_state(self):
 		# Send initial game state to the clients
-		await self.send(text_data=json.dumps(self.game_state.__dict__))
+		await self.send(text_data=json.dumps({"message": f"{self.game_state.__dict__}", "type": "initialize"}))
 
-	async def broadcast_game_state(self, room_id):
+	async def broadcast_game_state(self):
 		"""Broadcast the game state to all players in the room."""
 		await self.channel_layer.group_send(
-			room_id,
+			self.room_id,
 			{
 				'type': 'pong_message',
 				'message': self.game_state.__dict__
 			}
 		)
 	async def disconnect(self, close_code):
-		room_id = self.scope['url_route']['kwargs'].get('room_id')
-		if room_id in rooms:
-			for position in rooms[room_id]:
-				if (rooms[room_id][position]['player'] == self.channel_name):
-					rooms[room_id].pop(position)
+		if self.room_id in rooms:
+			for position in rooms[self.room_id]:
+				if (rooms[self.room_id][position]['player'] == self.channel_name):
+					rooms[self.room_id].pop(position)
 					break
-			if len(rooms[room_id]) == 0:
-				del rooms[room_id]
+			if len(rooms[self.room_id]) == 0:
+				del rooms[self.room_id]
 		await self.channel_layer.group_discard(
-			room_id,
+			self.room_id,
 			self.channel_name
 		)
 	async def pong_message(self, event):
 		# Send updated game state to the clients
 		await self.send(text_data=json.dumps(event['message']))
+
+	async def start_game(self):
+		# Start the game loop
+			await self.send(text_data=json.dumps({"message": f"Game starting in room: {self.room_id}"})) # random message will be modified
+			await asyncio.sleep(0.1)
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
@@ -147,4 +149,8 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.game_state.paddles = self.game_state._initialize_paddles(self.capacity, width, height)
 			await self.send_initial_state()
 		elif data['type'] == 'keyPress':
-			print(data)
+			# print(data)
+			self.handle_key_press(data)
+
+	async def handle_key_press(self, data):
+		"""Handle paddle movement based on key presses."""
