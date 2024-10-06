@@ -53,6 +53,7 @@ window.onload = async function() {
 
 		socket.onmessage = function(event) {
 			const gameState = JSON.parse(event.data);
+			// console.log("game state: ", gameState);
 			if (gameState['type'] == 'initialize')
 			{
 				// console.log("game state", gameState);
@@ -62,6 +63,9 @@ window.onload = async function() {
 				Object.keys(gameState.paddles).forEach((paddle) => {
 					game.paddles[paddle].updateState(gameState.paddles[paddle]);
 				});
+			}
+			if (gameState['ball']) {
+				game.ball.updateState(gameState.ball)
 			}
 		};
 

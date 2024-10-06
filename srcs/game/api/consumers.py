@@ -36,8 +36,8 @@ class GameState:
         return {
             'positionX': width / 2,
             'positionY': height / 2,
-            'velocityX': 0.5,
-            'velocityY': 0.5
+            'velocityX': 10,
+            'velocityY': 10
         }
 
     def update_ball_position(self):
@@ -88,8 +88,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 		await self.send_initial_state()
 
-		if len(rooms[self.room_id]) == self.game_state.capacity:
-			await self.start_game()
 
 	async def assign_paddle(self, player_db):
 		"""Assign a paddle to the player based on available slots."""
@@ -120,6 +118,16 @@ class PongConsumer(AsyncWebsocketConsumer):
 				'message': {'paddles': paddle_state}
 			}
 		)
+	async def broadcast_ball_state(self):
+		"""Broadcast the current ball state to all players in the room."""
+		ball_state = self.game_state.ball
+		await self.channel_layer.group_send(
+			self.room_id,
+			{
+				'type': 'pong_message',
+				'message': {'ball': ball_state}
+			}
+		)
 	async def disconnect(self, close_code):
 		if self.room_id in rooms:
 			for position in rooms[self.room_id]:
@@ -138,7 +146,12 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 	async def start_game(self):
 		# Start the game loop
-			await self.send(text_data=json.dumps({"message": f"Game starting in room: {self.room_id}"})) # random message will be modified
+		await self.send(text_data=json.dumps({"message": f"Game starting in room: {self.room_id}"})) # random message will be modified
+		while True:
+			self.game_state.update_ball_position()
+			# self.game_state.check_wall_collision()
+
+			await self.broadcast_ball_state()
 			await asyncio.sleep(0.1)
 
 	async def receive(self, text_data):
@@ -149,6 +162,10 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.game_state.ball = self.game_state._initialize_ball(self.width, self.height)
 			self.game_state.paddles = self.game_state._initialize_paddles(self.capacity, self.width, self.height)
 			await self.send_initial_state()
+
+			if len(rooms[self.room_id]) == self.game_state.capacity:
+				asyncio.create_task(self.start_game())
+
 		elif data['type'] == 'keyPress':
 			await self.handle_key_press(data)
 
@@ -168,5 +185,3 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 				await self.broadcast_paddle_state(position)
 				break
-
-
