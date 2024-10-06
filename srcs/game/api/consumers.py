@@ -83,9 +83,9 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 		if self.room_id not in rooms:
 			rooms[self.room_id] = {}
-		print("Before", rooms[self.room_id])
+
 		await self.assign_paddle(player_db)
-		print("After", rooms[self.room_id])
+
 		await self.send_initial_state()
 
 		if len(rooms[self.room_id]) == self.game_state.capacity:
@@ -110,13 +110,14 @@ class PongConsumer(AsyncWebsocketConsumer):
 		# Send initial game state to the clients
 		await self.send(text_data=json.dumps({"message": f"{self.game_state.__dict__}", "type": "initialize"}))
 
-	async def broadcast_game_state(self):
+	async def broadcast_paddle_state(self,position):
 		"""Broadcast the game state to all players in the room."""
+		paddle_state = {position: self.game_state.paddles[position]}
 		await self.channel_layer.group_send(
 			self.room_id,
 			{
 				'type': 'pong_message',
-				'message': self.game_state.__dict__
+				'message': {'paddles': paddle_state}
 			}
 		)
 	async def disconnect(self, close_code):
@@ -143,14 +144,29 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		data = json.loads(text_data)
 		if data['type'] == 'initialize':
-			width = data['width']
-			height = data['height']
-			self.game_state.ball = self.game_state._initialize_ball(width, height)
-			self.game_state.paddles = self.game_state._initialize_paddles(self.capacity, width, height)
+			self.width = data['width']
+			self.height = data['height']
+			self.game_state.ball = self.game_state._initialize_ball(self.width, self.height)
+			self.game_state.paddles = self.game_state._initialize_paddles(self.capacity, self.width, self.height)
 			await self.send_initial_state()
 		elif data['type'] == 'keyPress':
-			# print(data)
-			self.handle_key_press(data)
+			await self.handle_key_press(data)
 
 	async def handle_key_press(self, data):
 		"""Handle paddle movement based on key presses."""
+		paddles = self.game_state.paddles
+
+		 # Handle paddle movement based on key presses
+		for position, paddle_data in rooms[self.room_id].items():
+			if paddle_data['player'] == self.channel_name:
+				if data['keyCode'] == 38:
+					if paddles[position]['positionY'] > 0:
+						paddles[position]['positionY'] -= float(paddles[position]['velocity'])
+				elif data['keyCode'] == 40:
+					if paddles[position]['positionY'] + PADDLE_TEMPLATE[position]['sizeY'] <= self.height:
+						paddles[position]['positionY'] += float(paddles[position]['velocity'])
+
+				await self.broadcast_paddle_state(position)
+				break
+
+
