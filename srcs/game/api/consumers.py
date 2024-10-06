@@ -190,7 +190,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 					if paddles[position]['positionY'] > 0:
 						paddles[position]['positionY'] -= float(paddles[position]['velocity'])
 				elif data['keyCode'] == 40:
-					if paddles[position]['positionY'] + PADDLE_TEMPLATE[position]['sizeY'] <= self.height:
+					if paddles[position]['positionY'] + (PADDLE_TEMPLATE[position]['sizeY'] / 2) <= self.height:
 						paddles[position]['positionY'] += float(paddles[position]['velocity'])
 
 				await self.broadcast_paddle_state(position)
