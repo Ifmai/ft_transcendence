@@ -37,7 +37,8 @@ class GameState:
             'positionX': width / 2,
             'positionY': height / 2,
             'velocityX': 10,
-            'velocityY': 10
+            'velocityY': 10,
+            'radius': 20
         }
 
     def update_ball_position(self):
@@ -49,9 +50,18 @@ class GameState:
         # Handle paddle collision detection logic
         pass
 
-    def check_wall_collision(self):
+    def check_wall_collision(self, height, width):
         # Handle ball collision with walls logic
-        pass
+
+        # Check for collision with top and bottom walls
+        if (self.ball['positionY'] + self.ball['radius'] > height or
+                self.ball['positionY'] - self.ball['radius'] <= 0):
+            self.ball['velocityY'] *= -1
+
+        # Check for collision with left and right walls
+        if (self.ball['positionX'] + self.ball['radius'] > width or
+                self.ball['positionX'] - self.ball['radius'] <= 0):
+            self.ball['velocityX'] *= -1
 
     def reset_game(self):
         # Reset ball and paddles to initial positions
@@ -144,15 +154,15 @@ class PongConsumer(AsyncWebsocketConsumer):
 		# Send updated game state to the clients
 		await self.send(text_data=json.dumps(event['message']))
 
-	async def start_game(self):
+	async def start_game(self, height, width):
 		# Start the game loop
 		await self.send(text_data=json.dumps({"message": f"Game starting in room: {self.room_id}"})) # random message will be modified
 		while True:
 			self.game_state.update_ball_position()
-			# self.game_state.check_wall_collision()
+			self.game_state.check_wall_collision(height, width)
 
 			await self.broadcast_ball_state()
-			await asyncio.sleep(0.1)
+			await asyncio.sleep(0.03)
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
@@ -164,7 +174,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 			await self.send_initial_state()
 
 			if len(rooms[self.room_id]) == self.game_state.capacity:
-				asyncio.create_task(self.start_game())
+				asyncio.create_task(self.start_game(self.height, self.width))
 
 		elif data['type'] == 'keyPress':
 			await self.handle_key_press(data)
