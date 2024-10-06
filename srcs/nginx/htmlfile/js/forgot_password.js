@@ -4,7 +4,6 @@ function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
-            // This checks if this cookie string begins with the name we want
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
@@ -14,14 +13,9 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function getRefreshFromUrl() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('refresh');
-}
-
 async function forgotPassword() {
-    const loginBtn = document.getElementById('refpassword');
-    loginBtn.addEventListener('click', async function(event) {
+    const refBtn = document.getElementById('refpassword');
+    refBtn.addEventListener('click', async function(event) {
         event.preventDefault();
         const email = document.getElementById('email-ref').value;
 		const csrfToken = getCookie('csrftoken');
@@ -54,7 +48,7 @@ async function newPasswordPage() {
         event.preventDefault();
         const newPassword = document.getElementById('password-new').value;
         const newPassword2 = document.getElementById('password-new-2').value;
-        const refresh = getRefreshFromUrl();  // Token'ı URL'den al
+        const refresh = getCodeURL('refresh');  // Token'ı URL'den al
 
         if (newPassword !== newPassword2) {
             alert('Şifreler aynı değil.');

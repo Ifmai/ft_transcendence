@@ -11,7 +11,7 @@ from rest_framework.generics import ListAPIView
 
 class TournamentList(ListAPIView):
 	serializer_class = TournamentListSerializer
-	queryset = PlayerTournament.objects.all()
+	queryset = Tournament.objects.all()
 	permission_classes = [IsAuthenticated]
 
 
@@ -143,7 +143,8 @@ class TournamentView(APIView):
 		return Response({
 			"statusCode": 201,
 			"message": "Tournament created successfully",
-			"current_tournament": serializer.get_players(tournament)
+			"current_tournament": serializer.get_players(tournament),
+			"tournament_id": tournament.id
 			}, status=201)
 
 	def join_tournament(self, tournament, player, alias):
@@ -158,7 +159,7 @@ class TournamentView(APIView):
 		player.save()
 
 		PlayerTournament.objects.create(player=player, tournament=tournament, creator=False)
-		return Response({"statusCode": 200, "message": "Player joined tournament"}, status=status.HTTP_200_OK)
+		return Response({"statusCode": 200, "message": "Player joined tournament", "tournament_id" : tournament.id}, status=status.HTTP_200_OK)
 
 	def leave_tournament(self, tournament, player):
 		if (tournament.status != StatusChoices.PENDING.value):

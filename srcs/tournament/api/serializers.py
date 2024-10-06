@@ -73,11 +73,12 @@ class MatchSerializer(serializers.ModelSerializer):
 		return serializer.data
 
 class TournamentListSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='tournament.name', read_only=True)
-    tournaments_id = serializers.CharField(source='tournament.id', read_only=True)
-    tournaments_status = serializers.CharField(source='tournament.status', read_only=True)
-    creator_user = serializers.CharField(source='player.alias_name', read_only=True)
+    player_aliases = serializers.SerializerMethodField()
 
     class Meta:
-        model = PlayerTournament
-        fields = ['name', 'tournaments_id', 'tournaments_status', 'creator_user']
+        model = Tournament
+        fields = ['id', 'name', 'player_aliases']
+
+    def get_player_aliases(self, tournament):
+        players_tournament = PlayerTournament.objects.filter(tournament=tournament, creator=True)
+        return players_tournament[0].player.alias_name if players_tournament else None

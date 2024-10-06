@@ -65,14 +65,9 @@ async function loginPage() {
     });
 }
 
-function getCodeURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('code');
-}
-
 async function intralogin() {
 	try {
-		code = getCodeURL();
+		code = getCodeURL('code');
         const response = await fetch(`https://lastdance.com.tr/api/users/login42/${code}/`, {
             method: 'GET',
             headers: {

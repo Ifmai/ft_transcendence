@@ -4,3 +4,4 @@ srcs/nginx/log/access.log
 srcs/nginx/log/error.log
 srcs/authService/uploads/
 user_db
+migrations
