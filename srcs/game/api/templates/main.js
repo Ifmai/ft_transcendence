@@ -67,6 +67,10 @@ window.onload = async function() {
 			if (gameState['ball']) {
 				game.ball.updateState(gameState.ball)
 			}
+			if (gameState['scores']) {
+				console.log(gameState['scores'])
+				updateScoreDisplay(gameState['scores']);
+			}
 		};
 
 		socket.onerror = function(error) {

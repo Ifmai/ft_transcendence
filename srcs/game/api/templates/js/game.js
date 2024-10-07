@@ -1,3 +1,8 @@
+function updateScoreDisplay(scores) {
+	document.getElementById('LeftScore').innerText = scores.left;
+	document.getElementById('RightScore').innerText = scores.right;
+}
+
 class Game {
 	constructor(context, width, height) {
 		this.context = context;
@@ -33,5 +38,4 @@ class Game {
 		//this.update(keysPressed);
 		this.render();
 	}
-
 }

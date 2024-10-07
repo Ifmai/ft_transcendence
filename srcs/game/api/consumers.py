@@ -87,12 +87,14 @@ class GameState:
         self.paddles['right']['positionY'] = height / 2 - self.paddles['right']['sizeY'] / 2
         time.sleep(1)
 
-    def check_winner(self, width, height):
+    def check_winner(self, width, height, room_id):
         if (self.ball['positionX'] <= -self.ball['radius']):
             self.paddles['right']['score'] += 1
+            rooms[room_id]['right']['info']['score'] += 1
             self.reset_game(width, height)
         elif (self.ball['positionX'] >= self.ball['radius'] + width):
             self.paddles['left']['score'] += 1
+            rooms[room_id]['left']['info']['score'] += 1
             self.reset_game(width, height)
 
 class PongConsumer(AsyncWebsocketConsumer):
@@ -156,6 +158,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 				'message': {'paddles': paddle_state}
 			}
 		)
+
 	async def broadcast_ball_state(self):
 		"""Broadcast the current ball state to all players in the room."""
 		ball_state = self.game_state.ball
@@ -166,6 +169,19 @@ class PongConsumer(AsyncWebsocketConsumer):
 				'message': {'ball': ball_state}
 			}
 		)
+
+	async def broadcast_score(self):
+		"""Broadcast the current score to all players in the room."""
+		scores = {position: rooms[self.room_id][position]['info']['score'] for position in rooms[self.room_id]}
+
+		await self.channel_layer.group_send(
+		self.room_id,
+		{
+			'type': 'pong_message',
+			'message': {'scores': scores}
+		}
+	)
+
 	async def disconnect(self, close_code):
 		if self.room_id in rooms:
 			for position in rooms[self.room_id]:
@@ -189,9 +205,11 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.game_state.update_ball_position()
 			self.game_state.check_wall_collision(width, height)
 			self.game_state.check_paddle_collision(width)
-			self.game_state.check_winner(width, height)
+			self.game_state.check_winner(width, height, self.room_id)
 
+			print(self.game_state.paddles)
 			await self.broadcast_ball_state()
+			await self.broadcast_score()
 			await asyncio.sleep(0.03)
 
 	async def receive(self, text_data):
