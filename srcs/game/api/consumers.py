@@ -8,10 +8,10 @@ import asyncio
 rooms = dict()
 
 PADDLE_TEMPLATE = {
-    'left': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
-    'right': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
-    'up': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False},
-    'down': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False}
+    'left': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 150, 'eliminated': False, 'score': 0},
+    'right': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 150, 'eliminated': False, 'score': 0},
+    'up': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False, 'score': 0},
+    'down': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False, 'score': 0}
 }
 
 class GameState:
@@ -20,7 +20,7 @@ class GameState:
         self.paddles = None
         self.ball = None
 
-    def _initialize_paddles(self, capacity, width, height):
+    def _initialize_paddles(self, width, height):
         PADDLE_TEMPLATE['left']['positionY'] = height / 2 - 50
         PADDLE_TEMPLATE['right']['positionY'] = height / 2 - 50
         PADDLE_TEMPLATE['up']['positionX'] = height / 2 - 50
@@ -29,7 +29,7 @@ class GameState:
             'left' : PADDLE_TEMPLATE['left'],
             'right': PADDLE_TEMPLATE['right']
         }
-        if capacity == 4:
+        if self.capacity == 4:
             paddles.update({
                 'up': PADDLE_TEMPLATE['up'],
                 'down': PADDLE_TEMPLATE['down']
@@ -54,31 +54,42 @@ class GameState:
         for position, paddle in self.paddles.items():
             paddle_x = 0 if position == 'left' else width - paddle['sizeX']
             paddle_y = paddle['positionY']
-            half_width = paddle['sizeX'] / 2
-            half_height = paddle['sizeY'] / 2
 
-            dx = abs(self.ball['positionX'] - (paddle_x + half_width))
-            dy = abs(self.ball['positionY'] - (paddle_y + half_height))
+            paddle_center_x = paddle_x + (paddle['sizeX'] / 2)
+            paddle_center_y = paddle_y + (paddle['sizeY'] / 2)
 
-            if dx <= (self.ball['radius'] + half_width) and dy <= (self.ball['radius'] + half_height):
+            dx = abs(self.ball['positionX'] - paddle_center_x)
+            dy = abs(self.ball['positionY'] - paddle_center_y)
+
+            half_paddle_width = paddle['sizeX'] / 2
+            half_paddle_height = paddle['sizeY'] / 2
+
+            if dx <= (self.ball['radius'] + half_paddle_width) and dy <= (self.ball['radius'] + half_paddle_height):
                 self.ball['velocityX'] *= -1
+                if self.ball['positionX'] < paddle_center_x:
+                    self.ball['positionX'] = paddle_center_x - (self.ball['radius'] + half_paddle_width)
+                else:
+                    self.ball['positionX'] = paddle_center_x + (self.ball['radius'] + half_paddle_width)
 
-    def check_wall_collision(self, height, width):
+    def check_wall_collision(self, width, height):
         # Handle ball collision with walls logic
-
-        # Check for collision with top and bottom walls
         if (self.ball['positionY'] + self.ball['radius'] > height or
                 self.ball['positionY'] - self.ball['radius'] <= 0):
             self.ball['velocityY'] *= -1
 
-        # Check for collision with left and right walls
-        if (self.ball['positionX'] + self.ball['radius'] > width or
-                self.ball['positionX'] - self.ball['radius'] <= 0):
-            self.ball['velocityX'] *= -1
-
-    def reset_game(self):
+    def reset_game(self, width, height):
         # Reset ball and paddles to initial positions
-        self.__init__(self.capacity)
+        pass
+
+    def check_winner(self, width, height):
+        if (self.ball['positionX'] <= -self.ball['radius']):
+            print("Right player scored: ", self.paddles['right'])
+            self.paddles['right']['score'] += 1
+            self.reset_game(width, height)
+        elif (self.ball['positionX'] >= self.ball['radius'] + width):
+            print("Left player scored: ", self.paddles['left'])
+            self.paddles['left']['score'] += 1
+            self.reset_game(width, height)
 
 class PongConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
@@ -172,8 +183,9 @@ class PongConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({"message": f"Game starting in room: {self.room_id}"})) # random message will be modified
 		while True:
 			self.game_state.update_ball_position()
-			self.game_state.check_wall_collision(height, width)
+			self.game_state.check_wall_collision(width, height)
 			self.game_state.check_paddle_collision(width)
+			self.game_state.check_winner(width, height)
 
 			await self.broadcast_ball_state()
 			await asyncio.sleep(0.03)
@@ -184,7 +196,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.width = data['width']
 			self.height = data['height']
 			self.game_state.ball = self.game_state._initialize_ball(self.width, self.height)
-			self.game_state.paddles = self.game_state._initialize_paddles(self.capacity, self.width, self.height)
+			self.game_state.paddles = self.game_state._initialize_paddles(self.width, self.height)
 			await self.send_initial_state()
 
 			if len(rooms[self.room_id]) == self.game_state.capacity:

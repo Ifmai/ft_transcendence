@@ -5,8 +5,8 @@ class Game {
 		this.height = height;
 		this.ball = new Ball(width / 2, height / 2, 20, 10, 10);
 		this.paddles = {
-			left: new Paddle(10, height / 2 - 50, 12, 100, 15),
-			right: new Paddle(width - 20, height / 2 - 50, 12, 100, 15)
+			left: new Paddle(10, height / 2 - 50, 20, 150, 15),
+			right: new Paddle(width - 20, height / 2 - 50, 20, 150, 15)
 		};
 	}
 
