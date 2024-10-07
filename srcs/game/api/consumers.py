@@ -8,8 +8,8 @@ import asyncio
 rooms = dict()
 
 PADDLE_TEMPLATE = {
-    'left': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
-    'right': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
+    'left': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
+    'right': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
     'up': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False},
     'down': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False}
 }
@@ -23,8 +23,8 @@ class GameState:
     def _initialize_paddles(self, capacity, width, height):
         PADDLE_TEMPLATE['left']['positionY'] = height / 2 - 50
         PADDLE_TEMPLATE['right']['positionY'] = height / 2 - 50
-        PADDLE_TEMPLATE['up']['positionX'] = width / 2 - 50
-        PADDLE_TEMPLATE['down']['positionX'] = width / 2 - 50
+        PADDLE_TEMPLATE['up']['positionX'] = height / 2 - 50
+        PADDLE_TEMPLATE['down']['positionX'] = height / 2 - 50
         paddles = {
             'left' : PADDLE_TEMPLATE['left'],
             'right': PADDLE_TEMPLATE['right']
@@ -50,9 +50,18 @@ class GameState:
         self.ball['positionX'] += self.ball['velocityX']
         self.ball['positionY'] += self.ball['velocityY']
 
-    def check_paddle_collision(self):
-        # Handle paddle collision detection logic
-        pass
+    def check_paddle_collision(self, width):
+        for position, paddle in self.paddles.items():
+            paddle_x = 0 if position == 'left' else width - paddle['sizeX']
+            paddle_y = paddle['positionY']
+            half_width = paddle['sizeX'] / 2
+            half_height = paddle['sizeY'] / 2
+
+            dx = abs(self.ball['positionX'] - (paddle_x + half_width))
+            dy = abs(self.ball['positionY'] - (paddle_y + half_height))
+
+            if dx <= (self.ball['radius'] + half_width) and dy <= (self.ball['radius'] + half_height):
+                self.ball['velocityX'] *= -1
 
     def check_wall_collision(self, height, width):
         # Handle ball collision with walls logic
@@ -164,7 +173,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 		while True:
 			self.game_state.update_ball_position()
 			self.game_state.check_wall_collision(height, width)
-			self.game_state.check_paddle_collision()
+			self.game_state.check_paddle_collision(width)
 
 			await self.broadcast_ball_state()
 			await asyncio.sleep(0.03)
