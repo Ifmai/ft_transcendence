@@ -8,10 +8,10 @@ import asyncio
 rooms = dict()
 
 PADDLE_TEMPLATE = {
-    'left': {'speed': 30, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
-    'right': {'speed': 30, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
-    'up': {'speed': 30, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False},
-    'down': {'speed': 30, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False}
+    'left': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
+    'right': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 200, 'eliminated': False},
+    'up': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False},
+    'down': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False}
 }
 
 class GameState:
@@ -21,14 +21,18 @@ class GameState:
         self.ball = None
 
     def _initialize_paddles(self, capacity, width, height):
+        PADDLE_TEMPLATE['left']['positionY'] = height / 2 - 50
+        PADDLE_TEMPLATE['right']['positionY'] = height / 2 - 50
+        PADDLE_TEMPLATE['up']['positionX'] = width / 2 - 50
+        PADDLE_TEMPLATE['down']['positionX'] = width / 2 - 50
         paddles = {
-            'left': {'positionY':  height / 2 - 50, 'velocity': "15"},
-            'right': {'positionY': height / 2 - 50, 'velocity': 15}
+            'left' : PADDLE_TEMPLATE['left'],
+            'right': PADDLE_TEMPLATE['right']
         }
         if capacity == 4:
             paddles.update({
-                'up': {'positionY': height / 2 - 50, 'velocity': 15},
-                'down': {'positionY': height / 2 - 50, 'velocity': 15}
+                'up': PADDLE_TEMPLATE['up'],
+                'down': PADDLE_TEMPLATE['down']
             })
         return paddles
 
@@ -160,6 +164,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 		while True:
 			self.game_state.update_ball_position()
 			self.game_state.check_wall_collision(height, width)
+			self.game_state.check_paddle_collision()
 
 			await self.broadcast_ball_state()
 			await asyncio.sleep(0.03)
@@ -193,5 +198,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 					if paddles[position]['positionY'] + (PADDLE_TEMPLATE[position]['sizeY'] / 2) <= self.height:
 						paddles[position]['positionY'] += float(paddles[position]['velocity'])
 
+				rooms[self.room_id][position]['info']['positionY'] = paddles[position]['positionY']
 				await self.broadcast_paddle_state(position)
 				break
