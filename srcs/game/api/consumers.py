@@ -4,12 +4,13 @@ from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from .models import Profil
 import asyncio
+import time
 
 rooms = dict()
 
 PADDLE_TEMPLATE = {
-    'left': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 150, 'eliminated': False, 'score': 0},
-    'right': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 40, 'sizeY': 150, 'eliminated': False, 'score': 0},
+    'left': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 20, 'sizeY': 150, 'eliminated': False, 'score': 0},
+    'right': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 20, 'sizeY': 150, 'eliminated': False, 'score': 0},
     'up': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False, 'score': 0},
     'down': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False, 'score': 0}
 }
@@ -79,15 +80,18 @@ class GameState:
 
     def reset_game(self, width, height):
         # Reset ball and paddles to initial positions
-        pass
+        self.ball['positionX'] = width / 2
+        self.ball['positionY'] = height / 2
+
+        self.paddles['left']['positionY'] = height / 2 - self.paddles['left']['sizeY'] / 2
+        self.paddles['right']['positionY'] = height / 2 - self.paddles['right']['sizeY'] / 2
+        time.sleep(1)
 
     def check_winner(self, width, height):
         if (self.ball['positionX'] <= -self.ball['radius']):
-            print("Right player scored: ", self.paddles['right'])
             self.paddles['right']['score'] += 1
             self.reset_game(width, height)
         elif (self.ball['positionX'] >= self.ball['radius'] + width):
-            print("Left player scored: ", self.paddles['left'])
             self.paddles['left']['score'] += 1
             self.reset_game(width, height)
 
