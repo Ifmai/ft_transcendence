@@ -35,7 +35,7 @@ class Game {
 	}
 
 	loop(keysPressed) {
-		//this.update(keysPressed);
+		// this.update(keysPressed);
 		this.render();
 	}
 }

@@ -22,8 +22,8 @@ class GameState:
         self.ball = None
 
     def _initialize_paddles(self, width, height):
-        PADDLE_TEMPLATE['left']['positionY'] = height / 2 - 50
-        PADDLE_TEMPLATE['right']['positionY'] = height / 2 - 50
+        PADDLE_TEMPLATE['left']['positionY'] = height / 2 - 75
+        PADDLE_TEMPLATE['right']['positionY'] = height / 2 - 75
         PADDLE_TEMPLATE['up']['positionX'] = height / 2 - 50
         PADDLE_TEMPLATE['down']['positionX'] = height / 2 - 50
         paddles = {
@@ -78,24 +78,40 @@ class GameState:
                 self.ball['positionY'] - self.ball['radius'] <= 0):
             self.ball['velocityY'] *= -1
 
-    def reset_game(self, width, height):
+    def reset_game(self, width, height, room_id):
         # Reset ball and paddles to initial positions
         self.ball['positionX'] = width / 2
         self.ball['positionY'] = height / 2
 
         self.paddles['left']['positionY'] = height / 2 - self.paddles['left']['sizeY'] / 2
         self.paddles['right']['positionY'] = height / 2 - self.paddles['right']['sizeY'] / 2
+        rooms[room_id]['left']['info']['positionY'] = self.paddles['left']['positionY']
+        rooms[room_id]['right']['info']['positionY'] = self.paddles['right']['positionY']
+
+        if self.paddles['left']['score'] == 3:
+            print('left')
+        elif self.paddles['right']['score'] == 3:
+            print('right')
         time.sleep(1)
 
-    def check_winner(self, width, height, room_id):
-        if (self.ball['positionX'] <= -self.ball['radius']):
-            self.paddles['right']['score'] += 1
-            rooms[room_id]['right']['info']['score'] += 1
-            self.reset_game(width, height)
-        elif (self.ball['positionX'] >= self.ball['radius'] + width):
-            self.paddles['left']['score'] += 1
-            rooms[room_id]['left']['info']['score'] += 1
-            self.reset_game(width, height)
+    def update_score(self, width, height, room_id):
+        game_reset = False
+        if self.paddles['left']['score'] != 3 and self.paddles['right']['score'] != 3:
+            if self.ball['positionX'] <= -self.ball['radius']:
+                self.paddles['right']['score'] += 1
+                rooms[room_id]['right']['info']['score'] += 1
+                self.reset_game(width, height, room_id)
+                game_reset = True
+            elif self.ball['positionX'] >= self.ball['radius'] + width:
+                self.paddles['left']['score'] += 1
+                rooms[room_id]['left']['info']['score'] += 1
+                self.reset_game(width, height, room_id)
+                game_reset = True
+        else:
+            "Temporary announce the winner"
+            self.reset_game(width, height, room_id)
+            game_reset = True
+        return game_reset
 
 class PongConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
@@ -205,11 +221,13 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.game_state.update_ball_position()
 			self.game_state.check_wall_collision(width, height)
 			self.game_state.check_paddle_collision(width)
-			self.game_state.check_winner(width, height, self.room_id)
+			game_reset = self.game_state.update_score(width, height, self.room_id)
 
-			print(self.game_state.paddles)
 			await self.broadcast_ball_state()
 			await self.broadcast_score()
+			if (game_reset):
+				await self.broadcast_paddle_state('left')
+				await self.broadcast_paddle_state('right')
 			await asyncio.sleep(0.03)
 
 	async def receive(self, text_data):
