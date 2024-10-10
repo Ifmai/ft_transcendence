@@ -92,7 +92,6 @@ class APIGatewayMiddleware:
 			url = f'http://userservice:8001{path}'
 		elif path.startswith('/api/tournament/'):
 			url = f'http://tournament-app:8003{path}'
-		print("url kanka : ", url)
 		try:
 			if method == 'GET':
 				response = requests.get(url, headers=headers, cookies=cookie_jar)

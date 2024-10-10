@@ -121,9 +121,8 @@ class CheckRefreshTokenView(APIView):
         try:
             cookies = request.COOKIES
             headers = dict(request.headers)
-            print("headers ")
             refresh_token = cookies.get('refresh_token')
-            access_token = headers.get('acces')
+            access_token = headers.get('Authorization')
             if not refresh_token:
                 return Response({'error': 'Refresh token required.'}, status=status.HTTP_202_ACCEPTED)
             elif not access_token and refresh_token:
