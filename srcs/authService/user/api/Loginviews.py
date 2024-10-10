@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.core.files.base import ContentFile
 from dotenv import load_dotenv
 import pyotp
 import os
@@ -76,14 +77,13 @@ class UserIntraLoginView(APIView):
             'Authorization': f'Bearer {access_token}',
         }
         infoResponse = requests.get(urlinfo, headers=headers).json()
-        
+        #print("Gelen Response : ", infoResponse)
         loginEmail = infoResponse.get('email')
         if not User.objects.filter(email=loginEmail).exists():
             random_password = secrets.token_urlsafe(8)
             loginUsername = infoResponse.get('login')
             loginFirstName = infoResponse.get('first_name')
             loginLastName = infoResponse.get('last_name')
-            #loginPhotoUrl = infoResponse["image"]["versions"]["large"] #Photoyu da profile aktarmak istiyom.
             user = User.objects.create_user(
                 username=loginUsername,
                 email=loginEmail,
@@ -91,6 +91,18 @@ class UserIntraLoginView(APIView):
                 last_name=loginLastName,
                 password=random_password
             )
+            profil = Profil.objects.get(user=user)
+            url = infoResponse["image"]["versions"]["large"]
+            response = requests.get(url)
+            if response.status_code == 200:
+                if profil:
+                    photoname = infoResponse.get('login') + '.jpg'
+                    profil.photo.save(photoname, ContentFile(response.content))
+                    profil.save()
+                else:
+                    print("Profile instance not found.")
+            else:
+                print("Photo download failed.")
         else:
             user = User.objects.get(email=loginEmail)
         refresh = RefreshToken.for_user(user)
