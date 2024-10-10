@@ -361,3 +361,55 @@
 		grid-template-columns: 1fr;
 	}
 }
+
+.popup {
+    display: none; /* Başlangıçta gizli */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.popup-content {
+    background-color: #2d3748;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
+.popup button {
+    background-color: #ed8936;
+    color: #1a202c;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.popup button:hover {
+    background-color: #f6ad55;
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Merkeze hizalama */
+}
+
+.profile-container {
+    display: flex; /* Esnek düzen */
+    justify-content: center; /* Ortala */
+    gap: 1rem; /* Resimler arası boşluk */
+}
+
+.profile-pic {
+    border-radius: 50%; /* Yuvarlak yapma */
+    width: 50px; /* Genişlik */
+    height: 50px; /* Yükseklik */
+}

@@ -2,10 +2,6 @@
 let ws = null;
 let chat_ws = null;
 
-async function emptyFunc() {
-    console.log("yüklendi aga");
-}
-
 const routers = {
     "/" : "../pages/home_page.html",
     "/login" : "../pages/login.html",
@@ -34,7 +30,7 @@ const scripts ={
     '/new-password': newPasswordPage,
     '/wait' : intralogin,
     '/leaderboard' : leaderboardPage,
-    '/play' : emptyFunc,
+    '/play' : playerPage,
     '/tournaments' : tournamentPage,
     '/tournament' : tour_bracketPage
 };
@@ -124,3 +120,20 @@ window.route = route;
 document.addEventListener("DOMContentLoaded", function() {
     loadPage(selectPage(getPath()));
 });
+
+// window.addEventListener('beforeunload', function (event) {
+//     // Veri göndermek için sendBeacon kullanabilirsiniz.
+//     const url = 'https://example.com/api/log'; // Hedef URL
+//     const data = JSON.stringify({ message: 'Sayfa kapatılıyor' });
+
+//     navigator.sendBeacon(url, data);
+
+//     // İsterseniz burada kullanıcıya bir uyarı mesajı da gösterebilirsiniz.
+//     event.returnValue = 'Bu sayfayı kapatmak istediğinize emin misiniz?';
+// });
+
+// document.addEventListener('visibilitychange', function() {
+//     if (document.visibilityState === 'hidden') {
+//         console.log('Sekme kapatıldı veya başka bir sekmeye geçildi.');
+//     }
+// });
