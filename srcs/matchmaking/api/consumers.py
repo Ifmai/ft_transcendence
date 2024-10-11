@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 import uuid
-from .models import Match
+from .models import Match, PlayerTournament, Tournament
 from .enums import *
 from asgiref.sync import sync_to_async
 
@@ -60,6 +60,15 @@ async def get_room(player_id, capacity, channel_name, match_id):
 			return None, None
 	return await create_room(player_id, channel_name, capacity, match_id)
 
+async def is_tournament_creator(player_id):
+	player_tournament = await PlayerTournament.objects.filter(player_id=player_id, creator=True).first()
+	return player_tournament is not None
+
+async def delete_tournament(player_id):
+	player_tournament = await PlayerTournament.objects.filter(player_id=player_id, creator=True).first()
+	if player_tournament:
+		await Tournament.objects.filter(id=player_tournament.tournament_id).delete()
+
 class MatchMakerConsumer(AsyncWebsocketConsumer):
 	async def game_start_message(self, event):
 		await self.send(text_data=json.dumps({
@@ -116,4 +125,9 @@ class MatchMakerConsumer(AsyncWebsocketConsumer):
 		room, room_id = await find_channels_room(player_id, self.channel_name)
 		if room:
 			await self.channel_layer.group_discard(room_id, self.channel_name)
+
+			if await is_tournament_creator(player_id):
+				await delete_tournament(player_id)
+				await self.send(text_data=json.dumps({'message': 'Creator of the tournament left', 'status': 200}))
+
 

@@ -4,7 +4,7 @@ from django.test import TransactionTestCase
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from matchmaking.asgi import application
-from .models import Match
+from .models import Match, Tournament
 from .enums import *
 from .consumers import match_played
 import uuid
@@ -131,3 +131,18 @@ class MatchMakerConsumerTest(TransactionTestCase):
 
         await communicator1.disconnect()
         await communicator2.disconnect()
+
+    async def test_tournament_deleted_on_creator_disconnect(self):
+        communicator = WebsocketCommunicator(
+            application, f"/ws/matchmaking/10/2/?token={self.token}"
+        )
+
+        connected, subprotocol = await communicator.connect()
+        self.assertTrue(connected)
+
+        # Simulate disconnect
+        await communicator.disconnect()
+
+        # Check if the tournament is deleted
+        tournament_exists = await Tournament.objects.filter(id=self.tournament.id).exists()
+        self.assertFalse(tournament_exists)
