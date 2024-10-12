@@ -17,6 +17,7 @@ const routers = {
     '/play' : '../pages/play_select.html',
     '/tournaments' : '../pages/tournament.html',
     '/tournament' : '../pages/tournament_bracket.html',
+    '/pong-game' : '../pages/pong.html'
 };
 
 const scripts ={
@@ -32,7 +33,8 @@ const scripts ={
     '/leaderboard' : leaderboardPage,
     '/play' : playerPage,
     '/tournaments' : tournamentPage,
-    '/tournament' : tour_bracketPage
+    '/tournament' : tour_bracketPage,
+    '/pong-game' : pongPage
 };
 
 async function selectNavbar(){

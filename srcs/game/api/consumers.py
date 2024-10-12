@@ -17,9 +17,11 @@ PADDLE_TEMPLATE = {
 }
 
 class GameState:
-	def __init__(self, capacity, match_id):
+	def __init__(self, capacity, match_id, channel_layer, room_id):
 		self.capacity = capacity
 		self.match_id = match_id
+		self.channel_layer = channel_layer
+		self.room_id = room_id
 		self.paddles = None
 		self.ball = None
 
@@ -82,7 +84,9 @@ class GameState:
 
 	def get_match(self, match_id):
 		if not match_id:
-			return Match.objects.create(state=State.PLAYED.value)
+			new_match = Match.objects.create(state=State.PLAYED.value)
+			self.match_id = new_match.id
+			return new_match
 		match = Match.objects.get(id=match_id)
 		match.state = State.PLAYED.value
 		match.save()
@@ -145,11 +149,13 @@ class GameState:
 		rooms[room_id]['right']['info']['positionY'] = self.paddles['right']['positionY']
 
 		if self.paddles['left']['score'] == 3:
+			print("left girdi ")
 			result = await self.set_db_two_players(room_id, self.match_id)
-			self.announce_winner(result)
+			await self.announce_winner(result)
 		elif self.paddles['right']['score'] == 3:
+			print("right girdi ")
 			result = await self.set_db_two_players(room_id, self.match_id)
-			self.announce_winner(result)
+			await self.announce_winner(result)
 		time.sleep(1)
 
 	async def update_score(self, width, height, room_id):
@@ -173,12 +179,18 @@ class GameState:
 
 	async def announce_winner(self, result):
 		"""Send the winner announcement to all players in the room."""
+		message = {
+			'type': 'pong.message',
+			'message': result
+		}
+
+		# Mesajı gönderme
 		await self.channel_layer.group_send(
 			self.room_id,
 			{
-				'type': 'pong.message',
-				'message': result
-			}
+				'type': 'pong_message',
+				'message': {'won': message}
+			} 
 		)
 
 class PongConsumer(AsyncWebsocketConsumer):
@@ -188,7 +200,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.room_id = self.scope['url_route']['kwargs'].get('room_id')
 			self.capacity =  self.scope['url_route']['kwargs'].get('capacity')
 			self.match_id = self.scope['url_route']['kwargs'].get('match_id')
-			self.game_state = GameState(self.capacity, self.match_id)
+			self.game_state = GameState(self.capacity, self.match_id, self.channel_layer, self.room_id)
 			self.user = self.scope['user']
 		except KeyError as e:
 			print(f"Error getting scope: {e}")
@@ -223,7 +235,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 					'user_id': self.user.id,
 					'info': PADDLE_TEMPLATE[position].copy(),
 					'alias': player_db.alias_name,
-					'avatar': player_db.photo
+					'avatar': player_db.photo.url
 				}
 				await self.send(str(paddle_positions.index(position) + 1))
 				break

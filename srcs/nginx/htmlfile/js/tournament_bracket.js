@@ -44,6 +44,7 @@ async function initWebSocket_tournament() {
         return;
     }
 
+    // buraya bir if koncak eğer olmauan bir tournament id girilip sayfa erişimi sağlanmaya çalışılırsa home page yönlendir veya turnuvaya yönlendir.
     ws_tournament = new WebSocket(`wss://lastdance.com.tr/ws-match/matchmaking/4/${getCodeURL('tournament')}/?token=${getCookie('access_token')}`);
     ws_tournament.onopen = function(event) {
         console.log('WebSocket bağlantısı açıldı.');

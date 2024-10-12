@@ -15,9 +15,13 @@ async function initWebSocket_one_pvp_one() {
     };
 
     ws_tournament.onmessage = async function(event) {
-        console.log("event data : ", event.data);
         const data = JSON.parse(event.data);
-       console.log('gelend dataİ: ', data);
+        console.log('gelen room_id: ', data['room_id ']);
+        if(data['room_id']){
+            loadPage(selectPage('/pong-game'));
+            window.history.pushState({}, "", `/pong-game?room=${data['room_id']}`);
+        }
+
     };
 
     ws_tournament.onclose = function(event) {

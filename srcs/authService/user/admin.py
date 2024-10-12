@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from user.models import Profil, ProfileComment, UserFriendsList, PlayerMatch, PlayerTournament, Tournament, ChatMessage, ChatRooms, ChatUserList
+from user.models import Profil, ProfileComment, UserFriendsList, PlayerMatch, PlayerTournament, Tournament, ChatMessage, ChatRooms, ChatUserList, Match
 
 class ChatMessages(admin.ModelAdmin):
     list_display = ("chatRoom", "sender", "message")
@@ -16,12 +16,19 @@ class ChatUserLists(admin.ModelAdmin):
 class TournamentList(admin.ModelAdmin):
     list_display = ("id" ,"name", "status")
 
+class PlayerMatchList(admin.ModelAdmin):
+    list_display = ('match', 'player', 'score')
+
+class MatchList(admin.ModelAdmin):
+    list_display = ('id', 'round', 'state')
+
 admin.site.register(Profil)
 admin.site.register(ProfileComment)
 admin.site.register(UserFriendsList)
-admin.site.register(PlayerMatch)
+admin.site.register(PlayerMatch, PlayerMatchList)
 admin.site.register(PlayerTournament)
 admin.site.register(Tournament, TournamentList)
 admin.site.register(ChatMessage, ChatMessages)
 admin.site.register(ChatRooms, ChatRoom)
 admin.site.register(ChatUserList, ChatUserLists)
+admin.site.register(Match, MatchList)

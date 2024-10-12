@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-cj1m7jsmm!=@9an0m6$-cwzz(48&ul)7&!(%9ie-^5)m9p)np+'
+SECRET_KEY = 'django-insecure-+zo&y+uv@s7t#&juqo7-j04xt%+1jaba^yem7m1&$n@180&lvh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['apigateway', 'userservice', 'chatservice', 'lastdance.com.tr']
 
 
 # Application definition
@@ -42,8 +42,6 @@ INSTALLED_APPS = [
 	'api',
     'rest_framework',
 	'rest_framework_simplejwt',
-    'rest_framework.authtoken',
-	'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +52,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # Add this line
     'django.middleware.common.CommonMiddleware',
 ]
 
@@ -90,11 +87,16 @@ ASGI_APPLICATION = 'game.asgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': 'users',
+       'USER': 'authuser',
+       'PASSWORD': 'Zodiyac123++',
+       'HOST': 'users_db',
+       'PORT': '5432',
+   }
 }
+
 
 
 # Password validation
@@ -133,6 +135,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'api/users/media/'
+MEDIA_ROOT = 'uploads'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

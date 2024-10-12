@@ -48,6 +48,13 @@ volumes:
       o: bind
       device: /root/lastdance/srcs/matchmaking
 
+  game-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /root/lastdance/srcs/game
+
 services:
 
   apigateway:
@@ -122,6 +129,26 @@ services:
     volumes:
       - tournament:/tournament-app
       - /root/lastdance/srcs/authService/uploads/:/tournament-app/uploads/
+    networks:
+      - lastdance
+    depends_on:
+      - user
+
+  pong:
+    container_name: pong-app
+    build: ./game
+    command: python manage.py runserver 0.0.0.0:8005
+    environment:
+      USER_DB_USER: ${USER_DB_USER}
+      USER_DB_PASS: ${USER_DB_PASS}
+      USER_DB_NAME: ${USER_DB_NAME}
+      USER_DB_HOST: ${USER_DB_HOST}
+      USER_DB_PORT: ${USER_DB_PORT}
+    ports:
+      - "8005:8005"
+    volumes:
+      - game-data:/game-app
+      - /root/lastdance/srcs/authService/uploads/:/pong-app/uploads/
     networks:
       - lastdance
     depends_on:
