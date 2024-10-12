@@ -168,8 +168,8 @@ class TournamentView(APIView):
 		player_tournament = PlayerTournament.objects.filter(player=player, tournament=tournament).first()
 		if not player_tournament:
 			return Response({"statusCode": 400, "message": "Player not in tournament"}, status=status.HTTP_400_BAD_REQUEST)
-		if player_tournament.creator:
-			tournament.delete()
+		# if player_tournament.creator:
+		# 	tournament.delete()
 
 		player_tournament.delete()
 		return Response({"statusCode": 200, "message": f"{player.alias_name} left tournament"}, status=status.HTTP_200_OK)

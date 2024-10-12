@@ -44,7 +44,7 @@ async function initWebSocket_tournament() {
         return;
     }
 
-    ws_tournament = new WebSocket(`wss://lastdance.com.tr/ws-match/matchmaking/2/${getCodeURL('tournament')}/?token=${getCookie('access_token')}`);
+    ws_tournament = new WebSocket(`wss://lastdance.com.tr/ws-match/matchmaking/4/${getCodeURL('tournament')}/?token=${getCookie('access_token')}`);
     ws_tournament.onopen = function(event) {
         console.log('WebSocket bağlantısı açıldı.');
     };
@@ -52,7 +52,11 @@ async function initWebSocket_tournament() {
     ws_tournament.onmessage = async function(event) {
         console.log("event data : ", event.data);
         const data = JSON.parse(event.data);
-       console.log('gelend dataİ: ', data);
+        console.log('gelend dataİ: ', data);
+        if(data['text'] == 'Creator of the tournament left'){
+            loadPage(selectPage('/'));
+            window.history.pushState({}, "", '/');
+        }
     };
 
     ws_tournament.onclose = function(event) {

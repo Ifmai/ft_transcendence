@@ -78,6 +78,12 @@ class MatchMakerConsumer(AsyncWebsocketConsumer):
 			'text' : event['text']
 		}))
 
+	async def disconnect_message_author(self, event):
+		await self.send(text_data=json.dumps({
+			'text' : event['text'],
+			'status': event['status']
+		}))
+
 	async def receive(self, text_data):
 		try:
 			data = json.loads(text_data)
@@ -126,10 +132,13 @@ class MatchMakerConsumer(AsyncWebsocketConsumer):
 			return
 		room, room_id = await find_channels_room(player_id, self.channel_name)
 		if room:
-			await self.channel_layer.group_discard(room_id, self.channel_name)
-
 			if await is_tournament_creator(player_id):
 				await delete_tournament(player_id)
-				await self.send(text_data=json.dumps({'message': 'Creator of the tournament left', 'status': 200}))
+				await get_channel_layer().group_send(room_id, {
+					'type': 'disconnect_message_author',
+					'text': "Creator of the tournament left",
+					'status': 200
+				})
+			await self.channel_layer.group_discard(room_id, self.channel_name)
 
 
