@@ -60,14 +60,16 @@ async def get_room(player_id, capacity, channel_name, match_id):
 			return None, None
 	return await create_room(player_id, channel_name, capacity, match_id)
 
-async def is_tournament_creator(player_id):
-	player_tournament = await PlayerTournament.objects.filter(player_id=player_id, creator=True).first()
+@sync_to_async
+def is_tournament_creator(player_id):
+	player_tournament = PlayerTournament.objects.filter(player_id=player_id, creator=True).first()
 	return player_tournament is not None
 
-async def delete_tournament(player_id):
-	player_tournament = await PlayerTournament.objects.filter(player_id=player_id, creator=True).first()
+@sync_to_async
+def delete_tournament(player_id):
+	player_tournament = PlayerTournament.objects.filter(player_id=player_id, creator=True).first()
 	if player_tournament:
-		await Tournament.objects.filter(id=player_tournament.tournament_id).delete()
+		Tournament.objects.filter(id=player_tournament.tournament_id).delete()
 
 class MatchMakerConsumer(AsyncWebsocketConsumer):
 	async def game_start_message(self, event):
