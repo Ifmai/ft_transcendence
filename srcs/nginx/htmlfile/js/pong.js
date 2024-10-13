@@ -51,10 +51,10 @@ async function pongPage() {
 		if (gameState['won']){
 			alert(gameState.won.message)
 			socket.close();
-			if(!getCodeURL('tournament')){
-				loadPage(selectPage('/play'));
-				window.history.pushState({}, "", '/play');
-			}
+			// if(!getCodeURL('tournament')){
+			// 	loadPage(selectPage('/play'));
+			// 	window.history.pushState({}, "", '/play');
+			// }
 		}
 	};
 

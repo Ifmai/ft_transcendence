@@ -27,9 +27,13 @@ class GameState:
 
 	def _initialize_paddles(self, width, height):
 		PADDLE_TEMPLATE['left']['positionY'] = height / 2 - 75
+		PADDLE_TEMPLATE['left']['score'] = 0
 		PADDLE_TEMPLATE['right']['positionY'] = height / 2 - 75
+		PADDLE_TEMPLATE['right']['score'] = 0
 		PADDLE_TEMPLATE['up']['positionX'] = height / 2 - 50
+		PADDLE_TEMPLATE['up']['score'] = 0
 		PADDLE_TEMPLATE['down']['positionX'] = height / 2 - 50
+		PADDLE_TEMPLATE['down']['score'] = 0
 		paddles = {
 			'left' : PADDLE_TEMPLATE['left'],
 			'right': PADDLE_TEMPLATE['right']
@@ -142,18 +146,15 @@ class GameState:
 		# Reset ball and paddles to initial positions
 		self.ball['positionX'] = width / 2
 		self.ball['positionY'] = height / 2
-
 		self.paddles['left']['positionY'] = height / 2 - self.paddles['left']['sizeY'] / 2
 		self.paddles['right']['positionY'] = height / 2 - self.paddles['right']['sizeY'] / 2
 		rooms[room_id]['left']['info']['positionY'] = self.paddles['left']['positionY']
 		rooms[room_id]['right']['info']['positionY'] = self.paddles['right']['positionY']
 
 		if self.paddles['left']['score'] == 3:
-			print("left girdi ")
 			result = await self.set_db_two_players(room_id, self.match_id)
 			await self.announce_winner(result)
 		elif self.paddles['right']['score'] == 3:
-			print("right girdi ")
 			result = await self.set_db_two_players(room_id, self.match_id)
 			await self.announce_winner(result)
 		time.sleep(1)
@@ -183,8 +184,6 @@ class GameState:
 			'type': 'pong.message',
 			'message': result
 		}
-
-		# Mesajı gönderme
 		await self.channel_layer.group_send(
 			self.room_id,
 			{
@@ -269,7 +268,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def broadcast_score(self):
 		"""Broadcast the current score to all players in the room."""
 		scores = {position: rooms[self.room_id][position]['info']['score'] for position in rooms[self.room_id]}
-
 		await self.channel_layer.group_send(
 		self.room_id,
 		{
@@ -290,6 +288,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.room_id,
 			self.channel_name
 		)
+
 	async def pong_message(self, event):
 		# Send updated game state to the clients
 		await self.send(text_data=json.dumps(event['message']))
