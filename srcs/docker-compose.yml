@@ -48,7 +48,7 @@ volumes:
       o: bind
       device: /root/lastdance/srcs/matchmaking
 
-  game-data:
+  game_data:
     driver: local
     driver_opts:
       type: none
@@ -147,7 +147,7 @@ services:
     ports:
       - "8005:8005"
     volumes:
-      - game-data:/game-app
+      - game_data:/pong-app
       - /root/lastdance/srcs/authService/uploads/:/pong-app/uploads/
     networks:
       - lastdance
