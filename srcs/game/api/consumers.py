@@ -154,10 +154,18 @@ class GameState:
 		if self.paddles['left']['score'] == 3:
 			result = await self.set_db_two_players(room_id, self.match_id)
 			await self.announce_winner(result)
+			await self.reset_scores(room_id)
 		elif self.paddles['right']['score'] == 3:
 			result = await self.set_db_two_players(room_id, self.match_id)
 			await self.announce_winner(result)
+			await self.reset_scores(room_id)
 		time.sleep(1)
+
+	async def reset_scores(self, room_id):
+		self.paddles['left']['score'] = 0
+		self.paddles['right']['score'] = 0
+		rooms[room_id]['left']['info']['score'] = 0
+		rooms[room_id]['right']['info']['score'] = 0
 
 	async def update_score(self, width, height, room_id):
 		game_reset = False
@@ -189,7 +197,7 @@ class GameState:
 			{
 				'type': 'pong_message',
 				'message': {'won': message}
-			} 
+			}
 		)
 
 class PongConsumer(AsyncWebsocketConsumer):
