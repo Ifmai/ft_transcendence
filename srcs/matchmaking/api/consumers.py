@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 import uuid
-from .models import Match, PlayerTournament, Tournament
+from .models import Match, PlayerTournament, Tournament, Profil
 from .enums import *
 from asgiref.sync import sync_to_async
 
@@ -123,7 +123,19 @@ class MatchMakerConsumer(AsyncWebsocketConsumer):
 			return
 
 		await self.channel_layer.group_add(room_id, self.channel_name)
-		await self.send(text_data=json.dumps({'message': 'Connected', 'status': 200, 'match_id': match_id}))
+
+		player_alias_map = {}
+		for player in room['players']:
+			player_id_in_room = list(player.keys())[0]
+			profil = await sync_to_async(Profil.objects.get)(user_id=player_id_in_room)
+			player_alias_map[player_id_in_room] = profil.alias_name
+
+		await self.send(text_data=json.dumps({
+			'message': 'Connected',
+			'status': 200,
+			'match_id': match_id,
+			'players': player_alias_map
+		}))
 
 	async def disconnect(self, close_code):
 		if self.scope['user']:
