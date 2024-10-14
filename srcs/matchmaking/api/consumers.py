@@ -137,6 +137,8 @@ class MatchMakerConsumer(AsyncWebsocketConsumer):
 			'players': player_alias_map
 		}))
 
+		await self.broadcast_alias_name(room_id, player_alias_map)
+
 	async def disconnect(self, close_code):
 		if self.scope['user']:
 			player_id = self.scope['user'].id
@@ -153,4 +155,13 @@ class MatchMakerConsumer(AsyncWebsocketConsumer):
 				})
 			await self.channel_layer.group_discard(room_id, self.channel_name)
 
+	async def broadcast_alias_name(self, room_id, player_alias_map):
+		await self.channel_layer.group_send(room_id, {
+			'type': 'alias_names_message',
+			'players': player_alias_map})
 
+	async def alias_names_message(self, event):
+		await self.send(text_data=json.dumps({
+			'message': 'Updated player list',
+			'players': event['players']
+			}))
