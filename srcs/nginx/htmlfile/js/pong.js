@@ -3,8 +3,8 @@ async function pongPage() {
 	const context = canvas.getContext('2d');
 
 	// Adjust the canvas size to fit the screen
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+	canvas.width = 1200;
+	canvas.height = 800;
 
 	const room_id = getCodeURL('room');
 	const wsUrl = `wss://lastdance.com.tr/ws-pong/pong/${room_id}/2/?token=${getCookie('access_token')}`;
@@ -25,13 +25,12 @@ async function pongPage() {
 		socket.send(JSON.stringify({
 			type: 'initialize',
 			width: canvas.width,
-			height: canvas.height
+			height: canvas.height,
 		}));
 	};
 
 	socket.onmessage = function(event) {
 		const gameState = JSON.parse(event.data);
-		console.log("game state: ", gameState);
 		if (gameState['type'] == 'initialize')
 		{
 			updateGameState(gameState);
@@ -45,15 +44,15 @@ async function pongPage() {
 			game.ball.updateState(gameState.ball)
 		}
 		if (gameState['scores']) {
-			console.log(gameState['scores'])
 			updateScoreDisplay(gameState['scores']);
 		}
-		if (gameState['won']){
-			alert(gameState.won.message)
+		if (gameState['end']){
+			console.log("gameState: ", gameState)
+			//alert(gameState.won.message)
 			socket.close();
 			if(!getCodeURL('tournament')){
-				loadPage(selectPage('/play'));
-				window.history.pushState({}, "", '/play');
+				//loadPage(selectPage('/play'));
+				//window.history.pushState({}, "", '/play');
 			}
 		}
 	};
