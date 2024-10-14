@@ -18,6 +18,7 @@ async function initWebSocket_one_pvp_one() {
         const data = JSON.parse(event.data);
         console.log('gelen room_id: ', data['room_id ']);
         if(data['room_id']){
+            closeWebSocket_one_pvp_one();
             loadPage(selectPage('/pong-game'));
             window.history.pushState({}, "", `/pong-game?room=${data['room_id']}`);
         }
