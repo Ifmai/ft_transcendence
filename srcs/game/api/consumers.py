@@ -157,16 +157,18 @@ class GameState:
 			print(f"Unexpected error: {e}", flush=True)
 			return "Unexpected error"
 
-	async def reset_game(self, width, height, room_id):
+	async def reset_game(self, width, height, room_id, game_id):
 		# Reset ball and paddles to initial positions
-		self.ball['positionX'] = width / 2
-		self.ball['positionY'] = height / 2
-		self.paddles['left']['positionY'] = height / 2 - self.paddles['left']['sizeY'] / 2
-		self.paddles['right']['positionY'] = height / 2 - self.paddles['right']['sizeY'] / 2
-		rooms[room_id]['left']['info']['positionY'] = self.paddles['left']['positionY']
-		rooms[room_id]['right']['info']['positionY'] = self.paddles['right']['positionY']
+		self.balls[f'ball_{game_id}']['positionX'] = width / 2
+		self.balls[f'ball_{game_id}']['positionY'] = height / 2
 
-		time.sleep(1)
+		self.paddles[game_id]['left']['positionY'] = height / 2 - self.paddles[game_id]['left']['sizeY'] / 2
+		self.paddles[game_id]['right']['positionY'] = height / 2 - self.paddles[game_id]['right']['sizeY'] / 2
+
+		rooms[room_id][game_id]['left']['info']['positionY'] = self.paddles[game_id]['left']['positionY']
+		rooms[room_id][game_id]['right']['info']['positionY'] = self.paddles[game_id]['right']['positionY']
+
+		await asyncio.sleep(1)
 
 	async def update_score(self, width, height, room_id):
 		game_reset = False
