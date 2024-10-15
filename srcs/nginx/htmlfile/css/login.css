@@ -111,3 +111,35 @@
 		font-size: 3rem;
 	}
 }
+#popup-message {
+	position: fixed;
+	bottom: 1rem;
+	right: 1rem;
+	background-color: rgba(220, 38, 38, 0.9); /* Kırmızı arka plan */
+	color: #fff;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	display: none; /* Başlangıçta gizli */
+	z-index: 1000;
+	animation: fadeInOut 4s forwards; /* Giriş ve çıkış animasyonu */
+}
+
+@keyframes fadeInOut {
+	0% {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	10% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	90% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+}
