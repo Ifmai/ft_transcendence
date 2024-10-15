@@ -8,7 +8,7 @@ class Profil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')
     bio = models.CharField(max_length=300, blank=True, null=True)
     city = models.CharField(max_length=120, blank=True, null=True)
-    photo = models.ImageField(blank=True, null=True, upload_to='profil_photo/')
+    photo = models.ImageField(blank=True, null=True, default='profil_photo/default.png',upload_to='profil_photo/')
     two_factory = models.BooleanField(default=False)
     otp_secret_key = models.CharField(max_length=64, blank=True, null=True)
     STATUS_CHOICES = [
@@ -125,7 +125,7 @@ class ChatRooms(models.Model):
     update_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"ChatRoom: {self.roomName}"
+        return f"{self.roomName}"
 
     class Meta:
         db_table = 'api_chat_rooms'
@@ -143,7 +143,7 @@ class ChatMessage(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"ChatRoom: {self.chatRoom.roomName}"
+        return f"{self.chatRoom.roomName}"
 
     class Meta:
         db_table = 'api_chat_message'
@@ -153,7 +153,7 @@ class ChatUserList(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"ChatRoom: {self.chatRoom.roomName}"
+        return f"{self.chatRoom.roomName} , {self.user.username}"
 
     class Meta:
         db_table = 'api_chat_users_list'
