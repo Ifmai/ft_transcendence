@@ -12,6 +12,28 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'first_name', 'last_name', 'email', 'password')
 
+    def validate_username(self, value):
+        forbidden_characters = ['!', '@', '#', '$', '%', '^', '&', '*', '.', ',', '<', '>', '-', ':', ';']  # yasaklı karakter listesi
+        if any(char in value for char in forbidden_characters):
+            raise serializers.ValidationError("Kullanıcı adında yasaklı karakterler var!")
+        return value
+
+    # şifreyi kontrol etmek için
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("Şifre en az 8 karakter olmalıdır.")
+        if not any(char.isdigit() for char in value):
+            raise serializers.ValidationError("Şifre en az bir sayı içermelidir.")
+        if not any(char.isalpha() for char in value):
+            raise serializers.ValidationError("Şifre en az bir harf içermelidir.")
+        return value
+
+    # tüm validate işlemlerini tek seferde yapmak için
+    def validate(self, data):
+        if data['first_name'] == data['last_name']:
+            raise serializers.ValidationError("İsim ve soyisim aynı olamaz.")
+        return data
+
     def create(self, validated_data):
         username = validated_data['username']
         password = validated_data['password']
