@@ -21,13 +21,7 @@ async function login(username, password, code_2fa) {
                 code_2fa: code_2fa
             })
         });
-        if (response.ok) {
-            return response;
-        } else if (response.status === 401) {
-            showPopup('Şifreniz veya Kullanıcı adınız yanlış. Lütfen tekrar deneyin.');
-        } else if (response.status === 500) {
-            showPopup('Sunucu hatası. Lütfen daha sonra tekrar deneyin.');
-        }
+        return response;
     } catch (error) {
         console.error(error);
         showPopup('Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin.');
@@ -45,6 +39,7 @@ async function loginPage() {
         const password = document.getElementById('login-password').value;
         try {
             const response = await login(username, password, "");
+            console.log("BEN SENİN", response.status)
             if (response.status == 202) {
                 document.getElementById('overlay-login').style.display = 'block';
                 document.getElementById('qr-popup-login').style.display = 'block';
@@ -66,8 +61,8 @@ async function loginPage() {
                 window.history.pushState({}, "", '/');
             } else if (response.status === 500) {  // Sunucu hatası kontrolü eklendi
                 showPopup('Sunucu hatası. Lütfen daha sonra tekrar deneyin.');
-            } else {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+            } else if (response.status === 401){
+                showPopup('Şifreniz veya Kullanıcı adınız yanlış. Lütfen tekrar deneyin.');
             }
         } catch (error) {
             console.error(error);
