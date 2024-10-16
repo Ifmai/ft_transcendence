@@ -34,7 +34,7 @@ volumes:
       o: bind
       device: /root/lastdance/srcs/apigateway
 
-  tournament:
+  tournament_data:
     driver: local
     driver_opts:
       type: none
@@ -127,7 +127,7 @@ services:
     ports:
       - "8003:8003"
     volumes:
-      - tournament:/tournament-app
+      - tournament_data:/tournament-app
       - /root/lastdance/srcs/authService/uploads/:/tournament-app/uploads/
     networks:
       - lastdance

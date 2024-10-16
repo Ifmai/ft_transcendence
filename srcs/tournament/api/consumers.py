@@ -50,14 +50,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			tournament_dict[self.room_group_name]['matches'].append(match_info1)
 			match_info2 = await self.create_match(self.tournament, player3, player4)
 			tournament_dict[self.room_group_name]['matches'].append(match_info2)
-			print("kanak bu siktiğim kaç oldu amk : ", len(tournament_dict[self.room_group_name]['matches']))
 			self.change_tournament_state()
 			await self.tournament_dict()
 
 	async def start_point(self):
 		while True:
 			if self.tournament.status != StatusChoices.PENDING.value:
-				print("buraya girdim break attım bro")
 				break
 			if len(tournament_dict[self.room_group_name]['matches']) == 2:
 				for match in tournament_dict[self.room_group_name]['matches']:
