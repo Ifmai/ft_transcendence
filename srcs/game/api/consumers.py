@@ -69,6 +69,13 @@ class GameState:
 		ball['positionX'] += ball['velocityX']
 		ball['positionY'] += ball['velocityY']
 
+	async def update_ball_position_concurrently(self, width, height):
+		tasks = []
+		for ball_id in self.balls:
+			task = self.update_ball_position(ball_id)
+			tasks.append(task)
+		await asyncio.gather(*tasks)
+
 	async def check_paddle_collision(self, ball_id, game_id, width):
 		ball = self.balls[ball_id]
 		paddle = self.paddles[game_id]
@@ -100,6 +107,17 @@ class GameState:
 		if (self.ball['positionY'] + self.ball['radius'] > height or
 				self.ball['positionY'] - self.ball['radius'] <= 0):
 			self.ball['velocityY'] *= -1
+
+	async def check_collision_concurrently(self, width, height):
+		tasks = []
+		for game_id in self.paddles:
+			for ball_id in self.balls:
+				task = self.check_paddle_collision(ball_id, game_id, width)
+				tasks.append(task)
+				task = self.check_wall_collision(ball_id, height)
+				tasks.append(task)
+		await asyncio.gather(*tasks)
+
 
 	def get_match(self, match_id):
 		if not match_id:
@@ -359,14 +377,9 @@ class PongConsumer(AsyncWebsocketConsumer):
 		# Start the game loop
 		await self.send(text_data=json.dumps({"message": f"Game starting in room: {self.room_id}"})) # random message will be modified
 		while True:
-			tasks = []
+			await self.game_state.update_ball_position_concurrently(width, height)
 
-			for ball_id, game_id in zip(self.game_state.balls.keys(), self.game_state.paddles.keys()):
-				tasks.append(self.game_state.update_ball_position(ball_id))
-				tasks.append(self.game_state.check_wall_collision(ball_id, height))
-				tasks.append(self.game_state.check_paddle_collision(ball_id, game_id, width))
-
-			await asyncio.gather(*tasks)
+			await self.game_state.check_collision_concurrently(width, height)
 
 			# Update score need to be adjusted for 1vs1 and tournament logic
 			game_reset , match_end = await self.game_state.update_score(width, height, self.room_id)
