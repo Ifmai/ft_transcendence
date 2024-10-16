@@ -78,27 +78,27 @@ class GameState:
 
 	async def check_paddle_collision(self, ball_id, game_id, width):
 		ball = self.balls[ball_id]
-		paddle = self.paddles[game_id]
+		game_paddles = self.paddles[game_id]
 
-		for position, paddle in self.paddles.items():
+		for position, paddle in game_paddles.items():
 			paddle_x = 0 if position == 'left' else width - paddle['sizeX']
 			paddle_y = paddle['positionY']
 
 			paddle_center_x = paddle_x + (paddle['sizeX'] / 2)
 			paddle_center_y = paddle_y + (paddle['sizeY'] / 2)
 
-			dx = abs(self.ball['positionX'] - paddle_center_x)
-			dy = abs(self.ball['positionY'] - paddle_center_y)
+			dx = abs(ball['positionX'] - paddle_center_x)
+			dy = abs(ball['positionY'] - paddle_center_y)
 
 			half_paddle_width = paddle['sizeX'] / 2
 			half_paddle_height = paddle['sizeY'] / 2
 
-			if dx <= (self.ball['radius'] + half_paddle_width) and dy <= (self.ball['radius'] + half_paddle_height):
-				self.ball['velocityX'] *= -1
-				if self.ball['positionX'] < paddle_center_x:
-					self.ball['positionX'] = paddle_center_x - (self.ball['radius'] + half_paddle_width)
+			if dx <= (ball['radius'] + half_paddle_width) and dy <= (ball['radius'] + half_paddle_height):
+				ball['velocityX'] *= -1
+				if ball['positionX'] < paddle_center_x:
+					ball['positionX'] = paddle_center_x - (ball['radius'] + half_paddle_width)
 				else:
-					self.ball['positionX'] = paddle_center_x + (self.ball['radius'] + half_paddle_width)
+					ball['positionX'] = paddle_center_x + (ball['radius'] + half_paddle_width)
 			await asyncio.sleep(0)
 
 	async def check_wall_collision(self, ball_id, height):
@@ -183,40 +183,80 @@ class GameState:
 		self.paddles[game_id]['left']['positionY'] = height / 2 - self.paddles[game_id]['left']['sizeY'] / 2
 		self.paddles[game_id]['right']['positionY'] = height / 2 - self.paddles[game_id]['right']['sizeY'] / 2
 
-		rooms[room_id][game_id]['left']['info']['positionY'] = self.paddles[game_id]['left']['positionY']
-		rooms[room_id][game_id]['right']['info']['positionY'] = self.paddles[game_id]['right']['positionY']
+		rooms[room_id][f'game_{game_id}']['left']['info']['positionY'] = self.paddles[game_id]['left']['positionY']
+		rooms[room_id][f'game_{game_id}']['right']['info']['positionY'] = self.paddles[game_id]['right']['positionY']
 
 		await asyncio.sleep(1)
 
 	async def update_score(self, width, height, room_id):
 		game_reset = False
 		match_end = False
-		if self.paddles['left']['score'] != 3 and self.paddles['right']['score'] != 3:
-			if self.ball['positionX'] <= -self.ball['radius']:
-				self.paddles['right']['score'] += 1
-				rooms[room_id]['right']['info']['score'] += 1
-				await self.reset_game(width, height, room_id)
+		winners = []
+
+		async def process_game_score(game_id, paddles):
+			nonlocal game_reset, match_end
+
+			if paddles['left']['score'] != 3 and paddles['right']['score'] != 3:
+				# Ball has passed the left side -> Right player scores
+				if self.balls[f'ball_{game_id}']['positionX'] <= -self.balls[f'ball_{game_id}']['radius']:
+					paddles['right']['score'] += 1
+					rooms[room_id][game_id]['right']['info']['score'] += 1
+					await self.reset_game(width, height, room_id, game_id)
+					game_reset = True
+
+				# Ball has passed the right side -> Left player scores
+				elif self.balls[f'ball_{game_id}']['positionX'] >= self.balls[f'ball_{game_id}']['radius'] + width:
+					paddles['left']['score'] += 1
+					rooms[room_id][game_id]['left']['info']['score'] += 1
+					await self.reset_game(width, height, room_id, game_id)
+					game_reset = True
+			else:
+				await self.reset_game(width, height, room_id, game_id)
+				if paddles['left']['score'] == 3 or paddles['right']['score'] == 3:
+					result = await self.set_db_two_players(room_id, self.match_id)
+					await self.announce_winner(result, game_id)
+					if (self.capacity == 4):
+						winner_id = rooms[room_id][game_id]['left']['info']['user_id'] if paddles['left']['score'] == 3 else rooms[room_id][game_id]['right']['info']['user_id']
+						winners.append(winner_id)
+						if paddles['left']['score'] == 3:
+							rooms[room_id][game_id]['right']['info']['eliminated'] = True
+						else:
+							rooms[room_id][game_id]['left']['info']['eliminated'] = True
 				game_reset = True
-			elif self.ball['positionX'] >= self.ball['radius'] + width:
-				self.paddles['left']['score'] += 1
-				rooms[room_id]['left']['info']['score'] += 1
-				await self.reset_game(width, height, room_id)
-				game_reset = True
-		else:
-			"Temporary announce the winner"
-			await self.reset_game(width, height, room_id)
-			if self.paddles['left']['score'] == 3:
-				result = await self.set_db_two_players(room_id, self.match_id)
-				await self.announce_winner(result)
-			elif self.paddles['right']['score'] == 3:
-				result = await self.set_db_two_players(room_id, self.match_id)
-				await self.announce_winner(result)
-			game_reset = True
-			match_end = True
+				match_end = True
+
+		# Create tasks to update the score for all games concurrently
+		tasks = [process_game_score(game_id, paddles) for game_id, paddles in self.paddles.items()]
+
+		# Run all tasks concurrently
+		await asyncio.gather(*tasks)
+
+		if len(winners) == 2:
+			await self.start_final_match(winners)
 
 		return game_reset, match_end
 
-	async def announce_winner(self, result):
+	async def start_final_match(self, winners):
+		"""Start the final match between the two winners."""
+		rooms[self.room_id]['game_1']['left']['info']['user_id'] = winners[0]
+		rooms[self.room_id]['game_1']['right']['info']['user_id'] = winners[1]
+		rooms[self.room_id]['game_1']['left']['info']['score'] = 0
+		rooms[self.room_id]['game_1']['right']['info']['score'] = 0
+		rooms[self.room_id]['game_1']['left']['info']['eliminated'] = False
+		rooms[self.room_id]['game_1']['right']['info']['eliminated'] = False
+
+
+		await self.channel_layer.group_send(
+			self.room_id,
+			{
+				'type': 'pong_message',
+				'message': {'final_match': 'Starting final match!'}
+			}
+		)
+
+		await self.reset_game(self.width, self.height, self.room_id, 'game_1')
+
+	async def announce_winner(self, result, game_id):
 		"""Send the winner announcement to all players in the room."""
 		message = {
 			'type': 'pong.message',
@@ -381,7 +421,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 			await self.game_state.check_collision_concurrently(width, height)
 
-			# Update score need to be adjusted for 1vs1 and tournament logic
 			game_reset , match_end = await self.game_state.update_score(width, height, self.room_id)
 			await self.broadcast_ball_state()
 			await self.broadcast_score()
