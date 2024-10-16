@@ -13,6 +13,8 @@ const winners = {
 	final: null
 };
 
+let count_player = 0;
+
 function startTournament() {
 	winners.semifinal1 = Math.random() < 0.5 ? players[0] : players[1];
 	winners.semifinal2 = Math.random() < 0.5 ? players[2] : players[3];
@@ -45,19 +47,28 @@ async function initWebSocket_tournament() {
     }
 
     // buraya bir if koncak eğer olmauan bir tournament id girilip sayfa erişimi sağlanmaya çalışılırsa home page yönlendir veya turnuvaya yönlendir.
-    ws_tournament = new WebSocket(`wss://lastdance.com.tr/ws-match/matchmaking/4/${getCodeURL('tournament')}/?token=${getCookie('access_token')}`);
+    ws_tournament = new WebSocket(`wss://lastdance.com.tr/ws-tournament/${getCodeURL('tournament')}/?token=${getCookie('access_token')}`);
     ws_tournament.onopen = function(event) {
         console.log('WebSocket bağlantısı açıldı.');
+        ws_tournament.send(JSON.stringify({
+            'type': 'init',
+            'message': 'Padding Tournament'
+        }))
     };
 
     ws_tournament.onmessage = async function(event) {
         console.log("event data : ", event.data);
         const data = JSON.parse(event.data);
         console.log('gelend dataİ: ', data);
-        if(data['text'] == 'Creator of the tournament left'){
-            loadPage(selectPage('/'));
-            window.history.pushState({}, "", '/');
+        if(data['type' == 'joined']){
+            count_player += 1;
+            //isimleri yerleştir amk.
         }
+        else if(data['type'] == 'match'){
+            loadPage(selectPage('/pong-game'));
+            window.history.pushState({}, "", `/pong-game?room=${data['room_name']}&match=${data['match_id']}&tournament=${getCodeURL('tournament')}`);
+        }
+
     };
 
     ws_tournament.onclose = function(event) {

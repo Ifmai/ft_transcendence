@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['apigateway', 'userservice', 'chatservice', 'lastdance.com.tr']
 # Application definition
 
 INSTALLED_APPS = [
+	'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +41,6 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
 	'rest_framework_simplejwt',
-    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -78,6 +78,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'api.wsgi.application'
+ASGI_APPLICATION = "api.asgi.application"
+
+CHANNEL_LAYERS = {"default": {
+	"BACKEND": "channels.layers.InMemoryChannelLayer"
+}}
 
 
 # Database
