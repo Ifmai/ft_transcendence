@@ -15,8 +15,7 @@ PADDLE_TEMPLATE = {
 }
 
 class GameState:
-	def __init__(self, capacity, match_id, channel_layer, room_id):
-		self.capacity = capacity
+	def __init__(self, match_id, channel_layer, room_id):
 		self.match_id = match_id
 		self.channel_layer = channel_layer
 		self.room_id = room_id
@@ -206,9 +205,8 @@ class PongConsumer(AsyncWebsocketConsumer):
 		await self.accept()
 		try:
 			self.room_id = self.scope['url_route']['kwargs'].get('room_id')
-			self.capacity =  self.scope['url_route']['kwargs'].get('capacity')
 			self.match_id = self.scope['url_route']['kwargs'].get('match_id')
-			self.game_state = GameState(self.capacity, self.match_id, self.channel_layer, self.room_id)
+			self.game_state = GameState(self.match_id, self.channel_layer, self.room_id)
 			self.user = self.scope['user']
 		except KeyError as e:
 			print(f"Error getting scope: {e}")
@@ -236,17 +234,38 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def assign_paddle(self, player_db):
 		"""Assign a paddle to the player based on available slots."""
 		paddle_positions = ['left', 'right']
-		for position in paddle_positions:
-			if position not in rooms[self.room_id]:
-				rooms[self.room_id][position] = {
+		if (self.match_id is None):
+			for position in paddle_positions:
+				if position not in rooms[self.room_id]:
+					rooms[self.room_id][position] = {
+						'player': self.channel_name,
+						'user_id': self.user.id,
+						'info': PADDLE_TEMPLATE[position].copy(),
+						'alias': player_db.alias_name,
+						'avatar': player_db.photo.url
+					}
+					await self.send(str(paddle_positions.index(position) + 1))
+					break
+
+		elif (self.match_id):
+			if len(rooms[self.room_id]) == 0:
+				rooms[self.room_id]['left'] = {
 					'player': self.channel_name,
 					'user_id': self.user.id,
-					'info': PADDLE_TEMPLATE[position].copy(),
+					'info': PADDLE_TEMPLATE['left'].copy(),
 					'alias': player_db.alias_name,
 					'avatar': player_db.photo.url
 				}
-				await self.send(str(paddle_positions.index(position) + 1))
-				break
+			elif len(rooms[self.room_id]) == 1 and self.user.id != rooms[self.room_id]['left']['user_id']:
+						rooms[self.room_id]['right'] = {
+						'player': self.channel_name,
+						'user_id': self.user.id,
+						'info': PADDLE_TEMPLATE['right'].copy(),
+						'alias': player_db.alias_name,
+						'avatar': player_db.photo.url
+					}
+			# await self.send(str(paddle_positions.index(position) + 1))
+
 
 	async def send_initial_state(self):
 		# Send initial game state to the clients
@@ -331,7 +350,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.game_state.paddles = self.game_state._initialize_paddles(self.width, self.height)
 			await self.send_initial_state()
 
-			if len(rooms[self.room_id]) == self.game_state.capacity:
+			if len(rooms[self.room_id]) == 2:
 				asyncio.create_task(self.start_game(self.height, self.width))
 
 		elif data['type'] == 'keyPress':
