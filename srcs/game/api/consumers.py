@@ -24,9 +24,13 @@ class GameState:
 		self.ball = None
 
 	def _initialize_paddles(self, width, height):
+		PADDLE_TEMPLATE['left']['positionY'] = height / 2 - 75
+		PADDLE_TEMPLATE['left']['score'] = 0
+		PADDLE_TEMPLATE['right']['positionY'] = height / 2 - 75
+		PADDLE_TEMPLATE['right']['score'] = 0
 		paddles = {
-			'left' : rooms[self.room_id]['left']['info'],
-			'right': rooms[self.room_id]['right']['info']
+			'left' : PADDLE_TEMPLATE['left'],
+			'right': PADDLE_TEMPLATE['right']
 		}
 		return paddles
 
@@ -38,6 +42,9 @@ class GameState:
 			'velocityY': 10,
 			'radius': 20
 		}
+	async def reset_scores(self, room_id):
+		PADDLE_TEMPLATE['left']['score'] = 0
+		PADDLE_TEMPLATE['right']['score'] = 0
 
 	def update_ball_position(self):
 		# Update the ball's position
@@ -157,9 +164,11 @@ class GameState:
 			await self.reset_game(width, height, room_id)
 			if self.paddles['left']['score'] == 3:
 				result = await self.set_db_two_players(room_id, self.match_id)
+				await self.reset_scores(room_id)
 				await self.announce_winner(result)
 			elif self.paddles['right']['score'] == 3:
 				result = await self.set_db_two_players(room_id, self.match_id)
+				await self.reset_scores(room_id)
 				await self.announce_winner(result)
 			game_reset = True
 			match_end = True
@@ -227,7 +236,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def assign_paddle(self, player_db):
 		"""Assign a paddle to the player based on available slots."""
 		paddle_positions = ['left', 'right']
-		for position in paddle_positions[:self.capacity]:
+		for position in paddle_positions:
 			if position not in rooms[self.room_id]:
 				rooms[self.room_id][position] = {
 					'player': self.channel_name,
@@ -278,6 +287,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 	async def disconnect(self, close_code):
 		if self.room_id in rooms:
+			await self.game_state.reset_scores(self.room_id)
 			for position in rooms[self.room_id]:
 				if (rooms[self.room_id][position]['player'] == self.channel_name):
 					rooms[self.room_id].pop(position)
