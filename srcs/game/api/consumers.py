@@ -12,8 +12,6 @@ rooms = dict()
 PADDLE_TEMPLATE = {
 	'left': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 20, 'sizeY': 150, 'eliminated': False, 'score': 0},
 	'right': {'velocity': 20, 'positionX': 0, 'positionY': 0, 'sizeX': 20, 'sizeY': 150, 'eliminated': False, 'score': 0},
-	'up': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False, 'score': 0},
-	'down': {'velocity': 15, 'positionX': 0, 'positionY': 0, 'sizeX': 200, 'sizeY': 40, 'eliminated': False, 'score': 0}
 }
 
 class GameState:
@@ -26,23 +24,10 @@ class GameState:
 		self.ball = None
 
 	def _initialize_paddles(self, width, height):
-		PADDLE_TEMPLATE['left']['positionY'] = height / 2 - 75
-		PADDLE_TEMPLATE['left']['score'] = 0
-		PADDLE_TEMPLATE['right']['positionY'] = height / 2 - 75
-		PADDLE_TEMPLATE['right']['score'] = 0
-		PADDLE_TEMPLATE['up']['positionX'] = height / 2 - 50
-		PADDLE_TEMPLATE['up']['score'] = 0
-		PADDLE_TEMPLATE['down']['positionX'] = height / 2 - 50
-		PADDLE_TEMPLATE['down']['score'] = 0
 		paddles = {
-			'left' : PADDLE_TEMPLATE['left'],
-			'right': PADDLE_TEMPLATE['right']
+			'left' : rooms[self.room_id]['left']['info'],
+			'right': rooms[self.room_id]['right']['info']
 		}
-		if self.capacity == 4:
-			paddles.update({
-				'up': PADDLE_TEMPLATE['up'],
-				'down': PADDLE_TEMPLATE['down']
-			})
 		return paddles
 
 	def _initialize_ball(self, width, height):
@@ -153,12 +138,6 @@ class GameState:
 
 		time.sleep(1)
 
-	async def reset_scores(self, room_id):
-		PADDLE_TEMPLATE['left']['score'] = 0
-		PADDLE_TEMPLATE['right']['score'] = 0
-		PADDLE_TEMPLATE['up']['score'] = 0
-		PADDLE_TEMPLATE['down']['score'] = 0
-
 	async def update_score(self, width, height, room_id):
 		game_reset = False
 		match_end = False
@@ -178,15 +157,13 @@ class GameState:
 			await self.reset_game(width, height, room_id)
 			if self.paddles['left']['score'] == 3:
 				result = await self.set_db_two_players(room_id, self.match_id)
-				await self.reset_scores(room_id)
 				await self.announce_winner(result)
 			elif self.paddles['right']['score'] == 3:
 				result = await self.set_db_two_players(room_id, self.match_id)
-				await self.reset_scores(room_id)
 				await self.announce_winner(result)
 			game_reset = True
 			match_end = True
-		
+
 		return game_reset, match_end
 
 	async def announce_winner(self, result):
@@ -249,7 +226,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 	async def assign_paddle(self, player_db):
 		"""Assign a paddle to the player based on available slots."""
-		paddle_positions = ['left', 'right', 'up', 'down']
+		paddle_positions = ['left', 'right']
 		for position in paddle_positions[:self.capacity]:
 			if position not in rooms[self.room_id]:
 				rooms[self.room_id][position] = {
@@ -301,7 +278,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 	async def disconnect(self, close_code):
 		if self.room_id in rooms:
-			await self.game_state.reset_scores(self.room_id);
 			for position in rooms[self.room_id]:
 				if (rooms[self.room_id][position]['player'] == self.channel_name):
 					rooms[self.room_id].pop(position)
