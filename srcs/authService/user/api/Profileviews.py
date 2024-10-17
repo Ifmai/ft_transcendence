@@ -17,12 +17,20 @@ class ProfilViewList(
 	permission_classes = [IsAuthenticated, SelfProfilOrReadOnly]
 
 	def get_queryset(self):
-		return Profil.objects.filter(user=self.request.user)
+			username = self.kwargs.get('username', None)  # URL'den username'i alıyoruz
+			print(f"Username from kwargs: {username}")
+			if username:
+				return Profil.objects.filter(user__username=username)
+			return Profil.objects.filter(user=self.request.user)
 
 	def get_serializer_class(self):
 		if self.request.method in ['PUT', 'PATCH']:
-			return ProfileUpdateSerializer  # PUT/PATCH isteği için farklı bir serializer
-		return ProfilSerializer  # Diğer durumlar için varsayılan serializer
+			profil = self.get_object()
+			if profil.user == self.request.user:
+				return ProfileUpdateSerializer
+			else:
+				raise PermissionDenied("Sadece kendi profilinizi düzenleyebilirsiniz.")
+		return ProfilSerializer
 
 class ProfilCommentViewList(ModelViewSet):
 	serializer_class = ProfileCommentSerializer

@@ -29,7 +29,13 @@ async function action_2fca(action) {
 
 async function getProfile() {
 	try {
-		const response = await fetch('/api/users/user_profil/', {
+		const username = getCodeURL('user');
+		let url;
+		if (username)
+			url = `/api/users/user_profil/${username}`
+		else
+			url = `/api/users/user_profil/`
+		const response = await fetch(url, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',

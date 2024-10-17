@@ -10,6 +10,7 @@ router.register(r'user_profil', ProfilViewList, basename='profil_content')
 router.register(r'user_commend', ProfilCommentViewList, basename='comment')
 
 urlpatterns = [
+	path('user_profil/<str:username>/', ProfilViewList.as_view({'get': 'list'}), name='profil_content'),
     path('register/', UserCreateView.as_view(), name='register'),
 	path('login42/<str:code>/', UserIntraLoginView.as_view(), name='login42'),
 	path('logout/', UserLogoutView.as_view(), name='logout'),
