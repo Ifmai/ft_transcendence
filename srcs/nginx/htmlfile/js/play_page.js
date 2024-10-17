@@ -46,7 +46,7 @@ async function playerPage() {
         initWebSocket_one_pvp_one();
         document.getElementById('matchPopup').style.display = 'flex';
     });
-    
+
     document.getElementById('cancelBtn').addEventListener('click', function() {
         closeWebSocket_one_pvp_one();
         document.getElementById('matchPopup').style.display = 'none';

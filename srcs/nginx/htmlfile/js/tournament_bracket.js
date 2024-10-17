@@ -52,7 +52,7 @@ async function initWebSocket_tournament() {
         console.log('WebSocket bağlantısı açıldı.');
         ws_tournament.send(JSON.stringify({
             'type': 'init',
-            'message': 'Padding Tournament'
+            'message': 'Pending Tournament'
         }))
     };
 
@@ -62,11 +62,11 @@ async function initWebSocket_tournament() {
         console.log('gelend dataİ: ', data);
         if(data['type' == 'joined']){
             count_player += 1;
-            //isimleri yerleştir amk.
+            //isimleri yerleştir.
         }
         else if(data['type'] == 'match'){
             loadPage(selectPage('/pong-game'));
-            window.history.pushState({}, "", `/pong-game?room=${data['room_name']}&match=${data['match_id']}&tournament=${getCodeURL('tournament')}`);
+            window.history.pushState({}, "", `/pong-game?room_id=${data['match_id']}&match=${data['match_id']}&tournament=${getCodeURL('tournament')}`);
         }
 
     };

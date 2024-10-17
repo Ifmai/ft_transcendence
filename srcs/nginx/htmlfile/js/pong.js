@@ -11,11 +11,12 @@ async function pongPage() {
 	const tournament = getCodeURL('tournament');
 	let wsUrl;
 	if(match_id){
-		wsUrl = `wss://lastdance.com.tr/ws-pong/pong/${room_id}/4/${match_id}/?token=${getCookie('access_token')}`;
+		wsUrl = `wss://lastdance.com.tr/ws-pong/pong/${room_id}/${match_id}/?token=${getCookie('access_token')}`;
 	}
 	else{
-		wsUrl = `wss://lastdance.com.tr/ws-pong/pong/${room_id}/2/?token=${getCookie('access_token')}`;
+		wsUrl = `wss://lastdance.com.tr/ws-pong/pong/${room_id}/?token=${getCookie('access_token')}`;
 	}
+	console.log("wsUrl: ", wsUrl)
 	const socket = new WebSocket(wsUrl);
 
 
