@@ -206,6 +206,8 @@ class PongConsumer(AsyncWebsocketConsumer):
 		try:
 			self.room_id = self.scope['url_route']['kwargs'].get('room_id')
 			self.match_id = self.scope['url_route']['kwargs'].get('match_id')
+			print("room id : ", self.room_id)
+			print("match id : ", self.match_id)
 			self.game_state = GameState(self.match_id, self.channel_layer, self.room_id)
 			self.user = self.scope['user']
 		except KeyError as e:
@@ -218,6 +220,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 			except Profil.DoesNotExist:
 				print("User not found")
 
+		self.room_group_name = 'pong_room' + str(self.match_id)
 		await self.channel_layer.group_add(
 			self.room_id,
 			self.channel_name

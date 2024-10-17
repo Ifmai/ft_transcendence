@@ -66,7 +66,7 @@ async function initWebSocket_tournament() {
         }
         else if(data['type'] == 'match'){
             loadPage(selectPage('/pong-game'));
-            window.history.pushState({}, "", `/pong-game?room_id=${data['match_id']}&match=${data['match_id']}&tournament=${getCodeURL('tournament')}`);
+            window.history.pushState({}, "", `/pong-game?room=${data['match_id']}&match=${data['match_id']}&tournament=${getCodeURL('tournament')}`);
         }
 
     };
