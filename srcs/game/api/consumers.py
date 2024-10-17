@@ -104,9 +104,9 @@ class GameState:
 	async def check_wall_collision(self, ball_id, height):
 		# Handle ball collision with walls logic
 		ball = self.balls[ball_id]
-		if (self.ball['positionY'] + self.ball['radius'] > height or
-				self.ball['positionY'] - self.ball['radius'] <= 0):
-			self.ball['velocityY'] *= -1
+		if (ball['positionY'] + ball['radius'] > height or
+				ball['positionY'] - ball['radius'] <= 0):
+			ball['velocityY'] *= -1
 
 	async def check_collision_concurrently(self, width, height):
 		tasks = []
@@ -187,29 +187,37 @@ class GameState:
 		rooms[room_id][f'game_{game_id}']['right']['info']['positionY'] = self.paddles[game_id]['right']['positionY']
 
 		await asyncio.sleep(1)
+		await self.channel_layer.group_send(
+			room_id,
+			{
+				'type': 'pong_message',
+				'message': {
+					'reset': True,
+					'paddles': {
+						'left' : self.paddles[game_id]['left'],
+						'right' : self.paddles[game_id]['right'],
+						}
+					}
+			}
+		)
 
 	async def update_score(self, width, height, room_id):
-		game_reset = False
 		match_end = False
 		winners = []
 
 		async def process_game_score(game_id, paddles):
-			nonlocal game_reset, match_end
-
 			if paddles['left']['score'] != 3 and paddles['right']['score'] != 3:
 				# Ball has passed the left side -> Right player scores
 				if self.balls[f'ball_{game_id}']['positionX'] <= -self.balls[f'ball_{game_id}']['radius']:
 					paddles['right']['score'] += 1
 					rooms[room_id][game_id]['right']['info']['score'] += 1
 					await self.reset_game(width, height, room_id, game_id)
-					game_reset = True
 
 				# Ball has passed the right side -> Left player scores
 				elif self.balls[f'ball_{game_id}']['positionX'] >= self.balls[f'ball_{game_id}']['radius'] + width:
 					paddles['left']['score'] += 1
 					rooms[room_id][game_id]['left']['info']['score'] += 1
 					await self.reset_game(width, height, room_id, game_id)
-					game_reset = True
 			else:
 				await self.reset_game(width, height, room_id, game_id)
 				if paddles['left']['score'] == 3 or paddles['right']['score'] == 3:
@@ -222,8 +230,8 @@ class GameState:
 							rooms[room_id][game_id]['right']['info']['eliminated'] = True
 						else:
 							rooms[room_id][game_id]['left']['info']['eliminated'] = True
-				game_reset = True
-				match_end = True
+					elif (self.capacity == 2):
+						match_end = True
 
 		# Create tasks to update the score for all games concurrently
 		tasks = [process_game_score(game_id, paddles) for game_id, paddles in self.paddles.items()]
@@ -233,8 +241,7 @@ class GameState:
 
 		if len(winners) == 2:
 			await self.start_final_match(winners)
-
-		return game_reset, match_end
+		return match_end
 
 	async def start_final_match(self, winners):
 		"""Start the final match between the two winners."""
@@ -258,15 +265,11 @@ class GameState:
 
 	async def announce_winner(self, result, game_id):
 		"""Send the winner announcement to all players in the room."""
-		message = {
-			'type': 'pong.message',
-			'message': result
-		}
 		await self.channel_layer.group_send(
 			self.room_id,
 			{
 				'type': 'pong_message',
-				'message': {'won': message}
+				'message': {'winner': result, 'game_id': game_id}
 			}
 		)
 	async def announce_game_finish(self):
@@ -363,20 +366,20 @@ class PongConsumer(AsyncWebsocketConsumer):
 		# Send initial game state to the clients
 		await self.send(text_data=json.dumps({"message": f"{self.game_state.__dict__}", "type": "initialize"}))
 
-	async def broadcast_paddle_state(self,position):
+	async def broadcast_paddle_state(self,position, game_id):
 		"""Broadcast the game state to all players in the room."""
-		paddle_state = {position: self.game_state.paddles[position]}
+		paddle_state = {position: self.game_state.paddles[game_id][position]}
 		await self.channel_layer.group_send(
 			self.room_id,
 			{
 				'type': 'pong_message',
-				'message': {'paddles': paddle_state}
+				'message': {f'paddles{game_id}': paddle_state}
 			}
 		)
 
-	async def broadcast_ball_state(self):
+	async def broadcast_ball_state(self, ball_id):
 		"""Broadcast the current ball state to all players in the room."""
-		ball_state = self.game_state.balls
+		ball_state = self.game_state.balls[ball_id]
 		await self.channel_layer.group_send(
 			self.room_id,
 			{
@@ -384,17 +387,39 @@ class PongConsumer(AsyncWebsocketConsumer):
 				'message': {'ball': ball_state}
 			}
 		)
+	async def broadcast_ball_state_concurrently(self):
+		tasks = []
+		for ball_id in self.balls:
+			task = self.broadcast_ball_state(ball_id)
+			tasks.append(task)
+		await asyncio.gather(*tasks)
 
 	async def broadcast_score(self):
-		"""Broadcast the current score to all players in the room."""
-		scores = {position: rooms[self.room_id][position]['info']['score'] for position in rooms[self.room_id]}
+		# Prepare the score data to be broadcasted
+		scores = {}
+
+		for game_id, paddles in self.game_state.paddles.items():
+			scores[game_id] = {
+				'left': {
+					'user_id': rooms[self.room_id][f'game_{game_id}']['left']['info']['user_id'],
+					'score': paddles['left']['score']
+				},
+				'right': {
+					'user_id': rooms[self.room_id][f'game_{game_id}']['right']['info']['user_id'],
+					'score': paddles['right']['score']
+				}
+			}
+
 		await self.channel_layer.group_send(
-		self.room_id,
-		{
-			'type': 'pong_message',
-			'message': {'scores': scores}
-		}
-	)
+			self.room_id,
+			{
+				'type': 'pong_message',
+				'message': {
+					'type': 'score_update',
+					'scores': scores
+				}
+			}
+		)
 
 	async def disconnect(self, close_code):
 		if self.room_id in rooms:
@@ -421,12 +446,11 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 			await self.game_state.check_collision_concurrently(width, height)
 
-			game_reset , match_end = await self.game_state.update_score(width, height, self.room_id)
-			await self.broadcast_ball_state()
+			match_end = await self.game_state.update_score(width, height, self.room_id)
+
+			await self.broadcast_ball_state_concurrently()
 			await self.broadcast_score()
-			if (game_reset):
-				await self.broadcast_paddle_state('left')
-				await self.broadcast_paddle_state('right')
+
 			if match_end:
 				self.game_state.announce_game_finish()
 				break
