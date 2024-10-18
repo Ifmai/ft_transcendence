@@ -42,6 +42,7 @@ async function pongPage() {
 		const gameState = JSON.parse(event.data);
 		if (gameState['type'] == 'initialize')
 		{
+			console.log("gamestate: ", gameState);
 			updateGameState(gameState);
 		}
 		if (gameState['paddles']) {
@@ -54,6 +55,7 @@ async function pongPage() {
 		}
 		if (gameState['scores']) {
 			updateScoreDisplay(gameState['scores']);
+			console.log("Score kanka : ", gameState['scores']);
 		}
 		if (gameState['end']){
 			console.log("gameState: ", gameState)

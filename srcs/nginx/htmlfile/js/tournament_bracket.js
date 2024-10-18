@@ -32,7 +32,7 @@ async function tour_bracketPage() {
 	//updatePlayerUI();
     tournamnet_id = getCodeURL('tournament');
 	await initWebSocket_tournament();
-    cleanupFunctions.push(() => closeWebSocket_tournament(tournamnet_id));
+    //cleanupFunctions.push(() => closeWebSocket_tournament(tournamnet_id));
 }
 
 async function initWebSocket_tournament() {
