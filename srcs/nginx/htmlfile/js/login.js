@@ -1,6 +1,10 @@
-function showPopup(message) {
+function showPopup(message, success = false) {
     const popup = document.getElementById('popup-message');
     popup.textContent = message;
+
+    // Başarılı ise yeşil renk, hata ise kırmızı renk
+    popup.style.backgroundColor = success ? 'rgba(72, 187, 120, 0.9)' : 'rgba(220, 38, 38, 0.9)';
+
     popup.style.display = 'block';
 
     setTimeout(() => {
@@ -62,6 +66,7 @@ async function loginPage() {
                 });
 
             } else if (response.status == 200) {
+                showPopup('Başarılı giriş yapıldı!', true); // Burada yeşil pop-up
                 loadPage(selectPage('/'));
                 window.history.pushState({}, "", '/');
             } else if (response.status === 500) {  // Sunucu hatası kontrolü eklendi
