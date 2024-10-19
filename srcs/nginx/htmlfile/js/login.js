@@ -1,11 +1,15 @@
-function showPopup(message) {
+function showPopup(message, success = false) {
     const popup = document.getElementById('popup-message');
     popup.textContent = message;
+
+    // Başarılı ise yeşil renk, hata ise kırmızı renk
+    popup.style.backgroundColor = success ? 'rgba(72, 187, 120, 0.9)' : 'rgba(220, 38, 38, 0.9)';
+
     popup.style.display = 'block';
 
     setTimeout(() => {
         popup.style.display = 'none';
-    }, 4000);
+    }, 1000);
 }
 
 async function login(username, password, code_2fa) {
@@ -24,7 +28,7 @@ async function login(username, password, code_2fa) {
         return response;
     } catch (error) {
         console.error(error);
-        showPopup('Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin.');
+        showPopup('Connection error. Please check your internet connection.');
     }
 }
 
@@ -39,7 +43,7 @@ async function loginPage() {
         const password = document.getElementById('login-password').value;
         try {
             const response = await login(username, password, "");
-            console.log("BEN SENİN", response.status)
+            //console.log("BEN SENİN", response.status)
             if (response.status == 202) {
                 document.getElementById('overlay-login').style.display = 'block';
                 document.getElementById('qr-popup-login').style.display = 'block';
@@ -57,16 +61,20 @@ async function loginPage() {
                 });
 
             } else if (response.status == 200) {
-                loadPage(selectPage('/'));
-                window.history.pushState({}, "", '/');
+                showPopup('Login successful!', true); // Burada yeşil pop-up
+                setTimeout(() => {
+                    loadPage(selectPage('/'));
+                    window.history.pushState({}, "", '/');
+                }, 1000);  // 4000ms = 4 saniye
             } else if (response.status === 500) {  // Sunucu hatası kontrolü eklendi
-                showPopup('Sunucu hatası. Lütfen daha sonra tekrar deneyin.');
+                showPopup('Server error. Please try again later.');
             } else if (response.status === 401){
-                showPopup('Şifreniz veya Kullanıcı adınız yanlış. Lütfen tekrar deneyin.');
+                console.log("HA BURADA");
+                showPopup('Incorrect username or password. Please try again.');
             }
         } catch (error) {
             console.error(error);
-            showPopup('Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin.');
+            showPopup('Connection error. Please check your internet connection.');
         }
     });
 
@@ -99,7 +107,7 @@ async function intralogin() {
         }
     } catch (error) {
         console.error(error);
-        showPopup('Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin.');
+        showPopup('Connection error. Please check your internet connection.');
     }
 }
 

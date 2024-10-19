@@ -1,4 +1,3 @@
-
 async function registerPage(){
     const registerBtn = document.getElementById('registerBtn');
     registerBtn.addEventListener('click', async function(event) {
@@ -10,7 +9,7 @@ async function registerPage(){
         const pass2 = document.getElementById('register-confirm-password').value;
 
         if(pass1 !== pass2)
-            alert("Şifreler aynı değil.");
+             showPopup('Passwords do not match');
         else{
             try {
                 const response = await fetch('https://lastdance.com.tr/api/users/register/', {
@@ -30,7 +29,10 @@ async function registerPage(){
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }else
-                    loadPage(selectPage('/'));
+                    showPopup('Registration successful!', true);
+                    setTimeout(()=>{
+                        loadPage(selectPage('/'));
+                    }, 1000);
             } catch (error) {
                 console.error('Error:', error);
             }

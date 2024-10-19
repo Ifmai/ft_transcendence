@@ -198,17 +198,6 @@
 	opacity: 0.1;
 }
 
-.idx-ping-pong-net {
-	position: fixed;
-	top: 0;
-	left: 50%;
-	width: 1px;
-	height: 100%;
-	background-color: #3182ce;
-	opacity: 0.2;
-	box-shadow: 0 0 10px #3182ce;
-}
-
 .idx-ping-pong-ball {
 	position: fixed;
 	width: 1rem;
