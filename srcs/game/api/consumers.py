@@ -375,9 +375,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		data = json.loads(text_data)
 		if data['type'] == 'initialize':
-			# self.width = data['width']
-			# self.height = data['height']
-			# self.game_state.ball = Ball(self.width, self.height)
 			if len(rooms[self.room_id]) != 2:
 				await self.send(text_data=json.dumps({
 					"type" : "initialize",
