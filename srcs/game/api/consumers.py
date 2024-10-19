@@ -135,7 +135,7 @@ class GameState:
 			player_id=player_left_db.id
 			)
 			player_match_left.score = player_left['info']['score']
-			player_match_left.won = player_left['info']['score'] == 1
+			player_match_left.won = player_left['info']['score'] == 3
 			player_match_left.save()
 
 			player_match_right, _ = PlayerMatch.objects.get_or_create(
@@ -143,10 +143,10 @@ class GameState:
 			player_id=player_right_db.id
 			)
 			player_match_right.score = player_right['info']['score']
-			player_match_right.won = player_right['info']['score'] == 1
+			player_match_right.won = player_right['info']['score'] == 3
 			player_match_right.save()
 
-			if player_left['info']['score'] == 1:
+			if player_left['info']['score'] == 3:
 				player_left_db.wins += 1
 				player_right_db.losses += 1
 				winner = player_left_db.user.username
@@ -178,8 +178,8 @@ class GameState:
 	async def update_score(self, width, room_id):
 		game_reset = False
 		match_end = False
-		if self.paddles['right'].score < 1 and self.paddles['left'].score < 1:
-			if self.ball.positionX <= -self.ball.radius:
+		if self.paddles['right'].score < 3 and self.paddles['left'].score < 3:
+			if self.ball.positionX <= -self.ball.radius: # Task 2 socket tarafından bağlandığı için aynı anda artırıyor sadce golu atan socket arttırsın aynı şekilde ball da
 				self.paddles['right'].score += 1
 				print("RIGHT ROOM CHECK:", rooms[room_id]['right']['info'].__dict__)
 				await self.reset_game()
@@ -192,10 +192,10 @@ class GameState:
 		else:
 			"Temporary announce the winner"
 			await self.reset_game()
-			if self.paddles['left'].score == 1:
+			if self.paddles['left'].score == 3:
 				result = await self.set_db_two_players(room_id, self.match_id)
 				await self.announce_winner(result)
-			elif self.paddles['right'].score == 1:
+			elif self.paddles['right'].score == 3:
 				result = await self.set_db_two_players(room_id, self.match_id)
 				await self.announce_winner(result)
 			game_reset = True
@@ -259,8 +259,10 @@ class PongConsumer(AsyncWebsocketConsumer):
 			rooms[self.room_id] = {}
 
 		await self.assign_paddle(player_db)
-
-		# await self.send_initial_state()
+		if self.game_state.paddles['left']:
+			rooms[self.room_id]['left']['info'] = self.game_state.paddles['left']
+		elif self.game_state.paddles['right']:
+			rooms[self.room_id]['right']['info'] = self.game_state.paddles['right']
 
 
 	async def assign_paddle(self, player_db):
@@ -353,6 +355,8 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 	async def start_game(self, height, width):
 		# Start the game loop
+		self.game_state.paddles['left'] = rooms[self.room_id]['left']['info']
+		self.game_state.paddles['right'] = rooms[self.room_id]['right']['info']
 		await self.send(text_data=json.dumps({"message": f"Game starting in room: {self.room_id}"})) # random message will be modified
 		while True:
 			self.game_state.ball.updatePosition()
@@ -377,10 +381,10 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.width = data['width']
 			self.height = data['height']
 			self.game_state.ball = Ball(self.width, self.height)
-			self.game_state.paddles = {
-				'left': Paddle(self.width, self.height, 'left'),
-				'right': Paddle(self.width, self.height, 'right')
-				}
+			self.game_state.paddles['left'].game_height = self.height
+			self.game_state.paddles['left'].game_width = self.width
+			self.game_state.paddles['right'].game_width = self.width
+			self.game_state.paddles['right'].game_height = self.height
 			await self.send_initial_state()
 
 			if len(rooms[self.room_id]) == 2:
