@@ -1,11 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+:root {
+    --neon-blue: #4df3ff;
+    --neon-orange: #ff6b1a;
+    --dark-bg: #0c141f;
+}
 #idx-body {
-	font-family: Arial, sans-serif;
-	background-color: #1a202c;
-	color: #63b3ed;
-	margin: 0;
-	padding: 0;
-	min-height: 100vh;
-	overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    font-family: 'Orbitron', sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--neon-blue);
+    min-height: 100vh;
+    overflow-x: hidden;
+
 }
 
 .idx-container {
