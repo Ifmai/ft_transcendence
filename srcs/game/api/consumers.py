@@ -60,11 +60,12 @@ class Ball():
 
 
 class GameState:
-	def __init__(self, match_id, channel_layer, room_id, side):
+	def __init__(self, match_id, channel_layer, room_id, side, user_name):
 		self.match_id = match_id
 		self.channel_layer = channel_layer
 		self.room_id = room_id
 		self.side = side
+		self.user_name = user_name # Debug amaçlı eklendi
 		self.paddles = {
 				'left': Paddle(1200, 800, 'left'),
 				'right': Paddle(1200, 800, 'right')
@@ -127,37 +128,26 @@ class GameState:
 		player_left = rooms[self.room_id]['left']
 		player_right = rooms[self.room_id]['right']
 
-		print("Self side brom : ", self.side)
-		print('Settings : ', player_left)
-		print('Settings : ', player_right)
 		try:
 			match = self.get_match(match_id)
 			player_left_db = Profil.objects.get(id=player_left['user_id'])
-			print("player left _ db : ", player_left_db)
 			player_right_db = Profil.objects.get(id=player_right['user_id'])
-			print("player right _ db : ", player_right_db)
 
 
-			print("başlangıç -2")
 			player_match_left, _ = PlayerMatch.objects.get_or_create(
 			match_id=match.id,
 			player_id=player_left_db.id
 			)
-			print("-1")
 			player_match_left.score = player_left['info'].score
-			print("0")
 			player_match_left.won = player_left['info'].score == 3
 			player_match_left.save()
-			print("1")
 			player_match_right, _ = PlayerMatch.objects.get_or_create(
 			match_id=match.id,
 			player_id=player_right_db.id
 			)
-			print("2")
 			player_match_right.score = player_right['info'].score
 			player_match_right.won = player_right['info'].score == 3
 			player_match_right.save()
-			print("3")
 			if player_left['info'].score == 3:
 				player_left_db.wins += 1
 				player_right_db.losses += 1
@@ -206,11 +196,9 @@ class GameState:
 			await self.reset_game()
 			if rooms[self.room_id]['left']['info'].score == 3 and self.side == 'left':
 				result = await self.set_db_two_players(room_id, self.match_id)
-				print("Left ROOM CHECK:", rooms[room_id]['left']['info'].__dict__)
 				await self.announce_winner(result)
 			elif rooms[self.room_id]['right']['info'].score == 3 and self.side == 'right':
 				result = await self.set_db_two_players(room_id, self.match_id)
-				print("RIGHT ROOM CHECK:", rooms[room_id]['right']['info'].__dict__)
 				await self.announce_winner(result)
 			game_reset = True
 			match_end = True
@@ -251,8 +239,8 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.room_id = self.scope['url_route']['kwargs'].get('room_id')
 			self.match_id = self.scope['url_route']['kwargs'].get('match_id')
 			self.side = ''
-			self.game_state = GameState(self.match_id, self.channel_layer, self.room_id, self.side)
 			self.user = self.scope['user']
+			self.game_state = GameState(self.match_id, self.channel_layer, self.room_id, self.side, self.user.username)
 		except KeyError as e:
 			print(f"Error getting scope: {e}")
 
@@ -348,7 +336,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 	)
 
 	async def disconnect(self, close_code):
-		print("Disconnect self user : ", self.user)
 		if self.room_id in rooms:
 			for position in rooms[self.room_id]:
 				if (rooms[self.room_id][position]['player'] == self.channel_name):
@@ -388,24 +375,31 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		data = json.loads(text_data)
 		if data['type'] == 'initialize':
+			# self.width = data['width']
+			# self.height = data['height']
+			# self.game_state.ball = Ball(self.width, self.height)
+			if len(rooms[self.room_id]) != 2:
+				await self.send(text_data=json.dumps({
+					"type" : "initialize",
+					"message" : 'len 1'
+				}))
+			elif len(rooms[self.room_id]) == 2:
+				await self.send(text_data=json.dumps({
+					"type" : "initialize",
+					"message" : 'len 2'
+				}))
+		if data['type'] == 'start':
 			self.width = data['width']
 			self.height = data['height']
 			self.game_state.ball = Ball(self.width, self.height)
 			await self.send_initial_state()
-
-			if len(rooms[self.room_id]) == 2:
-				asyncio.create_task(self.start_game(self.height, self.width))
+			asyncio.create_task(self.start_game(self.height, self.width))
 
 		elif data['type'] == 'keyPress':
 			await self.handle_key_press(data)
 
 	async def handle_key_press(self, data):
 		"""Handle paddle movement based on key presses."""
-		paddles = {
-			'left' : rooms[self.room_id]['left']['info'],
-			'right' : rooms[self.room_id]['right']['info']
-		}
-
 		 # Handle paddle movement based on key presses
 		for position, paddle_data in rooms[self.room_id].items():
 			if paddle_data['player'] == self.channel_name:

@@ -33,8 +33,6 @@ async function pongPage() {
 		console.log('WebSocket connection opened:', event);
 		socket.send(JSON.stringify({
 			type: 'initialize',
-			width: canvas.width,
-			height: canvas.height,
 		}));
 	};
 
@@ -55,7 +53,6 @@ async function pongPage() {
 		}
 		if (gameState['scores']) {
 			updateScoreDisplay(gameState['scores']);
-			console.log("Score kanka : ", gameState['scores']);
 		}
 		if (gameState['end']){
 			console.log("gameState: ", gameState)
@@ -64,6 +61,21 @@ async function pongPage() {
 			if(!getCodeURL('tournament')){
 				loadPage(selectPage('/play'));
 				window.history.pushState({}, "", '/play');
+			}
+		}
+		if (gameState['type'] == 'initialize'){
+			console.log("GameState : ", gameState);
+			if(gameState['message'] == 'len 1'){
+				socket.send(JSON.stringify({
+					type: 'initialize',
+				}));
+			}
+			else if(gameState['message'] == 'len 2'){
+				socket.send(JSON.stringify({
+					type: 'start',
+					width: canvas.width,
+					height: canvas.height,
+				}));
 			}
 		}
 	};
@@ -79,7 +91,9 @@ async function pongPage() {
 
 	window.addEventListener('keydown', function(event) {
 		keysPressed[event.keyCode] = true;
-
+		if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+			event.preventDefault();
+		}
 		if (socket && socket.readyState === WebSocket.OPEN && event.keyCode in keys) {
 			socket.send(JSON.stringify({ type: "keyPress", keyCode: event.keyCode, state: "down" }));
 		}
