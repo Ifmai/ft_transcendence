@@ -31,10 +31,21 @@ async function getProfile() {
 	try {
 		const username = getCodeURL('user');
 		let url;
-		if (username)
+		if (username){
 			url = `/api/users/user_profil/${username}`
-		else
+			console.log("selam kanka buradayım ilk if ");
+		}
+		else{
+			console.log("selam kanka buradayım ");
 			url = `/api/users/user_profil/`
+			const profileHeader = document.querySelector('.pub-profile-header');
+   			const settingsLink = `
+				<a href="/profile-settings" class="pub-settings-link">
+					<i class="fas fa-cog"></i>
+				</a>
+			`;
+			profileHeader.innerHTML += settingsLink;
+		}
 		const response = await fetch(url, {
 			method: 'GET',
 			headers: {
@@ -59,7 +70,7 @@ async function profilePage() {
 		if (response.ok) {
 			const data = await response.json();
 			console.log("gelen data : ", data);
-			window.history.replaceState({}, "", `/profile?user=${data[0]['user']}`);
+			//window.history.replaceState({}, "", `/profile?user=${data[0]['user']}`);
 			const userProfile = document.getElementById('player-profile');
 			const nameLabel = document.getElementById('pub-profile-name');
 			const locLabel = document.getElementById('pub-profile-location');
