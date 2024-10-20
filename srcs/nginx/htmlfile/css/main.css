@@ -4,6 +4,11 @@
     --neon-orange: #ff6b1a;
     --dark-bg: #0c141f;
 }
+.idx-navbar-link.active,
+.idx-navbar-cta.active {
+    color: #ed8936; /* Aktif sayfa rengi */
+    font-weight: bold; /* Vurgulamak için kalın yap */
+}
 #idx-body {
     margin: 0;
     padding: 0;
@@ -13,6 +18,17 @@
     min-height: 100vh;
     overflow-x: hidden;
 
+}
+
+.idx-ping-pong-net {
+	position: fixed;
+	top: 0;
+	left: 50%;
+	width: 1px;
+	height: 100%;
+	background-color: #3182ce;
+	opacity: 0;
+	box-shadow: 0 0 10px #3182ce;
 }
 
 .idx-container {
@@ -370,7 +386,10 @@
     align-items: center;
     z-index: 2000;
 }
-
+#pong {
+    position: relative; /* Z-index için gerekli */
+    z-index: 4000;     /* İstenilen z-index değeri */
+}
 .popup-content {
     background-color: #2d3748;
     padding: 2rem;
@@ -408,4 +427,5 @@
     border-radius: 50%; /* Yuvarlak yapma */
     width: 50px; /* Genişlik */
     height: 50px; /* Yükseklik */
+	background: none;
 }

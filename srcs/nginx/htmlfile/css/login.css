@@ -1,145 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+:root {
+    --neon-blue: #4df3ff;
+    --neon-orange: #ff6b1a;
+    --dark-bg: #0c141f;
+}
+
+body {
+    font-family: 'Orbitron', sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--neon-blue);
+}
+
 .login-container {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 4rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 1rem;
 }
 
 .login-header {
-	text-align: center;
-	margin-bottom: 4rem;
+    text-align: center;
+    margin-bottom: 4rem;
 }
 
 .login-title {
-	font-size: 3.75rem;
-	font-weight: bold;
-	margin-bottom: 1rem;
-	letter-spacing: 0.05em;
+    font-size: 3.75rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
 }
 
 .login-title span {
-	color: #ed8936;
+    color: var(--neon-orange);
 }
 
 .login-subtitle {
-	font-size: 1.25rem;
-	color: #90cdf4;
+    font-size: 1.25rem;
+    color: var(--neon-blue);
 }
 
 .login-form {
-	background-color: rgba(45, 55, 72, 0.5);
-	border-radius: 0.5rem;
-	border: 1px solid #3182ce;
-	box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
-	padding: 2rem;
-	max-width: 400px;
-	margin: 0 auto;
+    background-color: rgba(45, 55, 72, 0.5);
+    border-radius: 0.5rem;
+    border: 1px solid var(--neon-blue);
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+    padding: 2rem;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .login-form-group {
-	margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .login-form-group label {
-	display: block;
-	margin-bottom: 0.5rem;
-	font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
 }
 
 .login-form-group input {
-	width: 100%;
-	padding: 0.5rem;
-	border: 1px solid #4a5568;
-	border-radius: 0.25rem;
-	background-color: #2d3748;
-	color: #fff;
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #4a5568;
+    border-radius: 0.25rem;
+    background-color: #2d3748;
+    color: #fff;
 }
 
 .login-form-group input:focus {
-	outline: none;
-	border-color: #3182ce;
+    outline: none;
+    border-color: var(--neon-blue);
 }
 
-#login-submit-button {
-	background-color: #ed8936;
-	color: #1a202c;
-	border: none;
-	border-radius: 0.25rem;
-	padding: 0.75rem 1rem;
-	font-weight: bold;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
-	width: 100%;
-}
-
-#login-submit-button:hover {
-	background-color: #f6ad55;
-}
-
+#login-submit-button,
 #login-intra-button {
-	background-color: #ed8936;
-	color: #1a202c;
-	border: none;
-	border-radius: 0.25rem;
-	padding: 0.75rem 1rem;
-	font-weight: bold;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
-	width: 100%;
+    background-color: var(--neon-orange);
+    color: var(--dark-bg);
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
 }
 
+#login-submit-button:hover,
 #login-intra-button:hover {
-	background-color: #f6ad55;
+    background-color: #f6ad55;
 }
 
 .login-form-footer {
-	text-align: center;
-	margin-top: 1rem;
+    text-align: center;
+    margin-top: 1rem;
 }
 
 .login-form-footer a {
-	color: #63b3ed;
-	text-decoration: none;
+    color: var(--neon-blue);
+    text-decoration: none;
 }
 
 .login-form-footer a:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
-
 
 @media (max-width: 768px) {
-	.login-title {
-		font-size: 3rem;
-	}
+    .login-title {
+        font-size: 3rem;
+    }
 }
+
 #popup-message {
-	position: fixed;
-	bottom: 1rem;
-	right: 1rem;
-	background-color: rgba(220, 38, 38, 0.9); /* Kırmızı arka plan */
-	color: #fff;
-	padding: 1rem;
-	border-radius: 0.5rem;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	display: none; /* Başlangıçta gizli */
-	z-index: 1000;
-	animation: fadeInOut 4s forwards; /* Giriş ve çıkış animasyonu */
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background-color: rgba(220, 38, 38, 0.9);
+    color: #fff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 3000;
+    animation: fadeInOut 4s forwards;
 }
 
 @keyframes fadeInOut {
-	0% {
-		opacity: 0;
-		transform: translateY(20px);
-	}
-	10% {
-		opacity: 1;
-		transform: translateY(0);
-	}
-	90% {
-		opacity: 1;
-		transform: translateY(0);
-	}
-	100% {
-		opacity: 0;
-		transform: translateY(20px);
-	}
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+
+.popup {
+    display: none; /* Start hidden */
+    position: fixed; /* Fixed positioning */
+    top: 0; /* Start at top */
+    left: 0; /* Start at left */
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    z-index: 2000; /* On top */
+}
+
+
+.popup-content {
+    background-color: var(--dark-bg);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px var(--neon-blue);
+    text-align: center;
+    max-width: 300px; /* Maximum width */
+    width: 90%; /* Responsive width */
+}
+
+
+.popup-content h2 {
+    color: var(--neon-orange);
+    margin-bottom: 20px;
+}
+
+.popup-content input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    font-family: 'Orbitron', sans-serif;
+}
+
+.popup-content button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    background-color: var(--neon-blue);
+    color: var(--dark-bg);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.popup-content button:hover {
+    background-color: var(--neon-orange);
+    box-shadow: 0 0 10px var(--neon-orange);
 }

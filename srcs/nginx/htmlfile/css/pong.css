@@ -3,30 +3,19 @@
 }
 
 .score-container {
-	margin-top: 50px;
-    position: absolute; /* Position relative to the .hp-container */
-    top: 20px; /* Adjust vertical positioning */
-    left: 50%; /* Center the container */
-    transform: translateX(-50%); /* Shift left by half its width for perfect centering */
-    text-align: center; /* Center text inside the container */
+    display: flex; /* Flexbox kullan */
+    justify-content: space-between; /* Aralardaki boşluğu eşit dağıt */
+    position: absolute; /* Aynı */
+    top: 20px; /* Aynı */
+    left: 50%; /* Aynı */
+    transform: translateX(-50%); /* Aynı */
+    text-align: center; /* Aynı */
+    z-index: 4001; /* Aynı */
 }
 
-#LeftScore {
-	color: #fff;
-	font-family: sans-serif;
-	font-size: 4rem;
-	position: absolute;
-	top: 45px;
-	left: 35%;
-	padding-left: 15px;
-}
-
-#RightScore {
-	color: #fff;
-	font-family: sans-serif;
-	font-size: 4rem;
-	position: absolute;
-	top: 45px;
-	right: 35%;
-	padding-right: 15px;
+#LeftScore, #RightScore {
+    color: #fff;
+    font-family: sans-serif;
+    font-size: 4rem;
+    padding: 0 15px; /* Yanlardan iç boşluk ekle */
 }

@@ -26,13 +26,18 @@ async function registerPage(){
                     })
                 });
                 console.log('Status Code:', response.status);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }else
+                if (response.ok) {
                     showPopup('Registration successful!', true);
                     setTimeout(()=>{
                         loadPage(selectPage('/'));
                     }, 1000);
+                }
+                if(response.status === 400)
+                {
+                    showPopup('Name and Surname cannot be same!');
+                }
+                else if (!response.ok)
+                    throw new Error(`HTTP error! Status: ${response.status}`);
             } catch (error) {
                 console.error('Error:', error);
             }

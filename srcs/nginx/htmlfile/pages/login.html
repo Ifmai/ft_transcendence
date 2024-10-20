@@ -19,10 +19,20 @@
             <br>
             <button type="button" id="login-intra-button">Intra 42 Login</button>
             <div class="login-form-footer">
-                <p>Don't have an account? <a href="/register" onclick="route()"">Register here</a></p>
+                <p>Don't have an account? <a href="/register" onclick="route()">Register here</a></p>
                 <p><a href="/forgot-password" onclick="route()">Forgot your password?</a></p>
             </div>
         </form>
     </main>
 </div>
 <div id="popup-message">Şifreniz yanlış. Lütfen tekrar deneyin.</div>
+<div class="popup">
+    <div class="popup-content">
+        <h2>Two-Factor Authentication</h2>
+        <p>Please enter your 2FA code:</p>
+        <input type="text" id="twofa-code" placeholder="Enter 2FA code">
+        <button id="twofa-submit">Submit</button>
+        <br>
+        <button id="twofa-cancel">Cancel</button>
+    </div>
+</div>

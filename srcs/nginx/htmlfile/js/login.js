@@ -12,6 +12,17 @@ function showPopup(message, success = false) {
     }, 1000);
 }
 
+function showPopup_2fa_login() {
+    const popup = document.querySelector('.popup');
+    popup.style.display = 'flex'; // Make it visible
+}
+
+function closePopup_2fa_login() {
+    const popup = document.querySelector('.popup');
+    popup.style.display = 'none'; // Hide the popup
+}
+
+
 async function login(username, password, code_2fa) {
     try {
         const response = await fetch('https://lastdance.com.tr/api/users/jwtlogin/', {
@@ -35,7 +46,6 @@ async function login(username, password, code_2fa) {
 async function loginPage() {
     const loginBtn = document.getElementById('login-submit-button');
     const intraBtn = document.getElementById('login-intra-button');
-    const twoFactorBtn = document.getElementById("two_factor_auth");
 
     loginBtn.addEventListener('click', async function(event) {
         event.preventDefault();
@@ -43,33 +53,45 @@ async function loginPage() {
         const password = document.getElementById('login-password').value;
         try {
             const response = await login(username, password, "");
-            //console.log("BEN SENİN", response.status)
+            console.log("Response status:", response.status);
             if (response.status == 202) {
-                document.getElementById('overlay-login').style.display = 'block';
-                document.getElementById('qr-popup-login').style.display = 'block';
+                showPopup_2fa_login();
+                console.log("2FA popup shown");
 
-                twoFactorBtn.addEventListener('click', async function(event) {
-                    event.preventDefault();
-                    const code = document.getElementById("code-2fa").value;
-                    const response_2fca = await login(username, password, code);
-                    if (response_2fca.ok) {
-                        loadPage(selectPage('/'));
-                        window.history.pushState({}, "", '/');
+                document.getElementById('twofa-submit').addEventListener('click', async function() {
+                    const code = document.getElementById('twofa-code').value;
+                    const response_2fa = await login(username, password, code);
+                    console.log("giriş yapmayı denedi");
+
+                    if (response_2fa.ok) {
+                        console.log("giriş başarılı");
+
+                        closePopup_2fa_login();
+                        showPopup('Login successful!', true);
+                        setTimeout(() => {
+                            loadPage(selectPage('/'));
+                            window.history.pushState({}, "", '/');
+                        }, 1000);
                     } else {
-                        throw new Error(`HTTP error! Status: ${response_2fca.status}`);
+                        showPopup('Invalid 2FA code. Please try again.');
                     }
                 });
 
+                document.getElementById('twofa-cancel').addEventListener('click', function() {
+                    closePopup_2fa_login();
+                });
+
             } else if (response.status == 200) {
-                showPopup('Login successful!', true); // Burada yeşil pop-up
+                showPopup('Login successful!', true);
+                console.log("GIRDU");
                 setTimeout(() => {
                     loadPage(selectPage('/'));
                     window.history.pushState({}, "", '/');
-                }, 1000);  // 4000ms = 4 saniye
-            } else if (response.status === 500) {  // Sunucu hatası kontrolü eklendi
+                }, 1000);
+            } else if (response.status === 500) {
                 showPopup('Server error. Please try again later.');
             } else if (response.status === 401){
-                console.log("HA BURADA");
+                console.log("Authentication failed");
                 showPopup('Incorrect username or password. Please try again.');
             }
         } catch (error) {
@@ -100,7 +122,7 @@ async function intralogin() {
         if (response.ok) {
             loadPage(selectPage('/'));
             window.history.pushState({}, "", '/');
-        } else if (response.status === 500) {  // Ekstra: Sunucu hatası kontrolü
+        } else if (response.status === 500) {
             showPopup('Sunucu hatası. Lütfen daha sonra tekrar deneyin.');
         } else {
             console.log("login problemi var 42 apida");
