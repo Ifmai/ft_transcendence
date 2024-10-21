@@ -56,7 +56,7 @@ async function action_2fca(action) {
 			const data = await response.json();
 			document.getElementById('qr-code-container').innerHTML = data.qr_svg;
 			if (action == "enable") {
-				showPopup();
+				showPopup_2fa();
 				submitBtn = document.getElementById('twofa-submit');
 				cancelBtn = document.getElementById('twofa-cancel');
 				submitBtn.addEventListener('click', async function(){
@@ -77,8 +77,6 @@ async function action_2fca(action) {
 		return true;
 	}
 }
-
-
 
 async function ppSaveChanges() {
 	const firstName = document.getElementById('pp-firstName').value;
@@ -164,7 +162,7 @@ async function settingsPage(){
 	});
 }
 
-function showPopup() {
+function showPopup_2fa() {
 	document.getElementById('twofa-popup').style.display = 'block';
 	document.getElementById('overlay').style.display = 'block';
 }
