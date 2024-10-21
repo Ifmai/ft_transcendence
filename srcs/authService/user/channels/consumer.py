@@ -37,6 +37,12 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 			await self.friend_request_response(s_username, r_response)
 		elif m_type == 'friend_request_list':
 			await self.friend_request_list()
+		elif m_type == 'delete_friend':
+			s_username = text_data_json['name']
+			await self.delete_friend(s_username)
+		elif m_type == 'block_friend':
+			s_username = text_data_json['name']
+			await self.block_friend(s_username)
 
 	async def disconnect(self, code):
 		pass
@@ -47,6 +53,35 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 				self.room_group_name,
 				self.channel_name
 			)
+
+
+	#Friends Request Response Block/Delete
+	async def delete_friend(self, username):
+		r_user = await self.get_user(username)
+		await self.delete_or_block_friend_db(self.user, r_user, 'delete')
+
+	async def block_friend(self, username):
+		r_user = await self.get_user(username)
+		await self.delete_or_block_friend_db(self.user, r_user, 'block')
+
+
+	@database_sync_to_async
+	def delete_or_block_friend_db(self, sender, receiver, action):
+		obj  = UserFriendsList.objects.get(
+        	(Q(sender=sender) & Q(receiver=receiver)) | (Q(sender=receiver) & Q(receiver=sender))
+    	)
+		if obj:
+			if action == 'delete':
+				obj.delete()
+			else:
+				obj.friend_block = True
+				obj.save()
+		else:
+			self.send(text_data=json.dumps({
+				'type' : 'error',
+				'message': 'böyle bir arkadaşın yok!'
+			}))
+
 
 
 	#Friends Request Response Accept/Reject

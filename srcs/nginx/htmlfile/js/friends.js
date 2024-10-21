@@ -16,11 +16,38 @@ async function populateFriendList(friend) {
     friendElement.className = 'chat-friend ' + friend.username;
     friendElement.id = friend.room_name;
     friendElement.innerHTML = `
-            <img src="${friend.photo}" alt="${friend.username}" class="chat-friend-avatar">
-            <span class="chat-friend-name">${friend.username}</span>
-            <div class="chat-friend-status ${friend.status}" id="status.${friend.username}"></div>
-        `;
+        <img src="${friend.photo}" alt="${friend.username}" class="chat-friend-avatar">
+        <div class="chat-friend-status ${friend.status}" id="status.${friend.username}"></div>
+        <span class="chat-friend-name">${friend.username}</span>
+        <button class="chat-friend-options-button" onclick="toggleOptions('${friend.username}-options')">:</button>
+        <div class="chat-friend-options" id="${friend.username}-options" style="display: none;">
+            <button class="chat-friend-block">Blokla</button>
+            <button class="chat-friend-remove">Sil</button>
+        </div>
+    `;
     friendList.insertBefore(friendElement, friendList.lastElementChild);
+
+    friendElement.querySelector('.chat-friend-block').addEventListener('click', function() {
+        alert(`${friend.username} başarıyla bloklandı.`);
+        ws.send(JSON.stringify({
+            'type' : 'block_friend',
+            'name' : friend.username
+        }));
+    });
+
+    friendElement.querySelector('.chat-friend-remove').addEventListener('click', function() {
+        friendElement.remove();
+        alert(`Arkadaş silindi.`);
+        ws.send(JSON.stringify({
+            'type' : 'delete_friend',
+            'name' : friend.username
+        }));
+    });
+}
+
+function toggleOptions(optionsId) {
+    const optionsDiv = document.getElementById(optionsId);
+    optionsDiv.style.display = optionsDiv.style.display === 'none' ? 'block' : 'none';
 }
 
 function addFriendRequest(request) {

@@ -265,3 +265,50 @@
 .OF {
     background-color: red; /* Kırmızı simge */
 }
+
+.chat-friend-options-button {
+    background-color: transparent; /* Arka plan saydam */
+    border: 2px solid #ed8936; /* Mavi kenar */
+    border-radius: 0.4rem; /* Yuvarlak köşeler */
+    color: #ffffff; /* Mavi yazı rengi */
+    font-size: 1rem; /* Büyük font boyutu */
+    cursor: pointer; /* İmleci el yapar */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Renk ve arka plan geçişi */
+    outline: none; /* Kenar çerçevesini kaldır */
+    padding: 0.25rem; /* İç boşluk */
+	margin-left: 7px;
+}
+
+.chat-friend-options-button:hover {
+    color: #2b6cb0; /* Hover durumunda daha koyu mavi */
+}
+
+
+.chat-friend-options {
+    position: absolute;
+    background-color: #2d3748; /* Koyu arka plan rengi */
+    border: 1px solid #3182ce; /* Kenar rengi */
+    border-radius: 0.25rem; /* Köşe yuvarlama */
+    padding: 0.5rem; /* İç boşluk */
+    z-index: 100; /* Diğer elemanların üstünde görünmesi için */
+    width: 120px; /* Genişlik */
+    margin-top: 10px; /* Aşağıya boşluk */
+    display: none; /* Başlangıçta gizli */
+}
+
+.chat-friend-options button {
+    display: block; /* Butonları dikey hizalamak için */
+    width: 100%; /* Tam genişlik */
+    background-color: #ed8936; /* Buton rengi */
+    color: #1a202c; /* Yazı rengi */
+    border: none; /* Kenar yok */
+    padding: 0.5rem; /* İç boşluk */
+    border-radius: 0.25rem; /* Köşe yuvarlama */
+    margin-top: 0.25rem; /* Üstten boşluk */
+    cursor: pointer; /* İmleci el yapar */
+    transition: background-color 0.3s ease; /* Renk geçişi */
+}
+
+.chat-friend-options button:hover {
+    background-color: #f6ad55; /* Hover durumunda renk değişimi */
+}

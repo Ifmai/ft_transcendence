@@ -55,6 +55,7 @@ class UserFriendsList(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_friend_requests')
 
     friend_request = models.BooleanField(default=False)
+    friend_block = models.BooleanField(default=False)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
 
