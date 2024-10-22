@@ -26,6 +26,7 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		text_data_json = json.loads(text_data)
 		m_type = text_data_json["type"]
+		print("m_type: ", m_type)
 		if m_type == 'list_request':
 			await self.list_request()
 		elif m_type == 'friend_request':
@@ -43,6 +44,10 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 		elif m_type == 'block_friend':
 			s_username = text_data_json['name']
 			await self.block_friend(s_username)
+		elif m_type == 'unblock_friend':
+			s_username = text_data_json['name']
+			await self.unblock_friend(s_username)
+
 
 	async def disconnect(self, code):
 		pass
@@ -54,15 +59,38 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 				self.channel_name
 			)
 
+	async def error_broadcast(self, message):
+		await self.send(text_data=json.dumps({
+			'type': 'error',
+			'message': message
+		}))
+
+	async def access_broadcast(self, m_type, message):
+		await self.send(text_data=json.dumps({
+			'type': m_type,
+			'message': message
+		}))
+
 
 	#Friends Request Response Block/Delete
 	async def delete_friend(self, username):
 		r_user = await self.get_user(username)
-		await self.delete_or_block_friend_db(self.user, r_user, 'delete')
+		if await self.delete_or_block_friend_db(self.user, r_user, 'delete'):
+			await self.error_broadcast("Böyle bir kişi yok.")
 
 	async def block_friend(self, username):
 		r_user = await self.get_user(username)
-		await self.delete_or_block_friend_db(self.user, r_user, 'block')
+		if await self.delete_or_block_friend_db(self.user, r_user, 'block'):
+			await self.error_broadcast("Böyle bir kişi yok.")
+		else:
+			await self.access_broadcast("block", f"{username}")
+	
+	async def unblock_friend(self, username):
+		r_user = await self.get_user(username)
+		if await self.delete_or_block_friend_db(self.user, r_user, 'unblock_friend'):
+			await self.error_broadcast("Sen bu kişinin bloğunu açamazsın.")
+		else:
+			await self.access_broadcast("unblock", f"{username}")
 
 
 	@database_sync_to_async
@@ -73,14 +101,25 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 		if obj:
 			if action == 'delete':
 				obj.delete()
-			else:
+				return False
+			elif action == 'block':
 				obj.friend_block = True
+				obj.blocked_user = self.user
 				obj.save()
+				return False
+			elif action == 'unblock_friend':
+				print("obj user : ", obj.blocked_user)
+				print("self user : ", self.user)
+				if obj.blocked_user == self.user:
+					print("Doğru kişi")
+					obj.friend_block = False
+					obj.blocked_user = None
+					obj.save()
+					return False
+				else:
+					return True
 		else:
-			self.send(text_data=json.dumps({
-				'type' : 'error',
-				'message': 'böyle bir arkadaşın yok!'
-			}))
+			return True
 
 
 
@@ -140,11 +179,11 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 	async def friend_request_list(self):
 		request_list = await self.get_request_list(self.user)
 		for req in request_list:
-			await self.send(
+			await self.send(	
 				text_data=json.dumps({
 					"type": 'request_list',
 					"user" : req['username'],
-					"photo": req['photo']
+					"photo": req['photo'],
 				})
 			)
 	#Friends Request List END
@@ -187,7 +226,9 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 					"user" : friend['username'],
 					"status": friend['is_online'],
 					"photo": friend['photo'],
-					"room_name": room_name
+					"room_name": room_name,
+					"blocked" : friend['friend_block'],
+					'who_blocked': friend['who_blocked']
 				})
 			)
 
@@ -217,24 +258,29 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 		if user.is_authenticated:
 			await sync_to_async(Profil.objects.filter(user=user).update)(status=change_status)
 
-	async def get_friends(self):
+
+	@database_sync_to_async
+	def get_friends(self):
 		request_user = self.scope['user']
-		friends = await sync_to_async(lambda: list(
-			UserFriendsList.objects.filter(
+		friends = UserFriendsList.objects.filter(
 				(Q(sender=request_user) | Q(receiver=request_user)) & Q(friend_request=True)
 			)
-		))()
 
 		friends_data = []
 		for friend in friends:
-			friend_user = await sync_to_async(lambda: friend.sender if friend.sender != request_user else friend.receiver)()
-			friend_profile = await sync_to_async(lambda: Profil.objects.get(user=friend_user.id))()
+			f_blocked_user = None
+			friend_user = (friend.sender if friend.sender != request_user else friend.receiver)
+			friend_profile = Profil.objects.get(user=friend_user.id)
+			if friend.blocked_user != None:
+				f_blocked_user = friend.blocked_user.username
 			status = friend_profile.status
 			friends_data.append({
 				'id': friend_user.id,
 				'username': friend_user.username,
 				'is_online': status,
-				'photo': friend_profile.photo.url
+				'photo': friend_profile.photo.url,
+				'friend_block': friend.friend_block,
+				'who_blocked': f_blocked_user
 			})
 		return friends_data
 	#Friends online/ofline && Friends List Functions END

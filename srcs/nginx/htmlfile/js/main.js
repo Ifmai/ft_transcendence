@@ -63,12 +63,13 @@ async function initWebSocket() {
     ws.onmessage = async function(event) {
         const data = JSON.parse(event.data);
         if(data['type'] == 'activity'){
-            friends = []
             const friend = {
                 'username': data['user'],
                 'photo': data['photo'],
                 'status': data['status'],
-                'room_name': data['room_name']
+                'room_name': data['room_name'],
+                'blocked': data['blocked'],
+                'who_blocked': data['who_blocked']
             }
             friends.push(friend);
             populateFriendList(friend);
@@ -99,6 +100,17 @@ async function initWebSocket() {
             ws.send(JSON.stringify({ 
                 'type' : 'friend_request_list',
             }));
+        }
+        else if(data['type'] == 'error')
+        {
+            console.log("Message : ", data['message']);
+        }
+        else if(data['type'] == 'block' || data['type'] == 'unblock'){
+            const div_name = '.chat-friend.' + data['message'];
+            const friendDivs = document.querySelector(div_name);
+            friends = friends.filter(friend => friend.username !== data['message']);
+            friendDivs.remove();
+            await sendListRequest();
         }
     };
 

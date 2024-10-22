@@ -21,17 +21,21 @@ async function populateFriendList(friend) {
         <span class="chat-friend-name">${friend.username}</span>
         <button class="chat-friend-options-button" onclick="toggleOptions('${friend.username}-options')">:</button>
         <div class="chat-friend-options" id="${friend.username}-options" style="display: none;">
-            <button class="chat-friend-block">Blokla</button>
-            <button class="chat-friend-remove">Sil</button>
+            <button class="chat-friend-block" id="${friend.blocked ? (friend.who_blocked + ' ' + friend.username) : ''}">
+                ${friend.blocked ? 'Bloklamayı kaldır' : 'Blokla'}
+            </button>
+                <button class="chat-friend-remove">Sil</button>
         </div>
     `;
     friendList.insertBefore(friendElement, friendList.lastElementChild);
 
     friendElement.querySelector('.chat-friend-block').addEventListener('click', function() {
-        alert(`${friend.username} başarıyla bloklandı.`);
+        const buttonText = this.innerText; // Butonun içindeki metni al
+        console.log("Button text : ", buttonText);
+        alert(`${friend.username} başarıyla ${buttonText.toLowerCase()}.`);
         ws.send(JSON.stringify({
-            'type' : 'block_friend',
-            'name' : friend.username
+            'type': buttonText.includes('Bloklamayı kaldır') ? 'unblock_friend' : 'block_friend',
+            'name': friend.username
         }));
     });
 

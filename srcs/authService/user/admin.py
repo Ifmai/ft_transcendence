@@ -22,9 +22,13 @@ class PlayerMatchList(admin.ModelAdmin):
 class MatchList(admin.ModelAdmin):
     list_display = ('id', 'round', 'state')
 
+class FriendList(admin.ModelAdmin):
+    list_display = ("sender", "receiver", "friend_request", "friend_block")
+    list_editable = ("friend_request", "friend_block")
+
 admin.site.register(Profil)
 admin.site.register(ProfileComment)
-admin.site.register(UserFriendsList)
+admin.site.register(UserFriendsList, FriendList)
 admin.site.register(PlayerMatch, PlayerMatchList)
 admin.site.register(PlayerTournament)
 admin.site.register(Tournament, TournamentList)

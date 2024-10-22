@@ -56,6 +56,7 @@ class UserFriendsList(models.Model):
 
     friend_request = models.BooleanField(default=False)
     friend_block = models.BooleanField(default=False)
+    blocked_user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
 
