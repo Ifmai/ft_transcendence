@@ -26,27 +26,18 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		text_data_json = json.loads(text_data)
 		m_type = text_data_json["type"]
-		print("m_type: ", m_type)
-		if m_type == 'list_request':
-			await self.list_request()
-		elif m_type == 'friend_request':
-			r_username = text_data_json['name']
-			await self.friend_Request(r_username)
-		elif m_type == 'friend_request_response':
-			s_username = text_data_json['username']
-			r_response = text_data_json['response']
-			await self.friend_request_response(s_username, r_response)
-		elif m_type == 'friend_request_list':
-			await self.friend_request_list()
-		elif m_type == 'delete_friend':
-			s_username = text_data_json['name']
-			await self.delete_friend(s_username)
-		elif m_type == 'block_friend':
-			s_username = text_data_json['name']
-			await self.block_friend(s_username)
-		elif m_type == 'unblock_friend':
-			s_username = text_data_json['name']
-			await self.unblock_friend(s_username)
+		action_map = {
+			'list_request': self.list_request,
+			'friend_request': lambda: self.friend_Request(text_data_json['name']),
+			'friend_request_response': lambda: self.friend_request_response(text_data_json['username'], text_data_json['response']),
+			'friend_request_list': self.friend_request_list,
+			'delete_friend': lambda: self.delete_friend(text_data_json['name']),
+			'block_friend': lambda: self.block_friend(text_data_json['name']),
+			'unblock_friend': lambda: self.unblock_friend(text_data_json['name']),
+   		}
+		action = action_map.get(m_type)
+		if action:
+			await action()
 
 
 	async def disconnect(self, code):
