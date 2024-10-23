@@ -1,6 +1,6 @@
 function showPopup(message, success = false) {
     const popup = document.getElementById('popup-message');
-    popup.textContent = message;
+    popup.innerHTML = message;
 
     // Başarılı ise yeşil renk, hata ise kırmızı renk
     popup.style.backgroundColor = success ? 'rgba(72, 187, 120, 0.9)' : 'rgba(220, 38, 38, 0.9)';
