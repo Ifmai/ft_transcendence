@@ -16,7 +16,9 @@ async function populateFriendList(friend) {
     friendElement.className = 'chat-friend ' + friend.username;
     friendElement.id = friend.room_name;
     friendElement.innerHTML = `
-        <img src="${friend.photo}" alt="${friend.username}" class="chat-friend-avatar">
+        <a href="/profile?user=${friend.username}">
+            <img src="${friend.photo}" alt="${friend.username}" class="chat-friend-avatar">
+        </a>
         <div class="chat-friend-status ${friend.status}" id="status.${friend.username}"></div>
         <span class="chat-friend-name">${friend.username}</span>
         <button class="chat-friend-options-button" onclick="toggleOptions('${friend.username}-options')">:</button>

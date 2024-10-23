@@ -11,7 +11,9 @@ function addMessage(sender, content, avatar) {
     const messageElement = document.createElement('div');
     messageElement.className = 'chat-message';
     messageElement.innerHTML = `
-                <img src="${avatar}" alt="${sender}" class="chat-message-avatar">
+                <a href="/profile?user=${sender}">
+                    <img src="${avatar}" alt="${sender}" class="chat-message-avatar">
+                </a>
                 <div class="chat-message-content">
                     <div class="chat-message-sender">${sender}</div>
                     <div class="chat-message-text">${content}</div>
