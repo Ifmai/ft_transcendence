@@ -1,13 +1,10 @@
 import json
-from django.http import JsonResponse
-from channels.generic.websocket import WebsocketConsumer
-from channels.exceptions import AcceptConnection
-from asgiref.sync import async_to_sync
-from channels.db import database_sync_to_async
-from django.contrib.auth import get_user_model
 from chat.models import Profil
+from django.db.models import Q
+from django.contrib.auth.models import User
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-from chat.models import ChatUserList, ChatMessage, ChatRooms, Profil
+from chat.models import ChatUserList, ChatMessage, ChatRooms, Profil, UserFriendsList
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
@@ -35,12 +32,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         m_type = text_data_json['type']
         m_room = text_data_json['chat_room']
-        print("type : ", m_type)
-        print("room : ", m_room)
         if m_type == 'chat_message':
             message = text_data_json["message"]
             if m_room != 'global-chat':
-                m_created = await self.add_db_message(m_room, message, self.user, 'chat')
+                await self.add_db_message(m_room, message, self.user, 'chat')
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {"type": "chat_message", "sender": self.user.username, "message": message, 'chat_room': m_room},
@@ -57,17 +52,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def add_db_message(self, m_room, message, user, m_type):
         room = ChatRooms.objects.get(roomName=m_room)
         msg = ChatMessage.objects.create(chatRoom=room, sender=user, message=message, type=m_type)
-        if msg == False:
-            return False
-        else:
-            return True
 
     @database_sync_to_async
     def get_history_from_db(self, m_room):
         msg_list = []
         room = ChatRooms.objects.get(roomName=m_room)
         msg_get = ChatMessage.objects.filter(chatRoom=room, type='chat').select_related('sender', 'chatRoom')
-        print("msg get amcık herif : ", msg_get)
         if msg_get.exists():
             for message in msg_get:
                 msg_list.append({
@@ -84,7 +74,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def get_history(self, m_room):
         msg_history = await self.get_history_from_db(m_room)
         for message in msg_history:
-            print('chat_room :', message)
             await self.send(text_data=json.dumps({
                 'chat_room': message['chat_room'],
                 'sender':  message['sender'],
@@ -96,24 +85,100 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_chatRoom(self, room):
-        print("Room name : ", room)
         r_room = ChatRooms.objects.get(roomName=room)
         return r_room
 
     @database_sync_to_async
-    def check_user_in_room(self, room):
-        room_list = ChatUserList.objects.filter(chatRoom=room, user=self.user).exists()
+    def check_user_in_room(self, user, room):
+        room_list = ChatUserList.objects.filter(chatRoom=room, user=user).exists()
         return room_list
 
+    @database_sync_to_async
+    def check_block_user(self, room, roomName):
+        both_friends = UserFriendsList.objects.filter((
+                    (Q(sender=self.user) & Q(receiver=room['user'])) | 
+                    (Q(sender=room['user']) & Q(receiver=self.user))
+                    ) & Q(friend_block=True)).exists()
+        return both_friends
+
+    @database_sync_to_async
+    def get_user(self, username):
+        user = User.objects.get(username=username)
+        return user
+
+    @database_sync_to_async
+    def check_block(self, sender_name):
+        both_friends = UserFriendsList.objects.filter((
+                (Q(sender=self.user) & Q(receiver=sender_name)) | 
+                (Q(sender=sender_name) & Q(receiver=self.user))
+                ) & Q(friend_block=True)).exists()
+        return both_friends
+
+
+    async def get_other_user(self, room_name):
+        usernames = room_name.split('.')
+        if len(usernames) == 2:
+            return usernames[1] if self.user.username == usernames[0] else usernames[0]
+    
+    async def check_block_users(self, roomName):
+        other_user_name = await self.get_other_user(roomName)
+        other_user = await self.get_user(other_user_name)
+        if await self.check_block(other_user):
+            return True
+        else:
+            return False
+
+    @database_sync_to_async
+    def delete_msg(self, message, sender):
+        msg = ChatMessage.objects.filter(message=message, sender=sender).order_by('-id').first()
+        if msg:
+            msg.delete()
+        
     async def chat_message(self, event):
         message = event["message"]
         sender = event["sender"]
+        sender_user_obj = await self.get_user(sender)
         room = await self.get_chatRoom(event['chat_room'])
-        profil_photo = await self.get_profile_photo(sender) 
-        if await self.check_user_in_room(room):
-            await self.send(
-                text_data=json.dumps({"type": "chat", "sender": sender, "message": message, "photo": profil_photo, 'chat_room': room.roomName})
-            )
+        profil_photo = await self.get_profile_photo(sender)
+        if await self.check_user_in_room(self.user, room):
+            if room.roomName == 'global-chat':
+                check = await self.check_block(sender_user_obj)
+                if check != True:
+                        await self.send(
+                            text_data=json.dumps({
+                                "type": "chat",
+                                "sender": sender, 
+                                "message": message, 
+                                "photo": profil_photo, 
+                                'chat_room': room.roomName
+                            })
+                        )
+            elif room.roomName != 'global-chat':
+                check = await self.check_block_users(room.roomName)
+                print("check ne geldi : ", check)
+                if check:
+                    if self.user.username == sender:
+                        await self.delete_msg(message, sender_user_obj)
+                        await self.send(
+                                text_data=json.dumps({
+                                    "type": "chat",
+                                    "sender": 'Chat Police', 
+                                    "message": 'DOSTUM ENGELLENDİĞİN/ENGELLEDİĞİN BİRİNE MESAJ ATAMAZSIN', 
+                                    "photo": profil_photo,
+                                    'chat_room': room.roomName
+                                })
+                            )
+                else:
+                    await self.send(
+                            text_data=json.dumps({
+                                "type": "chat",
+                                "sender": sender, 
+                                "message": message, 
+                                "photo": profil_photo, 
+                                'chat_room': room.roomName
+                            })
+                        )
+            #global chatte değilse room içini kontrol etmem gerekiyor. Error mesajı atıcaksam.
 
     async def activity(self, event):
         sender = event["sender"]
