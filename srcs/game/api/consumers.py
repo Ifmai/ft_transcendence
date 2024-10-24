@@ -37,8 +37,8 @@ class Paddle():
 
 class Ball():
 	def __init__(self, width, height):
-		self.velocityX = 10
-		self.velocityY = 10
+		self.velocityX = 5
+		self.velocityY = 5
 		self.positionX = width / 2
 		self.positionY = height / 2
 		self.radius =  20
@@ -70,48 +70,47 @@ class GameState:
 				'left': Paddle(1200, 800, 'left'),
 				'right': Paddle(1200, 800, 'right')
 				}
-		self.ball = None
 
 	def check_paddle_collision(self, width):
-		if self.ball.positionX < width / 2:
+		if rooms[self.room_id]['ball'].positionX < width / 2:
 			paddle = rooms[self.room_id]['left']['info']
 			paddle_center_x, paddle_center_y = paddle.getPaddleCenter()
 
-			dx = abs(self.ball.positionX - paddle_center_x)
-			dy = abs(self.ball.positionY - paddle_center_y)
+			dx = abs(rooms[self.room_id]['ball'].positionX - paddle_center_x)
+			dy = abs(rooms[self.room_id]['ball'].positionY - paddle_center_y)
 
 			half_paddle_width = paddle.sizeX / 2
 			half_paddle_height = paddle.sizeY / 2
 
-			if dx <= (self.ball.radius + half_paddle_width) and dy <= (self.ball.radius + half_paddle_height):
-				self.ball.velocityX *= -1
-				if self.ball.positionX > paddle_center_x:
-					self.ball.positionX = paddle_center_x + (self.ball.radius + half_paddle_width)
+			if dx <= (rooms[self.room_id]['ball'].radius + half_paddle_width) and dy <= (rooms[self.room_id]['ball'].radius + half_paddle_height):
+				rooms[self.room_id]['ball'].velocityX *= -1
+				if rooms[self.room_id]['ball'].positionX > paddle_center_x:
+					rooms[self.room_id]['ball'].positionX = paddle_center_x + (rooms[self.room_id]['ball'].radius + half_paddle_width)
 				else:
-					self.ball.positionX = paddle_center_x - (self.ball.radius + half_paddle_width)
+					rooms[self.room_id]['ball'].positionX = paddle_center_x - (rooms[self.room_id]['ball'].radius + half_paddle_width)
 
-		elif self.ball.positionX > width / 2:
+		elif rooms[self.room_id]['ball'].positionX > width / 2:
 			paddle = rooms[self.room_id]['right']['info']
 			paddle_center_x, paddle_center_y = paddle.getPaddleCenter()
 
-			dx = abs(self.ball.positionX - paddle_center_x)
-			dy = abs(self.ball.positionY - paddle_center_y)
+			dx = abs(rooms[self.room_id]['ball'].positionX - paddle_center_x)
+			dy = abs(rooms[self.room_id]['ball'].positionY - paddle_center_y)
 
 			half_paddle_width = paddle.sizeX / 2
 			half_paddle_height = paddle.sizeY / 2
 
-			if dx <= (self.ball.radius + half_paddle_width) and dy <= (self.ball.radius + half_paddle_height):
-				self.ball.velocityX *= -1
-				if self.ball.positionX < paddle_center_x:
-					self.ball.positionX = paddle_center_x - (self.ball.radius + half_paddle_width)
+			if dx <= (rooms[self.room_id]['ball'].radius + half_paddle_width) and dy <= (rooms[self.room_id]['ball'].radius + half_paddle_height):
+				rooms[self.room_id]['ball'].velocityX *= -1
+				if rooms[self.room_id]['ball'].positionX < paddle_center_x:
+					rooms[self.room_id]['ball'].positionX = paddle_center_x - (rooms[self.room_id]['ball'].radius + half_paddle_width)
 				else:
-					self.ball.positionX = paddle_center_x + (self.ball.radius + half_paddle_width)
+					rooms[self.room_id]['ball'].positionX = paddle_center_x + (rooms[self.room_id]['ball'].radius + half_paddle_width)
 
 	def check_wall_collision(self, width, height):
 		# Handle ball collision with walls logic
-		if (self.ball['positionY'] + self.ball['radius'] > height or
-				self.ball['positionY'] - self.ball['radius'] <= 0):
-			self.ball['velocityY'] *= -1
+		if (rooms[self.room_id]['ball'].positionY + rooms[self.room_id]['ball'].radius > height or
+				rooms[self.room_id]['ball'].positionY - rooms[self.room_id]['ball'].radius <= 0):
+			rooms[self.room_id]['ball'].velocityY *= -1
 
 	def get_match(self, match_id):
 		if not match_id:
@@ -173,20 +172,21 @@ class GameState:
 		# Reset ball and paddles to initial positions
 		rooms[self.room_id]['left']['info'].resetPaddleState()
 		rooms[self.room_id]['right']['info'].resetPaddleState()
-		self.ball.resetBallState()
+		rooms[self.room_id]['ball'].resetBallState()
 
 		await asyncio.sleep(1)
 
 	async def update_score(self, width, room_id):
 		game_reset = False
 		match_end = False
+		
 		if rooms[self.room_id]['right']['info'].score < 3 and rooms[self.room_id]['left']['info'].score < 3:
-			if self.ball.positionX <= -self.ball.radius: # Task 2 socket tarafından bağlandığı için aynı anda artırıyor sadce golu atan socket arttırsın aynı şekilde ball da
+			if rooms[self.room_id]['ball'].positionX <= -rooms[self.room_id]['ball'].radius: #
 				if self.side == 'right':
 					rooms[self.room_id]['right']['info'].score += 1
 				await self.reset_game()
 				game_reset = True
-			elif self.ball.positionX >= self.ball.radius + width:
+			elif rooms[self.room_id]['ball'].positionX >= rooms[self.room_id]['ball'].radius + width:
 				if self.side == 'left':
 					rooms[self.room_id]['left']['info'].score += 1
 				await self.reset_game()
@@ -258,6 +258,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 		if self.room_id not in rooms:
 			rooms[self.room_id] = {}
+			rooms[self.room_id]['ball'] = Ball(800, 1200)
 
 		await self.assign_paddle(player_db)
 
@@ -281,7 +282,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 					break
 
 		elif (self.match_id):
-			if len(rooms[self.room_id]) == 0:
+			if len(rooms[self.room_id]) == 1:
 				rooms[self.room_id]['left'] = {
 					'player': self.channel_name,
 					'user_id': self.user.id,
@@ -289,7 +290,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 					'alias': player_db.alias_name,
 					'avatar': player_db.photo.url
 				}
-			elif len(rooms[self.room_id]) == 1 and self.user.id != rooms[self.room_id]['left']['user_id']:
+			elif len(rooms[self.room_id]) == 2 and self.user.id != rooms[self.room_id]['left']['user_id']:
 						rooms[self.room_id]['right'] = {
 						'player': self.channel_name,
 						'user_id': self.user.id,
@@ -315,7 +316,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 	async def broadcast_ball_state(self):
 		"""Broadcast the current ball state to all players in the room."""
-		ball_state = self.game_state.ball.__dict__
+		ball_state = rooms[self.room_id]['ball'].__dict__
 		await self.channel_layer.group_send(
 			self.room_id,
 			{
@@ -326,7 +327,8 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 	async def broadcast_score(self):
 		"""Broadcast the current score to all players in the room."""
-		scores = {position: rooms[self.room_id][position]['info'].score for position in rooms[self.room_id]}
+		positions = ['left', 'right']
+		scores = {position: rooms[self.room_id][position]['info'].score for position in positions}
 		await self.channel_layer.group_send(
 		self.room_id,
 		{
@@ -338,9 +340,13 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def disconnect(self, close_code):
 		if self.room_id in rooms:
 			for position in rooms[self.room_id]:
-				if (rooms[self.room_id][position]['player'] == self.channel_name):
-					rooms[self.room_id].pop(position)
-					break
+				if (position != 'ball'):
+					if (rooms[self.room_id][position]['player'] == self.channel_name):
+						rooms[self.room_id].pop(position)
+						break
+					else:
+						rooms[self.room_id].pop(position)
+						break
 			if len(rooms[self.room_id]) == 0:
 				del rooms[self.room_id]
 		await self.channel_layer.group_discard(
@@ -356,10 +362,9 @@ class PongConsumer(AsyncWebsocketConsumer):
 		# Start the game loop
 		await self.send(text_data=json.dumps({"message": f"Game starting in room: {self.room_id}"})) # random message will be modified
 		while True:
-			self.game_state.ball.updatePosition()
-			self.game_state.ball.checkWallCollision()
+			rooms[self.room_id]['ball'].updatePosition()
+			rooms[self.room_id]['ball'].checkWallCollision()
 			self.game_state.check_paddle_collision(width)
-
 			game_reset , match_end = await self.game_state.update_score(width, self.room_id)
 			await self.broadcast_ball_state()
 			await self.broadcast_score()
@@ -375,12 +380,12 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		data = json.loads(text_data)
 		if data['type'] == 'initialize':
-			if len(rooms[self.room_id]) != 2:
+			if len(rooms[self.room_id]) != 3:
 				await self.send(text_data=json.dumps({
 					"type" : "initialize",
 					"message" : 'len 1'
 				}))
-			elif len(rooms[self.room_id]) == 2:
+			elif len(rooms[self.room_id]) == 3:
 				await self.send(text_data=json.dumps({
 					"type" : "initialize",
 					"message" : 'len 2'
@@ -388,7 +393,8 @@ class PongConsumer(AsyncWebsocketConsumer):
 		if data['type'] == 'start':
 			self.width = data['width']
 			self.height = data['height']
-			self.game_state.ball = Ball(self.width, self.height)
+			rooms[self.room_id]['ball'].game_width = self.width
+			rooms[self.room_id]['ball'].game_height = self.height
 			await self.send_initial_state()
 			asyncio.create_task(self.start_game(self.height, self.width))
 
@@ -399,11 +405,12 @@ class PongConsumer(AsyncWebsocketConsumer):
 		"""Handle paddle movement based on key presses."""
 		 # Handle paddle movement based on key presses
 		for position, paddle_data in rooms[self.room_id].items():
-			if paddle_data['player'] == self.channel_name:
-				if data['keyCode'] == 38:
-					rooms[self.room_id][position]['info'].movePaddleUp()
-				elif data['keyCode'] == 40:
-					rooms[self.room_id][position]['info'].movePaddleDown()
+			if position != 'ball':
+				if paddle_data['player'] == self.channel_name:
+					if data['keyCode'] == 38:
+						rooms[self.room_id][position]['info'].movePaddleUp()
+					elif data['keyCode'] == 40:
+						rooms[self.room_id][position]['info'].movePaddleDown()
 
-				await self.broadcast_paddle_state(position)
-				break
+					await self.broadcast_paddle_state(position)
+					break
