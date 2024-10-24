@@ -159,7 +159,7 @@ class GameState:
 			player_right_db.save()
 			player_left_db.save()
 
-			return f"{winner} won"
+			return winner
 
 		except Profil.DoesNotExist as e:
 			print(f"Error: {e}", flush=True)
@@ -174,22 +174,20 @@ class GameState:
 		rooms[self.room_id]['right']['info'].resetPaddleState()
 		rooms[self.room_id]['ball'].resetBallState()
 
-		await asyncio.sleep(1)
-
 	async def update_score(self, width, room_id):
 		game_reset = False
 		match_end = False
 		
 		if rooms[self.room_id]['right']['info'].score < 3 and rooms[self.room_id]['left']['info'].score < 3:
-			if rooms[self.room_id]['ball'].positionX <= -rooms[self.room_id]['ball'].radius: #
+			if rooms[self.room_id]['ball'].positionX <= -rooms[self.room_id]['ball'].radius:
 				if self.side == 'right':
 					rooms[self.room_id]['right']['info'].score += 1
-				await self.reset_game()
+					await self.reset_game()
 				game_reset = True
 			elif rooms[self.room_id]['ball'].positionX >= rooms[self.room_id]['ball'].radius + width:
 				if self.side == 'left':
 					rooms[self.room_id]['left']['info'].score += 1
-				await self.reset_game()
+					await self.reset_game()
 				game_reset = True
 		else:
 			"Temporary announce the winner"
@@ -258,7 +256,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 		if self.room_id not in rooms:
 			rooms[self.room_id] = {}
-			rooms[self.room_id]['ball'] = Ball(800, 1200)
+			rooms[self.room_id]['ball'] = Ball(1200, 800)
 
 		await self.assign_paddle(player_db)
 
@@ -366,8 +364,10 @@ class PongConsumer(AsyncWebsocketConsumer):
 			rooms[self.room_id]['ball'].checkWallCollision()
 			self.game_state.check_paddle_collision(width)
 			game_reset , match_end = await self.game_state.update_score(width, self.room_id)
+			
 			await self.broadcast_ball_state()
 			await self.broadcast_score()
+
 			if (game_reset):
 				await self.broadcast_paddle_state('left')
 				await self.broadcast_paddle_state('right')
