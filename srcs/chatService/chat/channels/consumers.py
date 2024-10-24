@@ -155,7 +155,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         )
             elif room.roomName != 'global-chat':
                 check = await self.check_block_users(room.roomName)
-                print("check ne geldi : ", check)
                 if check:
                     if self.user.username == sender:
                         await self.delete_msg(message, sender_user_obj)
@@ -163,8 +162,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                 text_data=json.dumps({
                                     "type": "chat",
                                     "sender": 'Chat Police', 
-                                    "message": 'DOSTUM ENGELLENDİĞİN/ENGELLEDİĞİN BİRİNE MESAJ ATAMAZSIN', 
-                                    "photo": profil_photo,
+                                    "message": 'DOSTUM ENGELLENDİĞİN/ENGELLEDİĞİN BİRİNE MESAJ ATAMAZSIN!', 
+                                    "photo": '/api/users/media/profil_photo/miskirik.png',
                                     'chat_room': room.roomName
                                 })
                             )
