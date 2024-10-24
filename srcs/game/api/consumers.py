@@ -137,16 +137,16 @@ class GameState:
 			player_id=player_left_db.id
 			)
 			player_match_left.score = player_left['info'].score
-			player_match_left.won = player_left['info'].score == 3
+			player_match_left.won = player_left['info'].score == 5
 			player_match_left.save()
 			player_match_right, _ = PlayerMatch.objects.get_or_create(
 			match_id=match.id,
 			player_id=player_right_db.id
 			)
 			player_match_right.score = player_right['info'].score
-			player_match_right.won = player_right['info'].score == 3
+			player_match_right.won = player_right['info'].score == 5
 			player_match_right.save()
-			if player_left['info'].score == 3:
+			if player_left['info'].score == 5:
 				player_left_db.wins += 1
 				player_right_db.losses += 1
 				winner = player_left_db.user.username
@@ -179,7 +179,7 @@ class GameState:
 		game_reset = False
 		match_end = False
 		
-		if rooms[self.room_id]['right']['info'].score < 3 and rooms[self.room_id]['left']['info'].score < 3:
+		if rooms[self.room_id]['right']['info'].score < 5 and rooms[self.room_id]['left']['info'].score < 5:
 			if rooms[self.room_id]['ball'].positionX <= -rooms[self.room_id]['ball'].radius:
 				if self.side == 'right':
 					rooms[self.room_id]['right']['info'].score += 1
@@ -192,10 +192,10 @@ class GameState:
 				game_reset = True
 		else:
 			await self.reset_game()
-			if rooms[self.room_id]['left']['info'].score == 3 and self.side == 'left':
+			if rooms[self.room_id]['left']['info'].score == 5 and self.side == 'left':
 				winner, loser = await self.set_db_two_players(room_id, self.match_id)
 				await self.announce_result(winner, loser)
-			elif rooms[self.room_id]['right']['info'].score == 3 and self.side == 'right':
+			elif rooms[self.room_id]['right']['info'].score == 5 and self.side == 'right':
 				winner, loser = await self.set_db_two_players(room_id, self.match_id)
 				await self.announce_result(winner, loser)
 			game_reset = True
@@ -256,7 +256,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def assign_paddle(self, player_db):
 		"""Assign a paddle to the player based on available slots."""
 		paddle_positions = ['left', 'right']
-		
+
 		for position in paddle_positions:
 			if position not in rooms[self.room_id]:
 				rooms[self.room_id][position] = {

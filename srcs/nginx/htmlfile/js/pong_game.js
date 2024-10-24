@@ -28,9 +28,9 @@ class Game {
 	render(){
 		this.context.fillStyle = "rgba(0, 0, 0, 0.4)";
 		this.context.fillRect(0, 0, this.width, this.height);
-		this.ball.draw(this.context)
-		this.paddles.left.draw(this.context)
-		this.paddles.right.draw(this.context)
+		this.ball.draw(this.context, "#FBFFFF")
+		this.paddles.left.draw(this.context, "#4df3ff")
+		this.paddles.right.draw(this.context, "#ff6b1a")
 		drawGameFrame(this);
 	}
 
@@ -41,7 +41,7 @@ class Game {
 }
 
 function drawGameFrame(game) {
-	game.context.strokeStyle = '#ffff00';
+	game.context.strokeStyle = '#FBFFFF';
 
 	game.context.beginPath();
 	game.context.lineWidth = 15;
@@ -61,6 +61,7 @@ function drawGameFrame(game) {
 	game.context.moveTo(0, 0)
 	game.context.lineTo(0, game.height);
 	game.context.stroke();
+
 
 	game.context.beginPath();
 	game.context.lineWidth = 15;

@@ -21,8 +21,8 @@ class Paddle {
         this.dy = data['velocity'];
     }
 
-    draw(context) {
-		context.fillStyle = "#33ff00";
+    draw(context, color) {
+		context.fillStyle = color;
 		context.fillRect(this.x, this.y, this.width, this.height);
 	}
 }

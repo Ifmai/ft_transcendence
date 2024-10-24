@@ -19,9 +19,9 @@ class Ball {
 		this.dy = data['velocityY'];
 	}
 
-	draw(context){
-		context.fillStyle = "#33ff00";
-		context.strokeStyle = "#33ff00";
+	draw(context, color){
+		context.fillStyle = color;
+		context.strokeStyle = color;
 		context.beginPath();
 		context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
 		context.fill();
