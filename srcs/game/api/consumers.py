@@ -132,7 +132,6 @@ class GameState:
 			player_left_db = Profil.objects.get(id=player_left['user_id'])
 			player_right_db = Profil.objects.get(id=player_right['user_id'])
 
-
 			player_match_left, _ = PlayerMatch.objects.get_or_create(
 			match_id=match.id,
 			player_id=player_left_db.id
@@ -151,22 +150,24 @@ class GameState:
 				player_left_db.wins += 1
 				player_right_db.losses += 1
 				winner = player_left_db.user.username
+				loser = player_right_db.user.username
 			else:
 				player_left_db.losses += 1
 				player_right_db.wins += 1
 				winner = player_right_db.user.username
+				loser = player_left_db.user.username
 
 			player_right_db.save()
 			player_left_db.save()
 
-			return winner
+			return winner, loser
 
 		except Profil.DoesNotExist as e:
 			print(f"Error: {e}", flush=True)
-			return "Error retrieving profiles"
+			return "Error retrieving profiles", "Error retrieving profiles"
 		except Exception as e:
 			print(f"Unexpected error: {e}", flush=True)
-			return "Unexpected error"
+			return "Unexpected error", "Unexpected error"
 
 	async def reset_game(self):
 		# Reset ball and paddles to initial positions
@@ -190,43 +191,34 @@ class GameState:
 					await self.reset_game()
 				game_reset = True
 		else:
-			"Temporary announce the winner"
 			await self.reset_game()
 			if rooms[self.room_id]['left']['info'].score == 3 and self.side == 'left':
-				result = await self.set_db_two_players(room_id, self.match_id)
-				await self.announce_winner(result)
+				winner, loser = await self.set_db_two_players(room_id, self.match_id)
+				await self.announce_result(winner, loser)
 			elif rooms[self.room_id]['right']['info'].score == 3 and self.side == 'right':
-				result = await self.set_db_two_players(room_id, self.match_id)
-				await self.announce_winner(result)
+				winner, loser = await self.set_db_two_players(room_id, self.match_id)
+				await self.announce_result(winner, loser)
 			game_reset = True
 			match_end = True
 
 		return game_reset, match_end
 
-	async def announce_winner(self, result):
+	async def announce_result(self, winner, loser):
 		"""Send the winner announcement to all players in the room."""
-		message = {
-			'type': 'pong.message',
-			'message': result
-		}
-		print("result : ", result)
 		await self.channel_layer.group_send(
 			self.room_id,
 			{
 				'type': 'pong_message',
-				'message': {'won': message}
+				'message': {'won': winner, 'lost': loser}
 			}
 		)
+
 	async def announce_game_finish(self):
-		message = {
-			'type': 'pong.message',
-			'message': 'match ended'
-		}
 		await self.channel_layer.group_send(
 			self.room_id,
 			{
 				'type': 'pong_message',
-				'message': {'end': message}
+				'message': {'end': 'match ended'}
 			}
 		)
 
@@ -264,38 +256,20 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def assign_paddle(self, player_db):
 		"""Assign a paddle to the player based on available slots."""
 		paddle_positions = ['left', 'right']
-		if (self.match_id is None):
-			for position in paddle_positions:
-				if position not in rooms[self.room_id]:
-					rooms[self.room_id][position] = {
-						'player': self.channel_name,
-						'user_id': self.user.id,
-						'info': self.game_state.paddles[position],
-						'alias': player_db.alias_name,
-						'avatar': player_db.photo.url
-					}
-					self.side = position
-					self.game_state.side = position
-					await self.send(str(paddle_positions.index(position) + 1))
-					break
-
-		elif (self.match_id):
-			if len(rooms[self.room_id]) == 1:
-				rooms[self.room_id]['left'] = {
+		
+		for position in paddle_positions:
+			if position not in rooms[self.room_id]:
+				rooms[self.room_id][position] = {
 					'player': self.channel_name,
 					'user_id': self.user.id,
-					'info': self.game_state.paddles['left'],
+					'info': self.game_state.paddles[position],
 					'alias': player_db.alias_name,
 					'avatar': player_db.photo.url
 				}
-			elif len(rooms[self.room_id]) == 2 and self.user.id != rooms[self.room_id]['left']['user_id']:
-						rooms[self.room_id]['right'] = {
-						'player': self.channel_name,
-						'user_id': self.user.id,
-						'info': self.game_state.paddles['right'],
-						'alias': player_db.alias_name,
-						'avatar': player_db.photo.url
-					}
+				self.side = position
+				self.game_state.side = position
+				await self.send(str(paddle_positions.index(position) + 1))
+				break
 
 	async def send_initial_state(self):
 		# Send initial game state to the clients
@@ -335,6 +309,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 		}
 	)
 
+	# Handle when randomly user disconnects, save the data
 	async def disconnect(self, close_code):
 		if self.room_id in rooms:
 			for position in rooms[self.room_id]:
@@ -364,7 +339,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 			rooms[self.room_id]['ball'].checkWallCollision()
 			self.game_state.check_paddle_collision(width)
 			game_reset , match_end = await self.game_state.update_score(width, self.room_id)
-			
 			await self.broadcast_ball_state()
 			await self.broadcast_score()
 
@@ -372,7 +346,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 				await self.broadcast_paddle_state('left')
 				await self.broadcast_paddle_state('right')
 			if match_end:
-				self.game_state.announce_game_finish()
+				await self.game_state.announce_game_finish()
 				break
 			await asyncio.sleep(0.03)
 
@@ -382,14 +356,14 @@ class PongConsumer(AsyncWebsocketConsumer):
 		if data['type'] == 'initialize':
 			if len(rooms[self.room_id]) != 3:
 				await self.send(text_data=json.dumps({
-					"type" : "initialize",
-					"message" : 'len 1'
+					'type': 'initialize',
+					'message': 'len 1'
 				}))
 			elif len(rooms[self.room_id]) == 3:
 				await self.send(text_data=json.dumps({
-					"type" : "initialize",
-					"message" : 'len 2'
-				}))
+						'type': 'initialize',
+						'message': 'len 2'
+					}))
 		if data['type'] == 'start':
 			self.width = data['width']
 			self.height = data['height']
