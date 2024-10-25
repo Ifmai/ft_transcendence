@@ -117,25 +117,29 @@ async function tournamentPage() {
 
 	document.getElementById('trn-joinButton').addEventListener('click', async () => {
 		const nickname = document.getElementById('trn-joinNicknameInput').value;
-		
-		if (nickname && currentTournamentName) {
+		if(!nickname)
+			showPopup('Please enter a nickname');
+		else if (nickname.length > 10 || nickname.length < 3)
+			showPopup("The alias name must be between 3 and 10 characters long!")
+		else if (nickname && currentTournamentName) {
 			await join_tournament(nickname, currentTournamentName);
-		} else {
-			alert('Please enter a nickname');
 		}
 	});
 
 	document.getElementById('trn-createButton').addEventListener('click', async () => {
 		const tournamentName = document.getElementById('trn-createTournamentInput').value;
 		const nickname = document.getElementById('trn-createNicknameInput').value;
-		console.log("ismi : ", tournamentName, " nickname : ", nickname);
-		if (tournamentName && nickname) {
+		if (!nickname || !tournamentName)
+			showPopup('Please enter both tournament name and nickname');
+		else if (nickname.length > 10 || nickname.length < 3)
+			showPopup("The tournament name must be between 3 and 10 characters long!")
+		else if (nickname.length > 10 || nickname.length < 3)
+			showPopup("The alias name must be between 3 and 10 characters long!")
+		else if (tournamentName && nickname) {
 			await create_tournament(tournamentName, nickname);
 			document.getElementById('trn-createPopupOverlay').style.display = 'none';
 			document.getElementById('trn-createTournamentInput').value = '';
 			document.getElementById('trn-createNicknameInput').value = '';
-		} else {
-			alert('Please enter both tournament name and nickname');
 		}
 	});
 
