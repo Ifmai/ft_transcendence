@@ -9,7 +9,7 @@ function showPopup(message, success = false) {
 
     setTimeout(() => {
         popup.style.display = 'none';
-    }, 1000);
+    }, 2000);
 }
 
 function showPopup_2fa_login() {
@@ -71,7 +71,7 @@ async function loginPage() {
                         setTimeout(() => {
                             loadPage(selectPage('/'));
                             window.history.pushState({}, "", '/');
-                        }, 1000);
+                        }, 2000);
                     } else {
                         showPopup('Invalid 2FA code. Please try again.');
                     }
@@ -87,7 +87,7 @@ async function loginPage() {
                 setTimeout(() => {
                     loadPage(selectPage('/'));
                     window.history.pushState({}, "", '/');
-                }, 1000);
+                }, 2000);
             } else if (response.status === 500) {
                 showPopup('Server error. Please try again later.');
             } else if (response.status === 401){

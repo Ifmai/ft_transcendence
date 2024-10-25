@@ -48,7 +48,7 @@ async function registerPage(){
                 showPopup('Registration successful!', true);
                 setTimeout(() => {
                     loadPage(selectPage('/'));
-                }, 1000);
+                }, 2000);
             }
 
             if (response.status === 400) {
