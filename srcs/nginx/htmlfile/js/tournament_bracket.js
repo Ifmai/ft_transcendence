@@ -32,10 +32,14 @@ async function tour_bracketPage() {
 	//updatePlayerUI();
     tournamnet_id = getCodeURL('tournament');
 	await initWebSocket_tournament();
-    //cleanupFunctions.push(() => closeWebSocket_tournament(tournamnet_id));
+    cleanupFunctions.push(() => closeWebSocket_tournament(tournamnet_id));
 }
 
 async function initWebSocket_tournament() {
+    player1 = document.getElementById('player1').querySelector('h3');
+    player2 = document.getElementById('player2').querySelector('h3');
+    player3 = document.getElementById('player3').querySelector('h3');
+    player4 = document.getElementById('player4').querySelector('h3');
     if (ws_tournament && ws_tournament.readyState === WebSocket.OPEN) {
         console.log('WebSocket zaten açık.');
         return;
@@ -60,13 +64,50 @@ async function initWebSocket_tournament() {
         console.log("event data : ", event.data);
         const data = JSON.parse(event.data);
         console.log('gelend dataİ: ', data);
-        if(data['type' == 'joined']){
-            count_player += 1;
-            //isimleri yerleştir.
+        if(data['type'] == 'joined'){
+            //Burası Temize Çekilecek.
+            if (data['message'][0]){
+                player1.innerText = data['message'][0];
+                document.getElementById('player1-status').classList.add('ready'); 
+            }
+            else if (!data['message'][0]) {
+                player1.innerText = 'User 1';
+                document.getElementById('player1-status').classList.remove('ready');
+            }
+            if (data['message'][1]){
+                player2.innerText = data['message'][1];
+                document.getElementById('player2-status').classList.add('ready'); 
+            }
+            else if (!data['message'][1]){
+                player2.innerText = 'User 2';
+                document.getElementById('player2-status').classList.remove('ready');
+            }
+            if (data['message'][2]){
+                player3.innerText = data['message'][2];
+                document.getElementById('player3-status').classList.add('ready'); 
+            }
+            else if (!data['message'][2]){
+                player3.innerText = 'User 3';
+                document.getElementById('player3-status').classList.remove('ready');
+            }
+            if (data['message'][3]){
+                player4.innerText = data['message'][3];
+                document.getElementById('player4-status').classList.add('ready'); 
+            }
+            else if (!data['message'][3]){
+                player4.innerText = 'User 4';
+                document.getElementById('player4-status').classList.remove('ready');
+            }
         }
         else if(data['type'] == 'match'){
+            cleanupFunctions = []
             loadPage(selectPage('/pong-game'));
             window.history.pushState({}, "", `/pong-game?room=${data['match_id']}&match=${data['match_id']}&tournament=${getCodeURL('tournament')}`);
+        }
+        else if(data['type'] == 'new_match'){
+            ws_tournament.send(JSON.stringify({
+                'type': 'final_match_start',
+            }))
         }
 
     };
@@ -112,30 +153,3 @@ function closeWebSocket_tournament(tournamnet_id) {
         ws_tournament = null;
     }
 }
-
-// function checkAllReady() {
-// 	if (players.every(player => player.ready)) {
-// 		startTournament();
-// 	}
-// }
-
-// function toggleReady(playerId) {
-// 	const player = players.find(p => p.id === playerId);
-// 	player.ready = !player.ready;
-// 	updatePlayerUI(player);
-// 	checkAllReady();
-// }
-
-// function updatePlayerUI(player) {
-// 	const statusElement = document.getElementById(`player${player.id}-status`);
-// 	const readyButton = document.getElementById(`player${player.id}-ready`);
-// 	if (player.ready) {
-// 		statusElement.classList.add('ready');
-// 		readyButton.classList.add('active');
-// 		readyButton.textContent = 'Hazır!';
-// 	} else {
-// 		statusElement.classList.remove('ready');
-// 		readyButton.classList.remove('active');
-// 		readyButton.textContent = 'Hazır';
-// 	}
-// }
