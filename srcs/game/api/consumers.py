@@ -20,6 +20,7 @@ class Paddle():
 		self.score = 0
 		self.game_width = width
 		self.game_height = height
+		self.power_up_used = False 
 
 	def movePaddleUp(self):
 		if	self.positionY > 0:
@@ -34,6 +35,15 @@ class Paddle():
 	def getPaddleCenter(self):
 		return self.positionX + (self.sizeX / 2), self.positionY + (self.sizeY / 2)
 
+	def activate_power_up(self):
+		if not self.power_up_used:
+			self.power_up_used = True
+			self.velocity += 15
+			asyncio.create_task(self.reset_power_up())
+	
+	async def reset_power_up(self):
+		await asyncio.sleep(5)
+		self.velocity -= 15
 
 class Ball():
 	def __init__(self, width, height):
@@ -385,6 +395,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 						rooms[self.room_id][position]['info'].movePaddleUp()
 					elif data['keyCode'] == 40:
 						rooms[self.room_id][position]['info'].movePaddleDown()
-
+					elif data['keyCode'] == 32:
+						rooms[self.room_id][position]['info'].activate_power_up()
 					await self.broadcast_paddle_state(position)
 					break
