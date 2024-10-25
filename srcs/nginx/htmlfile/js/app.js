@@ -79,7 +79,8 @@ const loadPage = async (page) => {
                 return response.text();
             });
             document.getElementById('main-div').innerHTML = html;
-            if(page.page != '../pages/waitlogin.html'){
+            console.log("PAGE : ", page.page);
+            if(page.page != '../pages/waitlogin.html' && page.page != '../pages/pong.html'){
                 const navbar = await selectNavbar()
                 const navbarhtml = await fetch(navbar).then((response) => {
                     if (!response.ok) {
@@ -87,6 +88,7 @@ const loadPage = async (page) => {
                     }
                     return response.text();
                 });
+                console.log("Page : ", page.page);
                 document.getElementById('main-navbar').innerHTML = navbarhtml;
                 const navbarToggle = document.getElementById('idx-navbar-toggle');
                 const navbarLinks = document.getElementById('idx-navbar-links');
@@ -99,6 +101,8 @@ const loadPage = async (page) => {
                     navbarLinks.classList.toggle('active');
                 });
             }
+            else if(page.page == '../pages/waitlogin.html' || page.page == '../pages/pong.html')
+                document.getElementById('main-navbar').innerHTML = '';
             const script = page.exec_script;
             if(page.page != "../pages/home_page.html" || script === logoutPage){
                 if(script){
