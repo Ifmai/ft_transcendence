@@ -54,8 +54,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.tournament_dict()
 
 	async def start_point(self):
-		while True:
-			if self.tournament.status != StatusChoices.PENDING.value:
+		while True and self.room_group_name in tournament_dict:
+			if self.tournament.status != StatusChoices.PENDING.value: #BUNU GALİBA BEN DEĞİŞTİRMEDİM.
 				break
 			if len(tournament_dict[self.room_group_name]['matches']) == 2:
 				for match in tournament_dict[self.room_group_name]['matches']:
@@ -78,23 +78,25 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.get_or_create_dict(self.scope['profile'])
 			self.profile = self.scope['profile']
 			self.user = self.scope['user']
-			await self.tournament_dict()
+			await self.tournament_dict() #dict'i yazdırıyor print fonksiyonu
 			await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-			join_message = f"{self.scope['profile'].alias_name} has joined the tournament!"
+			#join_message = self.scope['profile'].alias_name
+			alias_names = await self.get_alias_names()
 			await get_channel_layer().group_send(
 				self.room_group_name,
 				{
 					'type': 'broadcast_message',
-					'message': join_message,
+					'message': alias_names,
 					'm_type': 'joined'
 				}
 			)
-			for player in tournament_dict[self.room_group_name]['profiles']:
-				if player['alias_name'] != self.scope['profile'].alias_name:
-					await self.send(text_data=json.dumps({
-						'type': 'joined',
-						'message': f"{player['alias_name']} has joined the tournament!"
-					}))
+			# alias_names = "alp"
+			# for player in tournament_dict[self.room_group_name]['profiles']:
+			# 	if player['alias_name'] != self.scope['profile'].alias_name:
+			# 		await self.send(text_data=json.dumps({
+			# 			'type': 'joined',
+			# 			'message': alias_names
+			# 		}))
 			await self.check_tournament_state()
 		except Tournament.DoesNotExist:
 			await self.send(text_data=json.dumps({'message': 'Tournament not found', 'status': 401}))
@@ -102,31 +104,66 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data=None, bytes_data=None):
 		text_data_json = json.loads(text_data)
-		print("Text Data json : ", text_data_json)
 		m_type = text_data_json['type']
-		print("m_type", m_type)
 		if m_type == 'init':
-			print("geldim")
 			asyncio.create_task(self.start_point())
-		return await super().receive(text_data, bytes_data)
+		elif m_type == 'won_user':
+			winner_player_obj = await self.get_profile_object(text_data_json['winner_name'])
+			loser_player_obj = await self.get_profile_object(text_data_json['loser_name'])
+			if self.profile == winner_player_obj:
+				tournament_dict[self.room_group_name]['winners'].append(winner_player_obj)
+				if len(tournament_dict[self.room_group_name]['winners'] == 2):
+					tournament_dict[self.room_group_name]['matches'].clear()
+					new_match = await self.create_match(self.tournament, tournament_dict[self.room_group_name]['winners'][0], tournament_dict[self.room_group_name]['winners'][1])
+					tournament_dict[self.room_group_name]['matches'].append(new_match)
+					await get_channel_layer().group_send(
+						self.room_group_name,
+						{
+							'type': 'broadcast_message',
+							'message': 'new match ready.',
+							'm_type': 'new_match'
+						}
+					)
+			elif self.profile ==  loser_player_obj:
+				await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+		elif m_type == 'final_match_start':
+			for match in tournament_dict[self.room_group_name]['matches']:
+					await self.send_private_match_id(match['match_id'], match['player1'], match['player2'])
+
+		
 
 	async def disconnect(self, code):
-		await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 		tournament_player = await self.get_self_player_tournament()
 		if len(tournament_dict[self.room_group_name]['profiles']) == 1:
 			tournament_dict.pop(self.room_group_name, None)
-			asyncio.sleep(5)
+			await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+			await asyncio.sleep(1)
 			if self.room_group_name not in tournament_dict:
 				await self.delete_tournament()
 		elif tournament_player:
 			for p in tournament_dict[self.room_group_name]['profiles']:
 				if p['profile'] == self.scope['profile']:
 					tournament_dict[self.room_group_name]['profiles'].remove(p)
-					await self.tournament_dict()
+					alias_names = await self.get_alias_names()
+					await get_channel_layer().group_send(
+						self.room_group_name,
+						{
+							'type': 'broadcast_message',
+							'message': alias_names,
+							'm_type': 'joined'
+						}
+					)
+					await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 					break
-			if tournament_player.creator == True:
+			await asyncio.sleep(1)
+			check = False
+			for p in tournament_dict[self.room_group_name]['profiles']:
+				if p['profile'] == self.scope['profile']:
+					check = True
+					break
+			if tournament_player.creator == True and check != True:
 				await self.set_tournament_creator()
-			asyncio.sleep(2)
+			await asyncio.sleep(2)
 			if not any(p['profile'] != self.scope['profile'] for p in tournament_dict[self.room_group_name]['profiles']):
 				await self.delete_tournament_player(tournament_player)
 
@@ -139,7 +176,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		else:
 			tournament_dict[self.room_group_name] = {
 				'profiles' : [{'profile' :  profile, 'alias_name' : profile.alias_name}],
-				'matches' : []
+				'matches' : [],
+				'winners': [],
+				'champion': ''
 			}
 
 	async def broadcast_message(self, event):
@@ -162,7 +201,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	@database_sync_to_async
 	def get_self_player_tournament(self):
-		tournament_player = PlayerTournament.objects.get(player=self.scope['profile'], tournament=self.tournament)
+		try:
+			tournament_player = PlayerTournament.objects.get(player=self.scope['profile'], tournament=self.tournament)
+		except PlayerTournament.DoesNotExist as e:
+			print(f"Error: {e}", flush=True)
 		return tournament_player
 	
 	@database_sync_to_async
@@ -192,3 +234,17 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	def change_tournament_state(self):
 		self.tournament.status = StatusChoices.IN_PROGRESS
 		self.tournament.save()
+
+	@database_sync_to_async
+	def get_profile_object(self, username):
+		for profiles in tournament_dict[self.room_group_name]['profiles']:
+			if profiles['profile'].user.username == username:
+				return profiles['profile']
+		return None
+
+	async def get_alias_names(self):
+		alias_names = []
+		for player in tournament_dict[self.room_group_name]['profiles']:
+			alias_names.append(player['alias_name'])
+		return alias_names
+					
