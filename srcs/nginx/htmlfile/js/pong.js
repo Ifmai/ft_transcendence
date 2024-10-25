@@ -36,7 +36,11 @@ async function pongPage() {
 		}));
 	};
 
-	socket.onmessage = function(event) {
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	socket.onmessage = async function(event) {
 		const gameState = JSON.parse(event.data);
 		if (gameState['type'] == 'initialize')
 		{
@@ -57,11 +61,23 @@ async function pongPage() {
 		if (gameState['end']){
 			console.log("gameState: ", gameState)
 			//alert(gameState.won.message)
-			socket.close();
 			if(!getCodeURL('tournament')){
+				await sleep(2500);
+				socket.close();
 				loadPage(selectPage('/play'));
 				window.history.pushState({}, "", '/play');
 			}
+		}
+		if (gameState['won']){
+			console.log(gameState['won']);
+			console.log(gameState['lost']);
+			if (ws_tournament && ws_tournament.readyState === WebSocket.OPEN){
+				ws_tournament.send(JSON.stringify({
+					'type' : 'won_user',
+					'winner_name': gameState['won'],
+					'loser_name': gameState['lost']
+				}));
+			} 
 		}
 		if (gameState['type'] == 'initialize'){
 			console.log("GameState : ", gameState);
