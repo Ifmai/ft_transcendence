@@ -205,11 +205,13 @@ class GameState:
 			if rooms[self.room_id]['ball'].positionX <= -rooms[self.room_id]['ball'].radius:
 				if self.side == 'right':
 					rooms[self.room_id]['right']['info'].score += 1
+					await asyncio.sleep(1)
 					await self.reset_game()
 				game_reset = True
 			elif rooms[self.room_id]['ball'].positionX >= rooms[self.room_id]['ball'].radius + width:
 				if self.side == 'left':
 					rooms[self.room_id]['left']['info'].score += 1
+					await asyncio.sleep(1)
 					await self.reset_game()
 				game_reset = True
 		else:
