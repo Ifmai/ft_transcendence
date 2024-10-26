@@ -67,6 +67,14 @@ class Ball():
 		if (self.positionY + self.radius > self.game_height or
 			self.positionY - self.radius <= 0):
 			self.velocityY *= -1
+	
+	def resetBallVelocity(self):
+		self.velocityX = 5
+		self.velocityY = 5
+
+	def increaseSpeed(self):
+		self.velocityX += 0.5
+		self.velocityY += 0.5
 
 
 class GameState:
@@ -94,6 +102,7 @@ class GameState:
 
 			if dx <= (rooms[self.room_id]['ball'].radius + half_paddle_width) and dy <= (rooms[self.room_id]['ball'].radius + half_paddle_height):
 				rooms[self.room_id]['ball'].velocityX *= -1
+				rooms[self.room_id]['ball'].increaseSpeed()
 				if rooms[self.room_id]['ball'].positionX > paddle_center_x:
 					rooms[self.room_id]['ball'].positionX = paddle_center_x + (rooms[self.room_id]['ball'].radius + half_paddle_width)
 				else:
@@ -110,6 +119,7 @@ class GameState:
 			half_paddle_height = paddle.sizeY / 2
 
 			if dx <= (rooms[self.room_id]['ball'].radius + half_paddle_width) and dy <= (rooms[self.room_id]['ball'].radius + half_paddle_height):
+				rooms[self.room_id]['ball'].increaseSpeed()
 				rooms[self.room_id]['ball'].velocityX *= -1
 				if rooms[self.room_id]['ball'].positionX < paddle_center_x:
 					rooms[self.room_id]['ball'].positionX = paddle_center_x - (rooms[self.room_id]['ball'].radius + half_paddle_width)
@@ -184,6 +194,7 @@ class GameState:
 		rooms[self.room_id]['left']['info'].resetPaddleState()
 		rooms[self.room_id]['right']['info'].resetPaddleState()
 		rooms[self.room_id]['ball'].resetBallState()
+		rooms[self.room_id]['ball'].resetBallVelocity()
 
 	async def update_score(self, width, room_id):
 		game_reset = False
@@ -387,7 +398,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 	async def handle_key_press(self, data):
 		"""Handle paddle movement based on key presses."""
-		 # Handle paddle movement based on key presses
 		for position, paddle_data in rooms[self.room_id].items():
 			if position != 'ball':
 				if paddle_data['player'] == self.channel_name:
