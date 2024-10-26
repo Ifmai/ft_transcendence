@@ -12,23 +12,35 @@
 
     <div class="pub-card">
         <h2 class="pub-card-title">Game Statistics</h2>
-        <div class="pub-stats-grid">
-            <div>
-                <div class="pub-stat-value" id="profile-win"></div>
-                <div class="pub-stat-label">Total Wins</div>
+        <div class="pub-content">
+            <div class="pub-stats-grid">
+                <div>
+                    <div class="pub-stat-value" id="profile-win"></div>
+                    <div class="pub-stat-label">Total Wins</div>
+                </div>
+                <div>
+                    <div class="pub-stat-value" id="profile-lose"></div>
+                    <div class="pub-stat-label">Total Losses</div>
+                </div>
+                <div>
+                    <div class="pub-stat-value" id="profile-champ"></div>
+                    <div class="pub-stat-label">Tournament Championships</div>
+                </div>
+                <div>
+                    <div class="pub-stat-value" id="profile-kda"></div>
+                    <div class="pub-stat-label">Win Percent</div>
+                </div>
             </div>
-            <div>
-                <div class="pub-stat-value" id="profile-lose"></div>
-                <div class="pub-stat-label">Total Losses</div>
+            <div class="chart-container">
+                <canvas id="winLossChart" width="200" height="200"></canvas>
             </div>
-            <div>
-                <div class="pub-stat-value" id="profile-champ"></div>
-                <div class="pub-stat-label">Tournament Championships</div>
-            </div>
-            <div>
-                <div class="pub-stat-value" id="profile-kda"></div>
-                <div class="pub-stat-label">Win Percent</div>
-            </div>
+        </div>
+    </div>
+
+    <div class="pub-card">
+        <h2 class="pub-card-title">Match History</h2>
+        <div id="match-history-container">
+            <!-- Match history items will be added here dynamically -->
         </div>
     </div>
 </div>

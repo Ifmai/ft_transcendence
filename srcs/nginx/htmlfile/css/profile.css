@@ -56,6 +56,7 @@
 }
 
 .pub-card-title {
+	text-align: center;
 	font-size: 1.5rem;
 	font-weight: bold;
 	margin-bottom: 1rem;
@@ -63,9 +64,10 @@
 
 .pub-stats-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-	gap: 1rem;
-	text-align: center;
+    grid-template-columns: repeat(2, 1fr); /* Adjusted to 2 columns */
+    gap: 1rem;
+    text-align: center;
+    flex-grow: 1; /* Allow this to grow and take available space */
 }
 
 .pub-stat-value {
@@ -98,7 +100,11 @@
 		grid-template-columns: repeat(2, 1fr);
 	}
 }
-
+.pub-content {
+    display: flex; /* Use flexbox for horizontal alignment */
+    justify-content: space-between; /* Space between items */
+    align-items: center; /* Center items vertically */
+}
 .pub-settings-link {
     font-size: 1.5rem; /* İstediğin boyutta ayarlayabilirsin */
     color: #ed8936; /* Bağlantı rengi */
@@ -108,4 +114,70 @@
 
 .pub-settings-link:hover {
     color: #3182ce; /* Hover rengi */
+}
+#winLossChart {
+    width: 200px !important; /* Force the width */
+    height: 200px !important; /* Force the height */
+}
+.chart-container {
+	display: flex;
+    justify-content: center; /* Center the chart */
+    align-items: flex-end; /* Align to the bottom */
+    width: 250px; /* Set a fixed width for the chart container */
+}
+
+.match-history-item {
+    background-color: rgba(45, 55, 72, 0.3);
+    border: 1px solid #3182ce;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+	margin-left: 10rem;
+	margin-right: 10rem;
+	text-align: center;
+	display: flex;
+    justify-content: center; /* İçeriği ortalamak için */
+}
+
+.match-players {
+    width: 50%; /* Genişliği %50 yap */
+    display: flex;
+    justify-content: space-between; /* Oyuncular arasındaki boşluğu ayarla */
+}
+
+.player {
+    flex: 1; /* Her bir oyuncunun eşit genişlikte olmasını sağla */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center; /* İçeriği ortalamak için */
+}
+
+.player-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.player-name {
+    font-size: 0.875rem;
+}
+
+.player-score {
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center; /* Ortalamak için */
+    align-items: center; /* Dikey ortalamak için */
+    width: 40px; /* Genişlik vererek daha düzenli görünmesini sağla */
+    margin: 0 auto; /* Otomatik kenar boşluğu ile ortalama */
+}
+
+.winner {
+    color: #68d391;
+}
+
+.loser {
+    color: #fc8181;
 }

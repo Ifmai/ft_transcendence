@@ -1,3 +1,13 @@
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+function getCodeURL(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
 async function action_2fca(action) {
 	try {
 		const response = await fetch('/api/users/2fcaenable/', {
@@ -80,7 +90,11 @@ async function profilePage() {
 			const losecount = document.getElementById('profile-lose');
 			const kdacount = document.getElementById('profile-kda');
 			const champcount = document.getElementById('profile-champ');
-	
+
+			const matchHistory = await getMatchHistory();
+			if (matchHistory) {
+                renderMatchHistory(matchHistory);
+            }
 			const win = parseInt(data[0]["wins"]);
 			const lose = parseInt(data[0]["losses"]);
 			const percentage = win / (win + lose) * 100;
@@ -93,10 +107,118 @@ async function profilePage() {
 			losecount.textContent = lose;
 			kdacount.textContent = isNaN(percentage) ? "0%" : percentage.toFixed(1) + "%";
 			champcount.textContent = data[0]["championships"];
+			createWinLossChart(win, lose);
 		} else {
 			console.log('Profil bilgilerini çekerken bir hata oluştu:', response.status);
 		}
 	} catch (error) {
 		console.error(error);
-	}	
+	}
 }
+
+function createWinLossChart(wins, losses) {
+    // Check if we are on the player profile page
+	console.log(window.location.href );
+    if (window.location.href === 'https://lastdance.com.tr/profile') {
+        const chartElement = document.getElementById('winLossChart');
+		chartElement.width = 200; // Set the width
+		chartElement.height = 200;
+        if (!chartElement) {
+            console.error("Canvas element not found");
+            return;
+        }
+        const ctx = chartElement.getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Wins', 'Losses'],
+                datasets: [{
+                    data: [wins, losses],
+                    backgroundColor: [
+                        'rgba(104, 211, 145, 0.8)',
+                        'rgba(252, 129, 129, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(104, 211, 145, 1)',
+                        'rgba(252, 129, 129, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    }
+}
+
+
+async function getMatchHistory() {
+    try {
+        const response = await fetch('/api/tournament/match-history/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie('access_token')}`
+            },
+            credentials: 'include',
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.log('Failed to fetch match history:', response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error fetching match history:', error);
+        return null;
+    }
+}
+
+function renderMatchHistory(matches) {
+    const container = document.getElementById('match-history-container');
+    container.innerHTML = ''; // Clear existing content
+
+    matches.forEach(match => {
+        const matchElement = document.createElement('div');
+        matchElement.className = 'match-history-item';
+
+        const players = match.players.map((player, index) => {
+            const result = player.won ? 'winner' : 'loser';
+			console.log(index);
+            if  (index === 0) {
+                // If there's an odd number of players and this is the last player
+                return `
+                    <div class="player ${result}">
+                        <img src="${player.player.photo}" alt="${player.player.alias_name}" class="player-avatar">
+                        <span class="player-name">${player.player.alias_name}</span>
+                        <span class="player-score">${player.score}</span>
+                    </div>
+                `;
+            } else {
+                // For even or the other players
+                return `
+                    <div class="player ${result}">
+                        <span class="player-score">${player.score}</span>
+                        <span class="player-name">${player.player.alias_name}</span>
+                        <img src="${player.player.photo}" alt="${player.player.alias_name}" class="player-avatar">
+                    </div>
+                `;
+            }
+        }).join('');
+
+        matchElement.innerHTML = `
+            <div class="match-players">${players}</div>
+        `;
+
+        container.appendChild(matchElement);
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', profilePage);
