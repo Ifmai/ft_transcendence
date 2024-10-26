@@ -83,7 +83,6 @@ class GameState:
 		self.channel_layer = channel_layer
 		self.room_id = room_id
 		self.side = side
-		self.user_name = user_name # Debug amaçlı eklendi
 		self.paddles = {
 				'left': Paddle(1200, 800, 'left'),
 				'right': Paddle(1200, 800, 'right')
@@ -195,6 +194,8 @@ class GameState:
 		rooms[self.room_id]['right']['info'].resetPaddleState()
 		rooms[self.room_id]['ball'].resetBallState()
 		rooms[self.room_id]['ball'].resetBallVelocity()
+		rooms[self.room_id]['left']['info'].power_up_used = False
+		rooms[self.room_id]['right']['info'].power_up_used = False
 
 	async def update_score(self, width, room_id):
 		game_reset = False
