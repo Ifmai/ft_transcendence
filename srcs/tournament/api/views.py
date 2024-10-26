@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .enums import *
 from .models import Tournament, Profil, PlayerTournament, Match, PlayerMatch
-from .serializers import TournamentSerializer, TournamentListSerializer
+from .serializers import TournamentSerializer, TournamentListSerializer, MatchHistorySerializer
 from itertools import cycle
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
@@ -14,6 +14,14 @@ class TournamentList(ListAPIView):
 	queryset = Tournament.objects.all()
 	permission_classes = [IsAuthenticated]
 
+
+class MatchHistoryView(ListAPIView):
+	serializer_class = MatchHistorySerializer
+	permission_classes = [IsAuthenticated]
+
+	def get_queryset(self):
+		profile = Profil.objects.get(user=self.request.user)
+		return Match.objects.filter(playermatch__player=profile).distinct().order_by('-id')[:8]
 
 def create_match(tournament, player1, player2):
 	new_match = Match.objects.create(tournament= tournament,

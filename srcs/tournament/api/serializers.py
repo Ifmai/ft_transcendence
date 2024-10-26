@@ -5,10 +5,11 @@ from .enums import *
 
 
 class ProfilSerializer(serializers.ModelSerializer):
-    photo = serializers.ImageField(read_only=True)
-    class Meta:
-        model = Profil
-        fields = ['user', 'photo', 'alias_name']
+	photo = serializers.ImageField(read_only=True)
+	user = serializers.StringRelatedField(read_only=True)
+	class Meta:
+		model = Profil
+		fields = ['user', 'photo', 'alias_name']
 
 class TournamentSerializer(serializers.ModelSerializer):
 	matches = serializers.SerializerMethodField()
@@ -53,7 +54,7 @@ class PlayerMatchSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = PlayerMatch
-		fields = ('player', 'score')
+		fields = ('player', 'score', 'won')
 
 	def get_player(self, player_match):
 		player = Profil.objects.get(id=player_match.player.id)
@@ -82,3 +83,16 @@ class TournamentListSerializer(serializers.ModelSerializer):
     def get_player_aliases(self, tournament):
         players_tournament = PlayerTournament.objects.filter(tournament=tournament, creator=True)
         return players_tournament[0].player.alias_name if players_tournament else None
+
+
+class MatchHistorySerializer(serializers.ModelSerializer):
+	players = serializers.SerializerMethodField()
+
+	class Meta:
+		model = Match
+		fields = ('id', 'players')
+
+	def get_players(self, match):
+		player_matches = PlayerMatch.objects.filter(match_id=match.id)
+		serializer = PlayerMatchSerializer(player_matches, many=True)
+		return serializer.data
