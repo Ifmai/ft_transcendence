@@ -3,6 +3,7 @@ from user.api.Loginviews import UserCreateView, UserLogoutView, CheckRefreshToke
 from user.api.RefreshpassViews import PasswordResetRequest, PasswordResetConfirm
 from user.api.Profileviews import ProfilViewList, ProfilCommentViewList, ProfilPhotoUpdateView
 from user.api.User2FCA import Enabled2FCA
+from user.api.LeaderBoardviews import LeaderBoardView
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -19,6 +20,7 @@ urlpatterns = [
 	path('profil_photo/', ProfilPhotoUpdateView.as_view(), name='photo-update'),
 	path('whois/', CheckRefreshTokenView.as_view(), name='check-refresh'),
 	path('2fcaenable/', Enabled2FCA.as_view(), name='user2fca'),
-
+	path('leaderboard/', LeaderBoardView.as_view(), name='leaderboard'),
+	
 	path('', include(router.urls)),
 ]

@@ -97,3 +97,15 @@ class ProfileCommentSerializer(serializers.ModelSerializer):
 
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
+
+
+class LeaderBoardSerializer(serializers.Serializer):
+    user = serializers.StringRelatedField(read_only=True)
+    point = serializers.SerializerMethodField()
+    class Meta:
+        model = Profil
+        fields = ['user', 'point']
+
+    def get_point(self, profil):
+        point = (profil.wins * 50) - (profil.losses * 22)
+        return point
