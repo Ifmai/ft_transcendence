@@ -1,3 +1,6 @@
+let right_player_name;
+let left_player_name;
+
 async function pongPage() {
 	const canvas = document.getElementById("pong");
 	const context = canvas.getContext('2d');
@@ -45,7 +48,6 @@ async function pongPage() {
 		const gameState = JSON.parse(event.data);
 		if (gameState['type'] == 'initialize')
 		{
-			console.log("gamestate: ", gameState);
 			updateGameState(gameState);
 		}
 		if (gameState['paddles']) {
@@ -60,39 +62,84 @@ async function pongPage() {
 			updateScoreDisplay(gameState['scores']);
 		}
 		if (gameState['end']){
-			console.log("gameState: ", gameState)
-			//alert(gameState.won.message)
-			if(!getCodeURL('tournament')){
+			console.log("Game State: ", gameState)
+			if(!tournament){
 				await sleep(2500);
 				socket.close();
 				loadPage(selectPage('/play'));
 				window.history.pushState({}, "", '/play');
 			}
+			else if(tournament){
+				console.log("ben girdim ve tournament'e gittim");
+				await sleep(2500);
+				socket.close();
+				window.history.pushState({}, "", `/tournament?tournament=${tournament}`);
+				loadPage(selectPage('/tournament'));
+			}
 		}
 		if (gameState['won']){
-			console.log(gameState['won']);
-			console.log(gameState['lost']);
 			if (ws_tournament && ws_tournament.readyState === WebSocket.OPEN){
 				ws_tournament.send(JSON.stringify({
 					'type' : 'won_user',
 					'winner_name': gameState['won'],
 					'loser_name': gameState['lost']
 				}));
-			} 
+			}
+		}
+		if (gameState['PowerUp'])
+		{
+			const side = gameState['PowerUp'];
+			if (side === 'left') {
+				game.paddles.left.neon = 1; // LEFT SIDE COLOR
+			}
+			else if (side === 'right') {
+				game.paddles.right.neon = 1; // RIGHT SIDE COLOR
+			}
+			setTimeout(() => {
+				if (side == 'left'){
+					game.paddles.left.neon = 0}
+				else if (side == 'right'){
+					game.paddles.right.neon = 0;
+				}
+			}, 5000);
+
+
 		}
 		if (gameState['type'] == 'initialize'){
-			console.log("GameState : ", gameState);
 			if(gameState['message'] == 'len 1'){
 				socket.send(JSON.stringify({
 					type: 'initialize',
 				}));
 			}
 			else if(gameState['message'] == 'len 2'){
-				socket.send(JSON.stringify({
-					type: 'start',
-					width: canvas.width,
-					height: canvas.height,
-				}));
+				right_player_name = gameState['left'];
+				left_player_name = gameState['right'];
+
+				// Oyuncu isimlerini göster
+				const leftPlayerNameElement = document.getElementById('leftPlayerName');
+				const rightPlayerNameElement = document.getElementById('rightPlayerName');
+				const playerNamesElement = document.getElementById('playerNames');
+
+				leftPlayerNameElement.textContent = left_player_name;
+				rightPlayerNameElement.textContent = right_player_name;
+				playerNamesElement.style.opacity = '1';
+
+				// Canvas'a blur efekti ekle
+				canvas.classList.add('blur');
+
+				// 5 saniye bekle ve efektleri kaldır
+				setTimeout(async () => {
+					playerNamesElement.style.opacity = '0';
+					canvas.classList.remove('blur');
+
+					// Biraz daha bekle ve oyunu başlat
+					await sleep(500);
+					socket.send(JSON.stringify({
+						type: 'start',
+						width: canvas.width,
+						height: canvas.height,
+					}));
+				}, 4500);
 			}
 		}
 	};
@@ -104,7 +151,6 @@ async function pongPage() {
 	socket.onclose = function(event) {
 		console.log('WebSocket connection closed:', event);
 	};
-
 
 	window.addEventListener('keydown', function(event) {
 		keysPressed[event.keyCode] = true;
