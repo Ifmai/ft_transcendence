@@ -8,8 +8,8 @@ async function logoutPage() {
         });
         if (response.ok) {
             ws.close();
-            loadPage(selectPage('/'));
             window.history.pushState({}, "", '/');
+            await loadPage(selectPage('/'));
         } else {
             const errorData = await response.json();
             console.error('Logout failed:', errorData);

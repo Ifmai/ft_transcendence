@@ -108,8 +108,8 @@ async function ppSaveChanges() {
 			})
 		});
 		if(response.ok && response_status.ok){
-			loadPage(selectPage('/profile'));
 			window.history.replaceState({}, "", "/profile");
+			await loadPage(selectPage('/profile'));
 		}
 		//alert('Changes saved successfully!'); kenardan çıkıcak salakça şeye eklencek bu.
 	} catch (error) {
@@ -117,8 +117,8 @@ async function ppSaveChanges() {
 	}
 }
 
-function ppCancel() {
-	loadPage(selectPage('/profile'));
+async function ppCancel() {
+	await loadPage(selectPage('/profile'));
 	window.history.replaceState({}, "", "/profile");
 }
 
@@ -145,8 +145,8 @@ async function settingsPage(){
 	const cancelBtn = document.getElementById('pp-cancel');
 	const twoFactorAuth = document.getElementById('pp-twoFactorAuth').checked;
 	console.log("bu ne geliyor kanka ", twoFactorAuth);
-	cancelBtn.addEventListener('click', function(event){
-		ppCancel();
+	cancelBtn.addEventListener('click', async function(event){
+		await ppCancel();
 	});
 	changeBtn.addEventListener('click', async function(event){
 		await ppSaveChanges();

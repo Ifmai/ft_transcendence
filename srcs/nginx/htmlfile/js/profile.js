@@ -135,8 +135,8 @@ function createWinLossChart(wins, losses) {
                 datasets: [{
                     data: [wins, losses],
                     backgroundColor: [
-                        'rgba(104, 211, 145, 0.8)',
-                        'rgba(252, 129, 129, 0.8)'
+                        'rgba(95, 255, 145, 0.8)',
+                        'rgba(255, 60, 90, 0.8)'
                     ],
                     borderColor: [
                         'rgba(104, 211, 145, 1)',

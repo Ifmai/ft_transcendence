@@ -68,9 +68,9 @@ async function loginPage() {
 
                         closePopup_2fa_login();
                         showPopup('Login successful!', true);
-                        setTimeout(() => {
-                            loadPage(selectPage('/'));
+                        setTimeout(async () => {
                             window.history.pushState({}, "", '/');
+                            await loadPage(selectPage('/'));
                         }, 2000);
                     } else {
                         showPopup('Invalid 2FA code. Please try again.');
@@ -84,9 +84,9 @@ async function loginPage() {
             } else if (response.status == 200) {
                 showPopup('Login successful!', true);
                 console.log("GIRDU");
-                setTimeout(() => {
-                    loadPage(selectPage('/'));
+                setTimeout(async () => {
                     window.history.pushState({}, "", '/');
+                    await loadPage(selectPage('/'));
                 }, 2000);
             } else if (response.status === 500) {
                 showPopup('Server error. Please try again later.');
@@ -120,7 +120,7 @@ async function intralogin() {
             },
         });
         if (response.ok) {
-            loadPage(selectPage('/'));
+            await loadPage(selectPage('/'));
             window.history.pushState({}, "", '/');
         } else if (response.status === 500) {
             showPopup('Sunucu hatası. Lütfen daha sonra tekrar deneyin.');

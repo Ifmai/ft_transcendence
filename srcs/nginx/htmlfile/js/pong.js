@@ -66,7 +66,7 @@ async function pongPage() {
 			if(!tournament){
 				await sleep(2500);
 				socket.close();
-				loadPage(selectPage('/play'));
+				await loadPage(selectPage('/play'));
 				window.history.pushState({}, "", '/play');
 			}
 			else if(tournament){
@@ -74,7 +74,7 @@ async function pongPage() {
 				await sleep(2500);
 				socket.close();
 				window.history.pushState({}, "", `/tournament?tournament=${tournament}`);
-				loadPage(selectPage('/tournament'));
+				await loadPage(selectPage('/tournament'));
 			}
 		}
 		if (gameState['won']){

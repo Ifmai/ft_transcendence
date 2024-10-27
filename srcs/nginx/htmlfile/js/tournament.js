@@ -58,7 +58,7 @@ async function create_tournament(tournamentname, nickname){
 		if(response.ok){
 			const data = await response.json();
             window.history.pushState({}, "", `/tournament?tournament=${data['tournament_id']}`);
-			loadPage(selectPage('/tournament'));
+			await loadPage(selectPage('/tournament'));
 		}
 		else
 			throw new Error(`HTTP error! Status: ${response.status}`);
@@ -85,7 +85,7 @@ async function join_tournament(alliasName, currentTournamentName){
 			const data = await response.json();
 			console.log("tournament_id : ", data['tournament_id']);
             window.history.pushState({}, "", `/tournament?tournament=${data['tournament_id']}`);
-			loadPage(selectPage('/tournament'));
+			await loadPage(selectPage('/tournament'));
 		}
 		else
 			throw new Error(`HTTP error! Status: ${response.status}`);

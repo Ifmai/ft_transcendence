@@ -19,8 +19,8 @@ async function initWebSocket_one_pvp_one() {
         console.log('gelen room_id: ', data['room_id ']);
         if(data['room_id']){
             closeWebSocket_one_pvp_one();
-            loadPage(selectPage('/pong-game'));
             window.history.pushState({}, "", `/pong-game?room=${data['room_id']}`);
+            await loadPage(selectPage('/pong-game'));
         }
 
     };
@@ -41,7 +41,6 @@ function closeWebSocket_one_pvp_one() {
 
 
 async function playerPage() {
-    how_to_play();
     document.getElementById('playNowLink').addEventListener('click', function(event) {
         event.preventDefault(); // Linkin varsayılan davranışını engelle
         initWebSocket_one_pvp_one();

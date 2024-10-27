@@ -32,7 +32,7 @@ async function forgotPassword() {
                 })
             });
             if (response.ok) {
-                loadPage(selectPage('/'));
+                await loadPage(selectPage('/'));
             } else {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }

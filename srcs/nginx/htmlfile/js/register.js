@@ -46,8 +46,8 @@ async function registerPage(){
             console.log('Status Code:', response.status);
             if (response.ok) {
                 showPopup('Registration successful!', true);
-                setTimeout(() => {
-                    loadPage(selectPage('/'));
+                setTimeout(async () => {
+                    await loadPage(selectPage('/'));
                 }, 2000);
             }
 

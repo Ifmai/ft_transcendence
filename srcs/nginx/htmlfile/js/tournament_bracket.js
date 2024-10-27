@@ -78,8 +78,8 @@ async function initWebSocket_tournament() {
         else if(data['type'] == 'match'){
             cleanupFunctions = [];
             console.log("Clean up func. : ", cleanupFunctions);
-            loadPage(selectPage('/pong-game'));
             window.history.pushState({}, "", `/pong-game?room=${data['match_id']}&match=${data['match_id']}&tournament=${getCodeURL('tournament')}`);
+            await loadPage(selectPage('/pong-game'));
         }
         else if(data['type'] == 'new_match'){
             ws_tournament.send(JSON.stringify({
