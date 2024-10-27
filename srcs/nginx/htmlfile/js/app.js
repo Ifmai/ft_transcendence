@@ -64,10 +64,10 @@ const route = async (event) => {
     event = event || window.event;
     event.preventDefault();
     window.history.pushState({}, "", event.target.href);
-    loadPage(selectPage(getPath()));
+    await loadPage(selectPage(getPath()));
 }
 
-const loadPage = async (page) => {
+async function loadPage (page){
     await cleanupFunctionsHandle();
     const truePage = await load_page_check(page.page);
     if(truePage){
@@ -93,9 +93,9 @@ const loadPage = async (page) => {
                 const navbarToggle = document.getElementById('idx-navbar-toggle');
                 const navbarLinks = document.getElementById('idx-navbar-links');
                 const ponghref = document.getElementById('logo-click');
-                ponghref.addEventListener('click', () =>{
-                    loadPage(selectPage('/'));
+                ponghref.addEventListener('click', async () =>{
                     window.history.pushState({}, "", '/');
+                    await loadPage(selectPage('/'));
                 });
                 navbarToggle.addEventListener('click', () => {
                     navbarLinks.classList.toggle('active');
@@ -120,11 +120,11 @@ const loadPage = async (page) => {
     }
 }
 
-window.onpopstate = () => loadPage(selectPage(getPath()));
+window.onpopstate = async () => await loadPage(selectPage(getPath()));
 window.route = route;
 
-document.addEventListener("DOMContentLoaded", function() {
-    loadPage(selectPage(getPath()));
+document.addEventListener("DOMContentLoaded", async function() {
+    await loadPage(selectPage(getPath()));
 });
 
 // window.addEventListener('beforeunload', function (event) {
