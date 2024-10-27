@@ -10,8 +10,8 @@ class Game {
 		this.height = height;
 		this.ball = new Ball(width / 2, height / 2, 20, 5, 5);
 		this.paddles = {
-			left: new Paddle(0, height / 2 - 50, 20, 150, 15),
-			right: new Paddle(width - 20, height / 2 - 50, 20, 150, 15)
+			left: new Paddle(0, height / 2 - 50, 20, 150, 15, '#4df3ff'),
+			right: new Paddle(width - 20, height / 2 - 50, 20, 150, 15, '#ff6b1a')
 		};
 	}
 
@@ -29,13 +29,13 @@ class Game {
 		this.context.fillStyle = "rgba(0, 0, 0, 0.4)";
 		this.context.fillRect(0, 0, this.width, this.height);
 		this.ball.draw(this.context, "#FBFFFF")
-		this.paddles.left.draw(this.context, "#4df3ff")
-		this.paddles.right.draw(this.context, "#ff6b1a")
+		this.paddles.left.draw(this.context)
+		this.paddles.right.draw(this.context)
 		drawGameFrame(this);
 	}
 
 	loop(keysPressed) {
-		// this.update(keysPressed);
+		// this.update(keysPressed);4
 		this.render();
 	}
 }
