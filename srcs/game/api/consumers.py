@@ -20,7 +20,7 @@ class Paddle():
 		self.score = 0
 		self.game_width = width
 		self.game_height = height
-		self.power_up_used = False 
+		self.power_up_used = False
 
 	def movePaddleUp(self):
 		if	self.positionY > 0:
@@ -40,7 +40,7 @@ class Paddle():
 			self.power_up_used = True
 			self.velocity += 15
 			asyncio.create_task(self.reset_power_up())
-	
+
 	async def reset_power_up(self):
 		await asyncio.sleep(5)
 		self.velocity -= 15
@@ -67,7 +67,6 @@ class Ball():
 		if (self.positionY + self.radius > self.game_height or
 			self.positionY - self.radius <= 0):
 			self.velocityY *= -1
-	
 	def resetBallVelocity(self):
 		self.velocityX = 5
 		self.velocityY = 5
@@ -200,7 +199,7 @@ class GameState:
 	async def update_score(self, width, room_id):
 		game_reset = False
 		match_end = False
-		
+
 		if rooms[self.room_id]['right']['info'].score < 5 and rooms[self.room_id]['left']['info'].score < 5:
 			if rooms[self.room_id]['ball'].positionX <= -rooms[self.room_id]['ball'].radius:
 				if self.side == 'right':
@@ -261,7 +260,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 		player_db = None
 		if (self.user):
 			try:
-				player_db = await database_sync_to_async(Profil.objects.get)(user_id=self.user.id)
+				player_db = await database_sync_to_async(Profil.objects.get)(user=self.user)
 			except Profil.DoesNotExist:
 				print("User not found")
 
@@ -288,7 +287,8 @@ class PongConsumer(AsyncWebsocketConsumer):
 					'user_id': self.user.id,
 					'info': self.game_state.paddles[position],
 					'alias': player_db.alias_name,
-					'avatar': player_db.photo.url
+					'avatar': player_db.photo.url,
+					'user_name' : self.user.username
 				}
 				self.side = position
 				self.game_state.side = position
@@ -330,6 +330,16 @@ class PongConsumer(AsyncWebsocketConsumer):
 		{
 			'type': 'pong_message',
 			'message': {'scores': scores}
+		}
+	)
+		
+	async def broadcast_power_up(self, side):
+		"""Broadcast the current score to all players in the room."""
+		await self.channel_layer.group_send(
+		self.room_id,
+		{
+			'type': 'pong_message',
+			'message': {'PowerUp': side}
 		}
 	)
 
@@ -384,10 +394,20 @@ class PongConsumer(AsyncWebsocketConsumer):
 					'message': 'len 1'
 				}))
 			elif len(rooms[self.room_id]) == 3:
-				await self.send(text_data=json.dumps({
-						'type': 'initialize',
-						'message': 'len 2'
-					}))
+				if self.match_id:
+					await self.send(text_data=json.dumps({
+							'type': 'initialize',
+							'message': 'len 2',
+							'left' : rooms[self.room_id]['left']['alias'],
+							'right' : rooms[self.room_id]['right']['alias']
+						}))
+				elif not self.match_id:
+					await self.send(text_data=json.dumps({
+							'type': 'initialize',
+							'message': 'len 2',
+							'left' : rooms[self.room_id]['left']['user_name'],
+							'right' : rooms[self.room_id]['right']['user_name']
+						}))
 		if data['type'] == 'start':
 			self.width = data['width']
 			self.height = data['height']
@@ -410,5 +430,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 						rooms[self.room_id][position]['info'].movePaddleDown()
 					elif data['keyCode'] == 32:
 						rooms[self.room_id][position]['info'].activate_power_up()
+						await self.broadcast_power_up(position)
 					await self.broadcast_paddle_state(position)
 					break
