@@ -42,7 +42,7 @@ async function getProfile() {
 		const username = getCodeURL('user');
 		let url;
 		if (username){
-			url = `/api/users/user_profil/${username}`
+			url = `/api/users/user_profil/other/${username}`
 		}
 		else{
 			url = `/api/users/user_profil/`

@@ -78,23 +78,48 @@ async function action_2fca(action) {
 	}
 }
 
+async function getinfo() {
+	try {
+		url = `/api/users/user_profil/`
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${getCookie('access_token')}`  // Token'ı Authorization başlığına ekedik.
+			},
+			credentials: 'include',
+		});
+		if (response.ok)
+			return response;
+		else{
+			return response.status;
+		}
+	} catch (error) {
+		return error;
+	}
+}
+
+
 async function ppSaveChanges() {
 	const firstName = document.getElementById('pp-firstName').value;
 	const lastName = document.getElementById('pp-lastName').value;
 	const city = document.getElementById('pp-city').value;
 	const bio = document.getElementById('pp-bio').value;
-
 	const pp_photo = document.getElementById('pp-photo-upload');
+
+	const data_user = await getinfo();
+	const data_id = await data_user.json();
 	const file = pp_photo.files[0];
-	if(file){
-		const formData = new FormData();
-		formData.append('photo', file);
-		response_status = await update_photo(formData);
-	}
+	
 	try {
-		const getuser = await getProfile();
-		const userdata = await getuser.json();
-		const response = await fetch(`/api/users/user_profil/${userdata[0]['id']}/`, {
+		let response_status;
+		if(file){
+			const formData = new FormData();
+			formData.append('photo', file);
+			response_status = await update_photo(formData);
+	
+		}
+		const response = await fetch(`/api/users/user_profil/${data_id[0]['id']}/`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -104,10 +129,10 @@ async function ppSaveChanges() {
 				'user_first_name_update' : firstName,
 				'user_last_name_update' : lastName,
 				'city' : city,
-				'bio' : bio,
+				'bio' : bio
 			})
 		});
-		if(response.ok && response_status.ok){
+		if(response.ok || response_status.ok){
 			window.history.replaceState({}, "", "/profile");
 			await loadPage(selectPage('/profile'));
 		}
@@ -123,7 +148,7 @@ async function ppCancel() {
 }
 
 async function upload_value(){
-	const response = await getProfile();
+	const response = await getinfo();
 	try {
 		if(response.ok){
 			const data = await response.json();
@@ -144,7 +169,6 @@ async function settingsPage(){
 	const changeBtn = document.getElementById('pp-submit');
 	const cancelBtn = document.getElementById('pp-cancel');
 	const twoFactorAuth = document.getElementById('pp-twoFactorAuth').checked;
-	console.log("bu ne geliyor kanka ", twoFactorAuth);
 	cancelBtn.addEventListener('click', async function(event){
 		await ppCancel();
 	});
