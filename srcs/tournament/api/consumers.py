@@ -69,16 +69,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	async def connect(self):
 		await self.accept()
-		tournament_id = self.scope['url_route']['kwargs'].get('tournament_id')
-		if not tournament_id:
+		self.tournament_id = self.scope['url_route']['kwargs'].get('tournament_id')
+		if not self.tournament_id:
 			await self.send(text_data=json.dumps({'message': 'Torunament not found', 'status': 401}))
 			await self.close()
 		elif not self.scope['user']:
 			await self.send(text_data=json.dumps({'message': 'User not authenticated', 'status': 401}))
 			await self.close()
 		try:
-			self.tournament = await self.get_tournament(tournament_id)
-			self.room_group_name = 'tournament_' + str(tournament_id)
+			self.tournament = await self.get_tournament(self.tournament_id)
+			self.room_group_name = 'tournament_' + str(self.tournament_id)
 			await self.get_or_create_dict(self.scope['profile'])
 			self.profile = self.scope['profile']
 			self.user = self.scope['user']
@@ -113,37 +113,50 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	
 	async def final_match(self, text_data_json):
-		winner_player_obj = await self.get_profile_object(text_data_json['winner_name'])
-		loser_player_obj = await self.get_profile_object(text_data_json['loser_name'])
-		if self.profile == winner_player_obj:
-			tournament_dict[self.room_group_name]['winners'].append(winner_player_obj)
-			if len(tournament_dict[self.room_group_name]['winners']) == 2:
-				print("log winners : ", tournament_dict[self.room_group_name]['winners'])
+		winner_username = text_data_json['winner_name']
+		loser_username = text_data_json['loser_name']
+		winner_player_obj = await self.get_profile_object(winner_username)
+		loser_player_obj = await self.get_profile_object(loser_username)
+		alias_names = await self.get_alias_names()
+		await asyncio.sleep(1.5)
+		await self.send(text_data=json.dumps({
+				'message': alias_names,
+				'type': 'joined'
+		}))
+		if self.profile == winner_player_obj and  await self.get_tournament_round() != 2:
+			tournament_dict[self.room_group_name]['losers'].append(loser_player_obj.alias_name)
+			if tournament_dict[self.room_group_name]['semifinal1'] is None:
+				tournament_dict[self.room_group_name]['semifinal1'] = self.profile
+			elif tournament_dict[self.room_group_name]['semifinal2'] is None:
+				tournament_dict[self.room_group_name]['semifinal2'] = self.profile
+				await self.set_tournament_round()
 				tournament_dict[self.room_group_name]['matches'].clear()
-				print('log maches: ', tournament_dict[self.room_group_name]['matches'])
-				new_match = await self.create_match(self.tournament, tournament_dict[self.room_group_name]['winners'][0], tournament_dict[self.room_group_name]['winners'][1])
+				new_match = await self.create_match(self.tournament, tournament_dict[self.room_group_name]['semifinal1'], tournament_dict[self.room_group_name]['semifinal2'])
 				tournament_dict[self.room_group_name]['matches'].append(new_match)
-				await asyncio.sleep(5)
 				await get_channel_layer().group_send(
+							self.room_group_name,
+							{
+								'type': 'winner_message',
+								'm_type': 'winner_and_loser',
+								'loser' : tournament_dict[self.room_group_name]['losers'],
+							}
+						)
+		elif self.profile == winner_player_obj and await self.get_tournament_round() == 2:
+			print("ben final maçı sonrasında buraya geldim. Gelen user : ", self.user)
+			tournament_dict[self.room_group_name]['champion'] = self.profile
+			await get_channel_layer().group_send(
 					self.room_group_name,
 					{
-						'type': 'broadcast_message',
-						'message': 'new match ready.',
-						'm_type': 'new_match'
+						'type': 'winner_message',
+						'm_type': 'end_tournament',
+						'loser' : tournament_dict[self.room_group_name]['losers'],
 					}
 				)
 
 
-
 	async def disconnect(self, code):
 		tournament_player = await self.get_self_player_tournament()
-		if len(tournament_dict[self.room_group_name]['profiles']) == 1:
-			tournament_dict.pop(self.room_group_name, None)
-			await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-			await asyncio.sleep(1)
-			if self.room_group_name not in tournament_dict:
-				await self.delete_tournament()
-		elif tournament_player:
+		if tournament_player:
 			for p in tournament_dict[self.room_group_name]['profiles']:
 				if p['profile'] == self.scope['profile']:
 					tournament_dict[self.room_group_name]['profiles'].remove(p)
@@ -164,10 +177,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				if p['profile'] == self.scope['profile']:
 					check = True
 					break
-			if tournament_player.creator == True and check != True:
+			if tournament_player.creator == True and check != True and len(tournament_dict[self.room_group_name]['profiles']) >= 1:
 				await self.set_tournament_creator()
 			if not any(p['profile'] != self.scope['profile'] for p in tournament_dict[self.room_group_name]['profiles']):
 				await self.delete_tournament_player(tournament_player)
+			if len(tournament_dict[self.room_group_name]['profiles']) == 0 and check != True:
+				await self.delete_tournament()
+				tournament_dict.pop(self.room_group_name, None)
 
 
 
@@ -188,17 +204,34 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			tournament_dict[self.room_group_name] = {
 				'profiles' : [{'profile' :  profile, 'alias_name' : profile.alias_name}],
 				'matches' : [],
-				'winners': [],
-				'champion': ''
+				'semifinal1': None,
+				'semifinal2': None,
+				'champion': None,
+				'losers': []
 			}
 
 	async def broadcast_message(self, event):
-		message = event['message']
 		m_type = event['m_type']
-        
+		message = event['message']
+
 		await self.send(text_data=json.dumps({
 			'type': m_type,
 			'message': message
+		}))
+
+	async def winner_message(self, event):
+		m_type = event['m_type']
+		loser = event['loser']
+		semifinal1 = tournament_dict[self.room_group_name]['semifinal1'].alias_name if tournament_dict[self.room_group_name]['semifinal1'] else None
+		semifinal2 = tournament_dict[self.room_group_name]['semifinal2'].alias_name if tournament_dict[self.room_group_name]['semifinal2'] else None
+		champion = tournament_dict[self.room_group_name]['champion'].alias_name if tournament_dict[self.room_group_name]['champion'] else None
+
+		send_winners = [semifinal1, semifinal2, champion]
+
+		await self.send(text_data=json.dumps({
+			'type': m_type,
+			'winner': send_winners,
+			'loser': loser
 		}))
 
 	@database_sync_to_async
@@ -259,3 +292,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			alias_names.append(player['alias_name'])
 		return alias_names
 					
+
+	@database_sync_to_async
+	def set_tournament_round(self):
+		tournament = Tournament.objects.get(id=self.tournament_id)
+		tournament.round += 1
+		tournament.save()
+
+	@database_sync_to_async
+	def get_tournament_round(self):
+		tournament = Tournament.objects.get(id=self.tournament_id)
+		return tournament.round

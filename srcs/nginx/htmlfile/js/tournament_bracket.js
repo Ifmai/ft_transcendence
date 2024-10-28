@@ -23,7 +23,7 @@ async function initWebSocket_tournament() {
         else{
             ws_tournament = new WebSocket(`wss://lastdance.com.tr/ws-tournament/${getCodeURL('tournament')}/?token=${getCookie('access_token')}`);
             ws_tournament.onopen = function(event) {
-                console.log('WebSocket bağlantısı açıldı.');
+                console.log('Torunament WebSocketi bağlantısı açıldı.');
                 ws_tournament.send(JSON.stringify({
                     'type': 'init',
                     'message': 'Pending Tournament'
@@ -33,16 +33,14 @@ async function initWebSocket_tournament() {
     }
 
     ws_tournament.onmessage = async function(event) {
-        console.log("event data : ", event.data);
         const data = JSON.parse(event.data);
-        console.log('gelend dataİ: ', data);
         if(data['type'] == 'joined'){
             if (data['message'][0]){
                 player1.innerText = data['message'][0];
                 document.getElementById('player1-status').classList.add('ready'); 
             }
             else if (!data['message'][0]) {
-                player1.innerText = 'User 1';
+                player1.innerText = 'Player 1';
                 document.getElementById('player1-status').classList.remove('ready');
             }
             if (data['message'][1]){
@@ -50,7 +48,7 @@ async function initWebSocket_tournament() {
                 document.getElementById('player2-status').classList.add('ready'); 
             }
             else if (!data['message'][1]){
-                player2.innerText = 'User 2';
+                player2.innerText = 'Player 2';
                 document.getElementById('player2-status').classList.remove('ready');
             }
             if (data['message'][2]){
@@ -58,7 +56,7 @@ async function initWebSocket_tournament() {
                 document.getElementById('player3-status').classList.add('ready'); 
             }
             else if (!data['message'][2]){
-                player3.innerText = 'User 3';
+                player3.innerText = 'Player 3';
                 document.getElementById('player3-status').classList.remove('ready');
             }
             if (data['message'][3]){
@@ -66,25 +64,41 @@ async function initWebSocket_tournament() {
                 document.getElementById('player4-status').classList.add('ready'); 
             }
             else if (!data['message'][3]){
-                player4.innerText = 'User 4';
+                player4.innerText = 'Player 4';
                 document.getElementById('player4-status').classList.remove('ready');
             }
         }
-        else if(data['type'] == 'start'){
+        else if(data['type'] == 'winner_and_loser' || data['type'] == 'end_tournament')
+        {
+            if(data['winner'][0])
+                document.getElementById('semifinal1').querySelector('h3').textContent = data['winner'][0];
+            if(data['winner'][1])
+                document.getElementById('semifinal2').querySelector('h3').textContent = data['winner'][1];
+            if(data['winner'][2])
+                document.getElementById('champion').querySelector('h3').textContent = data['winner'][2];
+            if(data['type'] == 'winner_and_loser' && (!data['winner'][2])){
+                await sleep(6000);
+                ws_tournament.send(JSON.stringify({
+                    'type': 'final_match_start',
+                }))
+            }
+        }
+        else if(data['type'] == 'end_tournament')
+        {
+            document.getElementById('champion').querySelector('h3').textContent = data['winner'];
+        }
+        else if(data['type'] == 'start')
+        {
             ws_tournament.send(JSON.stringify({
                 'type': 'start_match',
             }))
         }
-        else if(data['type'] == 'match'){
+        else if(data['type'] == 'match')
+        {
             cleanupFunctions = [];
             console.log("Clean up func. : ", cleanupFunctions);
             window.history.pushState({}, "", `/pong-game?room=${data['match_id']}&match=${data['match_id']}&tournament=${getCodeURL('tournament')}`);
             await loadPage(selectPage('/pong-game'));
-        }
-        else if(data['type'] == 'new_match'){
-            ws_tournament.send(JSON.stringify({
-                'type': 'final_match_start',
-            }))
         }
     };
 

@@ -1,12 +1,16 @@
 let cleanupFunctions = [];
 
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function getCodeURL(query) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(query);
 }
 
 const getPath = () => window.location.pathname;
-const only_auth_pages = ["../pages/profile.html", '../pages/public-player.html', '../pages/leaderboard.html', '../pages/chat.html', '../pages/play_select.html', '../pages/tournament.html', '../pages/tournament_bracket.html']
+const only_auth_pages = ["../pages/profile.html", '../pages/public-player.html', '../pages/leaderboard.html', '../pages/chat.html', '../pages/play_select.html', '../pages/tournament.html', '../pages/tournament_bracket.html', '../pages/pong.html', '../pages/player-profile.html' ]
 const not_auth_pages = ["../pages/login.html", "../pages/register.html", "../pages/forgot-password.html" , '../pages/new-password.html', "../pages/waitlogin.html"]
 
 
