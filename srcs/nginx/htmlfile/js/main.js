@@ -77,7 +77,6 @@ async function initWebSocket() {
         else if (data['type'] == 'friend_status'){
             const statusDiv = document.getElementById('status.' + data['username']);
             const newStatus = data['status']
-            console.log("Status div : ", statusDiv);
             if (statusDiv) {
                 statusDiv.className = newStatus === 'ON' ? 'chat-friend-status ON' : 'chat-friend-status OF';
             }
