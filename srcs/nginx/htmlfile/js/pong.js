@@ -38,11 +38,8 @@ async function pongPage() {
 	};
 
 	socket.onopen = function(event) {
-		console.log('WebSocket connection opened:', event);{
-			socket.send(JSON.stringify({ type: 'initialize' }));
-		}
-		// socket.send(JSON.stringify({ type: 'initialize' }));
-
+		console.log('WebSocket connection opened:', event);
+		socket.send(JSON.stringify({ type: 'initialize' }));
 	};
 
 	function sleep(ms) {

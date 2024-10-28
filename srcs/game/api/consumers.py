@@ -4,7 +4,7 @@ from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from .models import Profil, Match, PlayerMatch
 import asyncio
-import time
+from datetime import datetime, timedelta
 from .enums import State
 
 rooms = dict()
@@ -141,7 +141,7 @@ class GameState:
 		return match
 
 	@database_sync_to_async
-	def set_db_two_players(self, room_id, match_id):
+	def set_db_two_players(self, match_id):
 		player_left = rooms[self.room_id]['left']
 		player_right = rooms[self.room_id]['right']
 
@@ -216,10 +216,10 @@ class GameState:
 		else:
 			await self.reset_game()
 			if rooms[self.room_id]['left']['info'].score == 5 and self.side == 'left':
-				winner, loser = await self.set_db_two_players(room_id, self.match_id)
+				winner, loser = await self.set_db_two_players(self.match_id)
 				await self.announce_result(winner, loser)
 			elif rooms[self.room_id]['right']['info'].score == 5 and self.side == 'right':
-				winner, loser = await self.set_db_two_players(room_id, self.match_id)
+				winner, loser = await self.set_db_two_players(self.match_id)
 				await self.announce_result(winner, loser)
 			game_reset = True
 			match_end = True
@@ -233,15 +233,6 @@ class GameState:
 			{
 				'type': 'pong_message',
 				'message': {'won': winner, 'lost': loser}
-			}
-		)
-
-	async def announce_game_finish(self):
-		await self.channel_layer.group_send(
-			self.room_id,
-			{
-				'type': 'pong_message',
-				'message': {'end': 'match ended'}
 			}
 		)
 
@@ -275,6 +266,18 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 		await self.assign_paddle(player_db)
 
+	# async def retrieve_paddle(self):
+	# 	"""Assign a paddle or retrieve existing paddle for the player."""
+	# 	if self.user.id in [rooms[self.room_id]['left'].get('user_id'), rooms[self.room_id]['right'].get('user_id')]:
+	# 		# User already has a paddle, retrieve existing paddle info
+	# 		if rooms[self.room_id]['left']['user_id'] == self.user.id:
+	# 			self.side = 'left'
+	# 			self.game_state.side = 'left'
+	# 		else:
+	# 			self.side = 'right'
+	# 			self.game_state.side = 'right'
+	# 		# Optionally send the paddle state to the client
+	# 		await self.send_initial_state()
 
 	async def assign_paddle(self, player_db):
 		"""Assign a paddle to the player based on available slots."""
@@ -343,19 +346,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 		}
 	)
 
-	# Handle when randomly user disconnects, save the data
 	async def disconnect(self, close_code):
-		if self.room_id in rooms:
-			for position in rooms[self.room_id]:
-				if (position != 'ball'):
-					if (rooms[self.room_id][position]['player'] == self.channel_name):
-						rooms[self.room_id].pop(position)
-						break
-					else:
-						rooms[self.room_id].pop(position)
-						break
-			if len(rooms[self.room_id]) == 0:
-				del rooms[self.room_id]
 		await self.channel_layer.group_discard(
 			self.room_id,
 			self.channel_name
@@ -380,7 +371,9 @@ class PongConsumer(AsyncWebsocketConsumer):
 				await self.broadcast_paddle_state('left')
 				await self.broadcast_paddle_state('right')
 			if match_end:
-				await self.game_state.announce_game_finish()
+				await self.send(text_data=json.dumps({
+					'end' : 'match ended'
+				}))
 				break
 			await asyncio.sleep(0.03)
 
@@ -416,6 +409,11 @@ class PongConsumer(AsyncWebsocketConsumer):
 			await self.send_initial_state()
 			asyncio.create_task(self.start_game(self.height, self.width))
 
+		# if data['type'] == 'refresh_reconnect':
+		# 	await self.retrieve_paddle()
+
+		# if data["type"] == "pong":
+		# 	self.last_heartbeat = datetime.now()
 		elif data['type'] == 'keyPress':
 			await self.handle_key_press(data)
 
