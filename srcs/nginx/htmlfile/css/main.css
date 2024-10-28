@@ -184,11 +184,13 @@
 }
 
 .idx-game-modes {
-	display: grid;
+	display: flex;
 	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 	gap: 2rem;
-	max-width: 64rem;
+	justify-content: center;
+	max-width: 84rem;
 	margin: 0 auto;
+
 }
 
 .idx-game-mode {
@@ -200,6 +202,7 @@
 	transition: transform 0.3s ease;
 	position: relative;
 	overflow: hidden;
+	justify-content: center;
 }
 
 .idx-game-mode:hover {
