@@ -68,7 +68,8 @@ const route = async (event) => {
 }
 
 async function loadPage (page){
-    await cleanupFunctionsHandle();
+    if(page.page != '../pages/pong.html')
+        await cleanupFunctionsHandle();
     const truePage = await load_page_check(page.page);
     if(truePage){
         try {
@@ -88,7 +89,6 @@ async function loadPage (page){
                     }
                     return response.text();
                 });
-                console.log("Page : ", page.page);
                 document.getElementById('main-navbar').innerHTML = navbarhtml;
                 const navbarToggle = document.getElementById('idx-navbar-toggle');
                 const navbarLinks = document.getElementById('idx-navbar-links');
@@ -110,6 +110,9 @@ async function loadPage (page){
                 }else{
                     throw new Error('Script bulunamadı: ' + page.page + '. Script yok.');
                 }
+            }
+            if (page.page === "../pages/home_page.html") {
+                homePage();
             }
             await initWebSocket();
         } catch (error) {

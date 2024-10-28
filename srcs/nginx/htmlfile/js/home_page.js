@@ -6,28 +6,61 @@ async function homePage() {
 	let hpBallY = 0;
 	let hpBallSpeedX = 2;
 	let hpBallSpeedY = 2;
-
+	let leftPaddleY = 100; // Sol paddle başlangıç konumu
+	let rightPaddleY = 100; // Sağ paddle başlangıç konumu
+	console.log("BURADASDASDASDASDASDASDASD");
 	const hpPongDemo = document.querySelector('.hp-pong-demo');
 	const hpMaxX = hpPongDemo.clientWidth - hpBall.clientWidth;
 	const hpMaxY = hpPongDemo.clientHeight - hpBall.clientHeight;
 
-	hpBallX += hpBallSpeedX;
-	hpBallY += hpBallSpeedY;
+	function updateBall() {
+		hpBallX += hpBallSpeedX;
+		hpBallY += hpBallSpeedY;
 
-	if (hpBallX <= 0 || hpBallX >= hpMaxX) {
-		hpBallSpeedX = -hpBallSpeedX;
+		// Topun duvarlara çarpmasını kontrol et
+		if (hpBallX <= 0 || hpBallX >= hpMaxX) {
+			hpBallSpeedX = -hpBallSpeedX; // Yön değiştir
+		}
+		if (hpBallY <= 0 || hpBallY >= hpMaxY) {
+			hpBallSpeedY = -hpBallSpeedY; // Yön değiştir
+		}
+
+		// Paddle'lara çarpma kontrolü
+		if (hpBallX <= 10 && hpBallY >= leftPaddleY && hpBallY <= leftPaddleY + 60) {
+			hpBallSpeedX = -hpBallSpeedX;
+		}
+		if (hpBallX >= hpMaxX - 10 && hpBallY >= rightPaddleY && hpBallY <= rightPaddleY + 60) {
+			hpBallSpeedX = -hpBallSpeedX;
+		}
+
+		hpBall.style.left = `${hpBallX}px`;
+		hpBall.style.top = `${hpBallY}px`;
 	}
-	if (hpBallY <= 0 || hpBallY >= hpMaxY) {
-		hpBallSpeedY = -hpBallSpeedY;
+
+	function updatePaddles() {
+		// Sol paddle topun y konumuna göre hareket eder
+		if (leftPaddleY + 30 < hpBallY) {
+			leftPaddleY += 2; // Aşağı hareket
+		} else if (leftPaddleY + 30 > hpBallY) {
+			leftPaddleY -= 2; // Yukarı hareket
+		}
+
+		// Sağ paddle topun y konumuna göre hareket eder
+		if (rightPaddleY + 30 < hpBallY) {
+			rightPaddleY += 2; // Aşağı hareket
+		} else if (rightPaddleY + 30 > hpBallY) {
+			rightPaddleY -= 2; // Yukarı hareket
+		}
+
+		hpLeftPaddle.style.top = `${leftPaddleY}px`;
+		hpRightPaddle.style.top = `${rightPaddleY}px`;
 	}
 
-	hpBall.style.left = `${hpBallX}px`;
-	hpBall.style.top = `${hpBallY}px`;
+	function gameLoop() {
+		updateBall();
+		updatePaddles();
+		requestAnimationFrame(gameLoop);
+	}
 
-	// Simple AI for paddles
-	hpLeftPaddle.style.top = `${hpBallY - 30}px`;
-	hpRightPaddle.style.top = `${hpBallY - 30}px`;
-
-	requestAnimationFrame(homePage);
-
+	gameLoop(); // Oyun döngüsünü başlat
 }
