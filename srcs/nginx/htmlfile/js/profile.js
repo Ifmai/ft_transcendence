@@ -43,10 +43,8 @@ async function getProfile() {
 		let url;
 		if (username){
 			url = `/api/users/user_profil/${username}`
-			console.log("selam kanka buradayım ilk if ");
 		}
 		else{
-			console.log("selam kanka buradayım ");
 			url = `/api/users/user_profil/`
 			const profileHeader = document.querySelector('.pub-profile-header');
    			const settingsLink = `
@@ -160,7 +158,17 @@ function createWinLossChart(wins, losses) {
 
 async function getMatchHistory() {
     try {
-        const response = await fetch('/api/tournament/match-history/', {
+		const username = getCodeURL('user');
+		let url;
+		if(username){
+			url = `/api/tournament/match-history/${username}`
+			console.log("selam kanka :x");
+		}
+		else{
+			url = `/api/tournament/match-history/`
+			console.log("merhaba bropa :P");
+		}
+        const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -195,8 +203,8 @@ function renderMatchHistory(matches) {
                 // If there's an odd number of players and this is the last player
                 return `
                     <div class="player ${result}">
-                        <img src="${player.player.photo}" alt="${player.player.alias_name}" class="player-avatar">
-                        <span class="player-name">${player.player.alias_name}</span>
+                        <img src="${player.player.photo}" alt="${player.player.user}" class="player-avatar">
+                        <span class="player-name">${player.player.user}</span>
                         <span class="player-score">${player.score}</span>
                     </div>
                 `;
@@ -205,8 +213,8 @@ function renderMatchHistory(matches) {
                 return `
                     <div class="player ${result}">
                         <span class="player-score">${player.score}</span>
-                        <span class="player-name">${player.player.alias_name}</span>
-                        <img src="${player.player.photo}" alt="${player.player.alias_name}" class="player-avatar">
+                        <span class="player-name">${player.player.user}</span>
+                        <img src="${player.player.photo}" alt="${player.player.user}" class="player-avatar">
                     </div>
                 `;
             }
@@ -219,6 +227,3 @@ function renderMatchHistory(matches) {
         container.appendChild(matchElement);
     });
 }
-
-
-document.addEventListener('DOMContentLoaded', profilePage);
