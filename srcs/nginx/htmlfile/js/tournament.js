@@ -25,13 +25,11 @@ async function get_tournaments_list(){
 		});
 		if(response.ok){
 			data = await response.json();
-			console.log("data : ", data);
 			const formattedTournaments = data.map(item => ({
 				id : item.id,
 				name: item.name,
 				creator: item.player_aliases
 			}));
-			console.log("format : ", formattedTournaments);
 			tournaments.push(...formattedTournaments);
 			await add_tournaments();
 		}else
@@ -136,10 +134,9 @@ async function tournamentPage() {
 		else if (nickname.length > 10 || nickname.length < 3)
 			showPopup("The alias name must be between 3 and 10 characters long!")
 		else if (tournamentName && nickname) {
-			await create_tournament(tournamentName, nickname);
-			document.getElementById('trn-createPopupOverlay').style.display = 'none';
 			document.getElementById('trn-createTournamentInput').value = '';
 			document.getElementById('trn-createNicknameInput').value = '';
+			await create_tournament(tournamentName, nickname);
 		}
 	});
 
