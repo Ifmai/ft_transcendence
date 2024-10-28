@@ -44,6 +44,8 @@ async def get_room(player_id, capacity, channel_name, match_id):
 	This function retrieves or creates a game room for the player.
 	"""
 	for room_id, room in game_rooms.items():
+		if any(player_id in player for player in room['players']):
+			return None, None
 		if len(room['players']) < capacity and room['capacity'] == capacity and room['match_id'] == match_id:
 			room['players'].append({player_id: channel_name})
 			await get_channel_layer().group_add(room_id, channel_name)
@@ -116,10 +118,11 @@ class MatchMakerConsumer(AsyncWebsocketConsumer):
 		if existing_room is not None:
 			await self.channel_layer.group_discard(existing_room_id, self.channel_name)
 			await self.send(text_data=json.dumps({'message': 'Disconnected from previous room', 'status': 200}))
+			return
 
 		room, room_id = await get_room(player_id, capacity, self.channel_name, match_id)
 		if not room:
-			await self.send(text_data=json.dumps({'message': 'No room found', 'status': 400}))
+			await self.send(text_data=json.dumps({'message': 'No room found or player already in the queue', 'status': 400}))
 			return
 
 		await self.channel_layer.group_add(room_id, self.channel_name)
