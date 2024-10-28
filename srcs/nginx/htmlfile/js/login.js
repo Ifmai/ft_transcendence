@@ -1,4 +1,4 @@
-function showPopup(message, success = false) {
+async function showPopup(message, success = false) {
     const popup = document.getElementById('popup-message');
     popup.innerHTML = message;
 
@@ -7,9 +7,8 @@ function showPopup(message, success = false) {
 
     popup.style.display = 'block';
 
-    setTimeout(() => {
+        await sleep(2000);
         popup.style.display = 'none';
-    }, 2000);
 }
 
 function showPopup_2fa_login() {
@@ -68,10 +67,9 @@ async function loginPage() {
 
                         closePopup_2fa_login();
                         showPopup('Login successful!', true);
-                        setTimeout(async () => {
-                            window.history.pushState({}, "", '/');
-                            await loadPage(selectPage('/'));
-                        }, 2000);
+                        await sleep(4500);
+                        window.history.pushState({}, "", '/');
+                        await loadPage(selectPage('/'));
                     } else {
                         showPopup('Invalid 2FA code. Please try again.');
                     }
@@ -83,11 +81,9 @@ async function loginPage() {
 
             } else if (response.status == 200) {
                 showPopup('Login successful!', true);
-                console.log("GIRDU");
-                setTimeout(async () => {
-                    window.history.pushState({}, "", '/');
-                    await loadPage(selectPage('/'));
-                }, 2000);
+                await sleep(2000);
+                window.history.pushState({}, "", '/');
+                await loadPage(selectPage('/'));
             } else if (response.status === 500) {
                 showPopup('Server error. Please try again later.');
             } else if (response.status === 401){

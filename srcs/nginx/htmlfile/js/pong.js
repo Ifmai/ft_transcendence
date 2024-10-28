@@ -1,6 +1,10 @@
 let right_player_name;
 let left_player_name;
 
+window.addEventListener("beforeunload", function () {
+	sessionStorage.setItem("isRefreshing", "true");
+});
+
 async function pongPage() {
 	const canvas = document.getElementById("pong");
 	const context = canvas.getContext('2d');
@@ -12,6 +16,8 @@ async function pongPage() {
 	const room_id = getCodeURL('room');
 	const match_id = getCodeURL('match');
 	const tournament = getCodeURL('tournament');
+	const isRefreshing = sessionStorage.getItem("isRefreshing");
+
 	let wsUrl;
 	if(match_id){
 		wsUrl = `wss://lastdance.com.tr/ws-pong/pong/${room_id}/${match_id}/?token=${getCookie('access_token')}`;
@@ -19,7 +25,6 @@ async function pongPage() {
 	else{
 		wsUrl = `wss://lastdance.com.tr/ws-pong/pong/${room_id}/?token=${getCookie('access_token')}`;
 	}
-	console.log("wsUrl: ", wsUrl)
 	const socket = new WebSocket(wsUrl);
 
 
@@ -35,9 +40,12 @@ async function pongPage() {
 
 	socket.onopen = function(event) {
 		console.log('WebSocket connection opened:', event);
-		socket.send(JSON.stringify({
-			type: 'initialize',
-		}));
+		if (isRefreshing) {
+			socket.send(JSON.stringify({ type: 'refresh_reconnect' }));
+			sessionStorage.removeItem("isRefreshing");
+		} else {
+			socket.send(JSON.stringify({ type: 'initialize' }));
+		}
 	};
 
 	function sleep(ms) {
@@ -62,16 +70,14 @@ async function pongPage() {
 			updateScoreDisplay(gameState['scores']);
 		}
 		if (gameState['end']){
-			console.log("Game State: ", gameState)
 			if(!tournament){
-				await sleep(2500);
+				await sleep(2000);
 				socket.close();
 				await loadPage(selectPage('/play'));
 				window.history.pushState({}, "", '/play');
 			}
 			else if(tournament){
-				console.log("ben girdim ve tournament'e gittim");
-				await sleep(2500);
+				await sleep(1500);
 				socket.close();
 				window.history.pushState({}, "", `/tournament?tournament=${tournament}`);
 				await loadPage(selectPage('/tournament'));
@@ -90,18 +96,17 @@ async function pongPage() {
 		{
 			const side = gameState['PowerUp'];
 			if (side === 'left') {
-				game.paddles.left.neon = 1; // LEFT SIDE COLOR
+				game.paddles.left.neon = 1;
 			}
 			else if (side === 'right') {
-				game.paddles.right.neon = 1; // RIGHT SIDE COLOR
+				game.paddles.right.neon = 1;
 			}
-			setTimeout(() => {
+			await sleep(5000)
 				if (side == 'left'){
 					game.paddles.left.neon = 0}
 				else if (side == 'right'){
 					game.paddles.right.neon = 0;
 				}
-			}, 5000);
 
 
 		}
@@ -112,8 +117,8 @@ async function pongPage() {
 				}));
 			}
 			else if(gameState['message'] == 'len 2'){
-				right_player_name = gameState['left'];
-				left_player_name = gameState['right'];
+				left_player_name = gameState['left'];
+				right_player_name = gameState['right'];
 
 				// Oyuncu isimlerini göster
 				const leftPlayerNameElement = document.getElementById('leftPlayerName');
@@ -128,7 +133,7 @@ async function pongPage() {
 				canvas.classList.add('blur');
 
 				// 5 saniye bekle ve efektleri kaldır
-				setTimeout(async () => {
+					await sleep(4500);
 					playerNamesElement.style.opacity = '0';
 					canvas.classList.remove('blur');
 
@@ -139,7 +144,7 @@ async function pongPage() {
 						width: canvas.width,
 						height: canvas.height,
 					}));
-				}, 4500);
+
 			}
 		}
 	};
@@ -154,7 +159,7 @@ async function pongPage() {
 
 	window.addEventListener('keydown', function(event) {
 		keysPressed[event.keyCode] = true;
-		if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+		if (event.key === "ArrowDown" || event.key === "ArrowUp" || event.keyCode === 32){
 			event.preventDefault();
 		}
 		console.log("event keycode: ", event.keyCode);
@@ -185,10 +190,4 @@ async function pongPage() {
 		// Update game logic based on server-side game state
 		game.updateState(gameState);
 	}
-};
-
-
-//close eklencek
-// soket init dışarı taşınabilir on message ile birlikte.
-// url'i nasıl göndermemiz gerekiyor.
-// direk pong-game mi olucak yoksa ekstra bilig gerekecek mi?
+}
