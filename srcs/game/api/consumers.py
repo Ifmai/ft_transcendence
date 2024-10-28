@@ -347,6 +347,18 @@ class PongConsumer(AsyncWebsocketConsumer):
 	)
 
 	async def disconnect(self, close_code):
+		if self.room_id in rooms:
+			if (rooms[self.room_id]['left']['info'].score == 5 or rooms[self.room_id]['right']['info'].score == 5):
+				for position in rooms[self.room_id]:
+					if (position != 'ball'):
+						if (rooms[self.room_id][position]['player'] == self.channel_name):
+							rooms[self.room_id].pop(position)
+							break
+					else:
+						rooms[self.room_id].pop(position)
+						break
+				if len(rooms[self.room_id]) == 0:
+					del rooms[self.room_id]
 		await self.channel_layer.group_discard(
 			self.room_id,
 			self.channel_name
@@ -409,11 +421,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 			await self.send_initial_state()
 			asyncio.create_task(self.start_game(self.height, self.width))
 
-		# if data['type'] == 'refresh_reconnect':
-		# 	await self.retrieve_paddle()
-
-		# if data["type"] == "pong":
-		# 	self.last_heartbeat = datetime.now()
 		elif data['type'] == 'keyPress':
 			await self.handle_key_press(data)
 
