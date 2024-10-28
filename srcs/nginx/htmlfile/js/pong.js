@@ -1,13 +1,10 @@
 let right_player_name;
 let left_player_name;
 
-window.addEventListener("beforeunload", function () {
-	sessionStorage.setItem("isRefreshing", "true");
-});
-
 async function pongPage() {
 	const canvas = document.getElementById("pong");
 	const context = canvas.getContext('2d');
+
 
 	// Adjust the canvas size to fit the screen
 	canvas.width = 1200;
@@ -16,18 +13,20 @@ async function pongPage() {
 	const room_id = getCodeURL('room');
 	const match_id = getCodeURL('match');
 	const tournament = getCodeURL('tournament');
-	const isRefreshing = sessionStorage.getItem("isRefreshing");
+
 
 	let wsUrl;
+
 	if(match_id){
 		wsUrl = `wss://lastdance.com.tr/ws-pong/pong/${room_id}/${match_id}/?token=${getCookie('access_token')}`;
 	}
 	else{
 		wsUrl = `wss://lastdance.com.tr/ws-pong/pong/${room_id}/?token=${getCookie('access_token')}`;
 	}
+	console.log("url kanka : ", wsUrl);
 	const socket = new WebSocket(wsUrl);
-
-
+	if(tournament)
+		initWebSocket_tournament();
 	const keysPressed = [];
 
 	const keys = {
@@ -39,13 +38,11 @@ async function pongPage() {
 	};
 
 	socket.onopen = function(event) {
-		console.log('WebSocket connection opened:', event);
-		if (isRefreshing) {
-			socket.send(JSON.stringify({ type: 'refresh_reconnect' }));
-			sessionStorage.removeItem("isRefreshing");
-		} else {
+		console.log('WebSocket connection opened:', event);{
 			socket.send(JSON.stringify({ type: 'initialize' }));
 		}
+		// socket.send(JSON.stringify({ type: 'initialize' }));
+
 	};
 
 	function sleep(ms) {
@@ -155,6 +152,9 @@ async function pongPage() {
 
 	socket.onclose = function(event) {
 		console.log('WebSocket connection closed:', event);
+		sessionStorage.setItem("isRefreshing", "false");
+		sessionStorage.removeItem("isRefreshing");
+
 	};
 
 	window.addEventListener('keydown', function(event) {

@@ -7,10 +7,6 @@ async function tour_bracketPage() {
 }
 
 async function initWebSocket_tournament() {
-    player1 = document.getElementById('player1').querySelector('h3');
-    player2 = document.getElementById('player2').querySelector('h3');
-    player3 = document.getElementById('player3').querySelector('h3');
-    player4 = document.getElementById('player4').querySelector('h3');
     if (ws_tournament && ws_tournament.readyState === WebSocket.OPEN) {
         console.log('Turnuva soketi zaten açık kanka');
         return;
@@ -35,37 +31,44 @@ async function initWebSocket_tournament() {
     ws_tournament.onmessage = async function(event) {
         const data = JSON.parse(event.data);
         if(data['type'] == 'joined'){
-            if (data['message'][0]){
-                player1.innerText = data['message'][0];
-                document.getElementById('player1-status').classList.add('ready'); 
-            }
-            else if (!data['message'][0]) {
-                player1.innerText = 'Player 1';
-                document.getElementById('player1-status').classList.remove('ready');
-            }
-            if (data['message'][1]){
-                player2.innerText = data['message'][1];
-                document.getElementById('player2-status').classList.add('ready'); 
-            }
-            else if (!data['message'][1]){
-                player2.innerText = 'Player 2';
-                document.getElementById('player2-status').classList.remove('ready');
-            }
-            if (data['message'][2]){
-                player3.innerText = data['message'][2];
-                document.getElementById('player3-status').classList.add('ready'); 
-            }
-            else if (!data['message'][2]){
-                player3.innerText = 'Player 3';
-                document.getElementById('player3-status').classList.remove('ready');
-            }
-            if (data['message'][3]){
-                player4.innerText = data['message'][3];
-                document.getElementById('player4-status').classList.add('ready'); 
-            }
-            else if (!data['message'][3]){
-                player4.innerText = 'Player 4';
-                document.getElementById('player4-status').classList.remove('ready');
+            console.log("Path : ", getPath());
+            if(getPath() != `/pong-game`){
+                player1 = document.getElementById('player1').querySelector('h3');
+                player2 = document.getElementById('player2').querySelector('h3');
+                player3 = document.getElementById('player3').querySelector('h3');
+                player4 = document.getElementById('player4').querySelector('h3');
+                if (data['message'][0]){
+                    player1.innerText = data['message'][0];
+                    document.getElementById('player1-status').classList.add('ready'); 
+                }
+                else if (!data['message'][0]) {
+                    player1.innerText = 'Player 1';
+                    document.getElementById('player1-status').classList.remove('ready');
+                }
+                if (data['message'][1]){
+                    player2.innerText = data['message'][1];
+                    document.getElementById('player2-status').classList.add('ready'); 
+                }
+                else if (!data['message'][1]){
+                    player2.innerText = 'Player 2';
+                    document.getElementById('player2-status').classList.remove('ready');
+                }
+                if (data['message'][2]){
+                    player3.innerText = data['message'][2];
+                    document.getElementById('player3-status').classList.add('ready'); 
+                }
+                else if (!data['message'][2]){
+                    player3.innerText = 'Player 3';
+                    document.getElementById('player3-status').classList.remove('ready');
+                }
+                if (data['message'][3]){
+                    player4.innerText = data['message'][3];
+                    document.getElementById('player4-status').classList.add('ready'); 
+                }
+                else if (!data['message'][3]){
+                    player4.innerText = 'Player 4';
+                    document.getElementById('player4-status').classList.remove('ready');
+                }
             }
         }
         else if(data['type'] == 'winner_and_loser' || data['type'] == 'end_tournament')
