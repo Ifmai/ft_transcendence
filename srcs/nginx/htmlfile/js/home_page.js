@@ -8,7 +8,6 @@ async function homePage() {
 	let hpBallSpeedY = 2;
 	let leftPaddleY = 100; // Sol paddle başlangıç konumu
 	let rightPaddleY = 100; // Sağ paddle başlangıç konumu
-	console.log("BURADASDASDASDASDASDASDASD");
 	const hpPongDemo = document.querySelector('.hp-pong-demo');
 	const hpMaxX = hpPongDemo.clientWidth - hpBall.clientWidth;
 	const hpMaxY = hpPongDemo.clientHeight - hpBall.clientHeight;
@@ -39,17 +38,17 @@ async function homePage() {
 
 	function updatePaddles() {
 		// Sol paddle topun y konumuna göre hareket eder
-		if (leftPaddleY + 30 < hpBallY) {
-			leftPaddleY += 2; // Aşağı hareket
-		} else if (leftPaddleY + 30 > hpBallY) {
-			leftPaddleY -= 2; // Yukarı hareket
+		if (leftPaddleY + 30 < hpBallY && leftPaddleY < hpMaxY - 60) {
+			leftPaddleY += 1; // Aşağı hareket
+		} else if (leftPaddleY + 20 > hpBallY && leftPaddleY > 0) {
+			leftPaddleY -= 1; // Yukarı hareket
 		}
 
 		// Sağ paddle topun y konumuna göre hareket eder
-		if (rightPaddleY + 30 < hpBallY) {
-			rightPaddleY += 2; // Aşağı hareket
-		} else if (rightPaddleY + 30 > hpBallY) {
-			rightPaddleY -= 2; // Yukarı hareket
+		if (rightPaddleY + 30 < hpBallY && rightPaddleY < hpMaxY - 60) {
+			rightPaddleY += 1; // Aşağı hareket
+		} else if (rightPaddleY + 20 > hpBallY && rightPaddleY > 0) {
+			rightPaddleY -= 1; // Yukarı hareket
 		}
 
 		hpLeftPaddle.style.top = `${leftPaddleY}px`;
