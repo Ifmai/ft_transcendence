@@ -1,0 +1,27 @@
+
+
+
+#PlayerScore {
+    color: #fff;
+	font-family: sans-serif;
+	font-size: 4rem;
+	position: absolute;
+	top: 60px;
+	left: 35%;
+}
+
+#AIScore {
+    color: #fff;
+	font-family: sans-serif;
+	font-size: 4rem;
+	position: absolute;
+	top: 60px;
+	right: 35%;
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Adjust this to the desired height */
+}
