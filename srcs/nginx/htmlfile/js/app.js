@@ -18,7 +18,8 @@ const routers = {
     '/tournaments' : '../pages/tournament.html',
     '/tournament' : '../pages/tournament_bracket.html',
     '/pong-game' : '../pages/pong.html',
-    '/local' : '../pages/local.html'
+    '/local' : '../pages/local.html',
+    '/player_ai': '../pages/local.html'
 };
 
 const scripts ={
@@ -36,7 +37,8 @@ const scripts ={
     '/tournaments' : tournamentPage,
     '/tournament' : tour_bracketPage,
     '/pong-game' : pongPage,
-    '/local' : local_pong
+    '/local' : () => local_pong("multiplayer_local"),
+    '/player_ai' : () => local_pong("ai")
 };
 
 async function selectNavbar(){
@@ -83,7 +85,7 @@ async function loadPage (page){
             });
             document.getElementById('main-div').innerHTML = html;
             console.log("PAGE : ", page.page);
-            if(page.page != '../pages/waitlogin.html' && page.page != '../pages/pong.html'){
+            if(page.page != '../pages/waitlogin.html' && page.page != '../pages/pong.html' && page.page != '../pages/local.html'){
                 const navbar = await selectNavbar()
                 const navbarhtml = await fetch(navbar).then((response) => {
                     if (!response.ok) {
@@ -103,7 +105,7 @@ async function loadPage (page){
                     navbarLinks.classList.toggle('active');
                 });
             }
-            else if(page.page == '../pages/waitlogin.html' || page.page == '../pages/pong.html')
+            else if(page.page == '../pages/waitlogin.html' || page.page == '../pages/pong.html' || page.page == '../pages/local.html')
                 document.getElementById('main-navbar').innerHTML = '';
             const script = page.exec_script;
             if(page.page != "../pages/home_page.html" || script === logoutPage){

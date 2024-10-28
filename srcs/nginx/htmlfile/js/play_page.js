@@ -18,10 +18,17 @@ async function initWebSocket_one_pvp_one() {
         const data = JSON.parse(event.data);
         console.log('gelen room_id: ', data['room_id ']);
         if(data['room_id']){
-            closeWebSocket_one_pvp_one();
+            await closeWebSocket_one_pvp_one();
             window.history.pushState({}, "", `/pong-game?room=${data['room_id']}`);
             await loadPage(selectPage('/pong-game'));
         }
+        if(data['message'] == 'No room found or player already in the queue'){
+            await closeWebSocket_one_pvp_one();
+            showPopup('Why 🤡? We know more than you', false, 5500);
+            await sleep(1000);
+            document.getElementById('matchPopup').style.display = 'none';
+        }
+
 
     };
 
@@ -34,7 +41,7 @@ async function initWebSocket_one_pvp_one() {
     };
 }
 
-function closeWebSocket_one_pvp_one() {
+async function closeWebSocket_one_pvp_one() {
     ws_tournament.close();
     ws_tournament = null;
 }
@@ -48,8 +55,8 @@ async function playerPage() {
         document.getElementById('matchPopup').style.display = 'flex';
     });
 
-    document.getElementById('cancelBtn').addEventListener('click', function() {
-        closeWebSocket_one_pvp_one();
+    document.getElementById('cancelBtn').addEventListener('click', async function() {
+        await closeWebSocket_one_pvp_one();
         document.getElementById('matchPopup').style.display = 'none';
     });
 }
