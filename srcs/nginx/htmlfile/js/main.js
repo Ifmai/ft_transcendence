@@ -111,6 +111,15 @@ async function initWebSocket() {
             friendDivs.remove();
             await sendListRequest();
         }
+        else if(data['type'] == 'new_tournament'){
+            if(chat_ws && chat_ws.readyState === WebSocket.OPEN){
+                chat_ws.send(JSON.stringify({
+                    'type': data['type'],
+                    'chat_room': 'global-chat',
+                    'message': 'Created tournament ' + data['tournament_name'] + '. Creator: ' + data['creator_alias'],
+                }))
+            }
+        }
     };
 
     ws.onclose = function(event) {

@@ -25,6 +25,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name = "global-chat"
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.add_user_to_group(self.user, self.room_group_name)
+            self.chatPolice = await self.get_chatPolice()
             await self.accept()
 
 
@@ -42,6 +43,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
         elif m_type == 'new_chat':
             await self.get_history(m_room)
+        elif m_type == 'new_tournament':
+            message = text_data_json['message']
+            await self.send(text_data=json.dumps({
+                'type': 'chat',
+                'sender': self.chatPolice.username,
+                'message': message,
+                'chat_room': m_room,
+                'photo': await self.get_profile_photo(self.chatPolice.username)
+            }))
+            # await self.channel_layer.group_send(
+            #     self.room_group_name,
+            #     {"type": "chat_message", "sender": self.chatPolice.username , "message": message, 'chat_room': m_room},
+            # )
 
     @database_sync_to_async
     def get_profile_photo(self, username):
@@ -161,9 +175,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         await self.send(
                                 text_data=json.dumps({
                                     "type": "chat",
-                                    "sender": 'Chat Police', 
+                                    "sender": self.chatPolice.username, 
                                     "message": 'DOSTUM ENGELLENDİĞİN/ENGELLEDİĞİN BİRİNE MESAJ ATAMAZSIN!', 
-                                    "photo": '/api/users/media/profil_photo/miskirik.png',
+                                    "photo": await self.get_profile_photo(self.chatPolice.username),
                                     'chat_room': room.roomName
                                 })
                             )
@@ -187,6 +201,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {"type": "activity", "sender": sender, "message": message}
             )
         )
+
+    @database_sync_to_async
+    def get_chatPolice(self):
+        chatPolice = User.objects.get(username='ChatPolice')
+        return chatPolice
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)

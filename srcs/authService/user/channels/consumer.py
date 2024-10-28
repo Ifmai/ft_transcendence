@@ -1,6 +1,6 @@
 # consumers.py
 from channels.generic.websocket import AsyncWebsocketConsumer
-from user.models import Profil, UserFriendsList, ChatRooms, ChatUserList
+from user.models import Profil, UserFriendsList, ChatRooms, ChatUserList, Tournament
 from django.contrib.auth.models import User
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
@@ -14,12 +14,18 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 		if self.scope['user'].is_authenticated:
 			self.user = self.scope['user']
 			self.room_group_name = f"friend_list_{self.user.username}"
+			self.additional_group_name = f'tournament_announce'
 
 			await self.update_online_status('ON')
 			await self.channel_layer.group_add(
             	self.room_group_name,
             	self.channel_name
 			)
+			await self.channel_layer.group_add(
+            	self.additional_group_name,
+            	self.channel_name
+			)
+
 			await self.accept()
 			await self.notify_friends('ON')
 
@@ -34,6 +40,7 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 			'delete_friend': lambda: self.delete_friend(text_data_json['name']),
 			'block_friend': lambda: self.block_friend(text_data_json['name']),
 			'unblock_friend': lambda: self.unblock_friend(text_data_json['name']),
+			'new_tournament': lambda: self.tournament_announce(text_data_json),
    		}
 		action = action_map.get(m_type)
 		if action:
@@ -49,6 +56,10 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 				self.room_group_name,
 				self.channel_name
 			)
+			# await self.channel_layer.group_discard(
+			# 	self.additional_group_name,
+			# 	self.channel_layer
+			# )
 
 	async def error_broadcast(self, message):
 		await self.send(text_data=json.dumps({
@@ -62,6 +73,33 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 			'message': message
 		}))
 
+	async def tournament_broadcast(self, event):
+		print("broadcast")
+		tournamnet_name = event['tournament_name']
+		creator_name = event['creator_name']
+		await self.send(text_data=json.dumps({
+			'type' : 'new_tournament',
+			'tournament_name' : tournamnet_name,
+			'creator_alias': creator_name
+		}))
+
+	@database_sync_to_async
+	def get_tournament_obj(self, tournament_id):
+		return Tournament.objects.get(id=tournament_id)
+
+	async def tournament_announce(self, text_data_json):
+		print("geldim ?")
+		tournament_id = text_data_json['tournament_id']
+		tournament = await self.get_tournament_obj(tournament_id)
+		creator_name = text_data_json['creator_name']
+		await self.channel_layer.group_send(
+        	self.additional_group_name,
+			{
+				'type': 'tournament_broadcast',
+				'tournament_name': tournament.name,
+				'creator_name': creator_name
+			}
+		)
 
 	#Friends Request Response Block/Delete
 	async def delete_friend(self, username):

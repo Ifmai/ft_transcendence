@@ -1,7 +1,6 @@
 .env
 srcs/gameService/requirements.txt
 srcs/nginx/log/
-srcs/authService/uploads/
 user_db
 migrations
 srcs/authService/secret.key

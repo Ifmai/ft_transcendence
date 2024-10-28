@@ -1,16 +1,3 @@
-async function showPopup(message, success = false) {
-    const popup = document.getElementById('popup-message');
-    popup.innerHTML = message;
-
-    // Başarılı ise yeşil renk, hata ise kırmızı renk
-    popup.style.backgroundColor = success ? 'rgba(72, 187, 120, 0.9)' : 'rgba(220, 38, 38, 0.9)';
-
-    popup.style.display = 'block';
-
-        await sleep(2000);
-        popup.style.display = 'none';
-}
-
 function showPopup_2fa_login() {
     const popup = document.querySelector('.popup');
     popup.style.display = 'flex'; // Make it visible

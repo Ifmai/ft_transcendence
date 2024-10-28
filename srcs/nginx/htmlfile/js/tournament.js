@@ -55,6 +55,11 @@ async function create_tournament(tournamentname, nickname){
 		});
 		if(response.ok){
 			const data = await response.json();
+			ws.send(JSON.stringify({
+				'type' : 'new_tournament',
+				'tournament_id' : data['tournament_id'],
+				'creator_name' : nickname
+			}));
             window.history.pushState({}, "", `/tournament?tournament=${data['tournament_id']}`);
 			await loadPage(selectPage('/tournament'));
 		}

@@ -1,4 +1,7 @@
 from rest_framework import generics, mixins
+from django.conf import settings
+from django.http import HttpResponse, Http404
+import os
 from rest_framework.views import APIView
 from user.models import Profil, ProfileComment
 from rest_framework.response import Response
@@ -64,26 +67,25 @@ class ProfilPhotoUpdateView(generics.UpdateAPIView,):
 		profil_object = self.request.user.profil
 		return profil_object
 
-
 def serve_dynamic_image(request, filename):
     ROOT = settings.STATICFILES_DIRS[0]
     image_path = os.path.join(ROOT, 'images', filename)
 
     if os.path.exists(image_path):
         with open(image_path, 'rb') as f:
-            return HttpResponse(f.read(), content_type="image/*")
+            return HttpResponse(f.read(), content_type="image/jpeg")  # Veya uygun olan başka bir tür
     else:
         raise Http404("Image not found")
 
 def serve_dynamic_media(request, filename):
-	print("çalışıyom kanka  : ", filename)
-	ROOT = settings.MEDIA_ROOT
-	image_path = os.path.join(ROOT, 'profil_photo', filename)
+    print("Çalışıyorum kanka : ", filename)
+    ROOT = settings.MEDIA_ROOT
+    image_path = os.path.join(ROOT, 'profil_photo', filename)
 
-	print(image_path)
+    print(image_path)
 
-	if os.path.exists(image_path):
-		with open(image_path, 'rb') as f:
-			return HttpResponse(f.read(), content_type="image/*")
-	else:
-		raise Http404("Image not found")
+    if os.path.exists(image_path):
+        with open(image_path, 'rb') as f:
+            return HttpResponse(f.read(), content_type="image/jpeg")  # Veya uygun olan başka bir tür
+    else:
+        raise Http404("Image not found")
