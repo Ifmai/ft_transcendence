@@ -78,7 +78,6 @@ async function profilePage() {
 		if (response.ok) {
 			const data = await response.json();
 			console.log("gelen data : ", data);
-			//window.history.replaceState({}, "", `/profile?user=${data[0]['user']}`);
 			const userProfile = document.getElementById('player-profile');
 			const nameLabel = document.getElementById('pub-profile-name');
 			const locLabel = document.getElementById('pub-profile-location');
@@ -116,43 +115,41 @@ async function profilePage() {
 
 function createWinLossChart(wins, losses) {
     // Check if we are on the player profile page
-	console.log(window.location.href );
-    if (window.location.href === 'https://lastdance.com.tr/profile') {
-        const chartElement = document.getElementById('winLossChart');
-		chartElement.width = 200; // Set the width
-		chartElement.height = 200;
-        if (!chartElement) {
-            console.error("Canvas element not found");
-            return;
-        }
-        const ctx = chartElement.getContext('2d');
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Wins', 'Losses'],
-                datasets: [{
-                    data: [wins, losses],
-                    backgroundColor: [
-                        'rgba(95, 255, 145, 0.8)',
-                        'rgba(255, 60, 90, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(104, 211, 145, 1)',
-                        'rgba(252, 129, 129, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                    }
-                }
-            }
-        });
-    }
+	console.log("BEN GELDİM KANKA BURALARDAYIM");
+	const chartElement = document.getElementById('winLossChart');
+	chartElement.width = 200; // Set the width
+	chartElement.height = 200;
+	if (!chartElement) {
+		console.error("Canvas element not found");
+		return;
+	}
+	const ctx = chartElement.getContext('2d');
+	new Chart(ctx, {
+		type: 'pie',
+		data: {
+			labels: ['Wins', 'Losses'],
+			datasets: [{
+				data: [wins, losses],
+				backgroundColor: [
+					'rgba(95, 255, 145, 0.8)',
+					'rgba(255, 60, 90, 0.8)'
+				],
+				borderColor: [
+					'rgba(104, 211, 145, 1)',
+					'rgba(252, 129, 129, 1)'
+				],
+				borderWidth: 1
+			}]
+		},
+		options: {
+			responsive: true,
+			plugins: {
+				legend: {
+					position: 'bottom',
+				}
+			}
+		}
+	});
 }
 
 
