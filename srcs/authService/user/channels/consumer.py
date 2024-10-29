@@ -88,7 +88,6 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 		return Tournament.objects.get(id=tournament_id)
 
 	async def tournament_announce(self, text_data_json):
-		print("geldim ?")
 		tournament_id = text_data_json['tournament_id']
 		tournament = await self.get_tournament_obj(tournament_id)
 		creator_name = text_data_json['creator_name']
@@ -129,6 +128,9 @@ class FriendListConsumer(AsyncWebsocketConsumer):
     	)
 		if obj:
 			if action == 'delete':
+				room_name = sorted([receiver.username, sender.username])[0] + '.' +sorted([receiver.username, sender.username])[1]
+				chat_room = ChatRooms.objects.get(roomName=room_name)
+				chat_room.delete()
 				obj.delete()
 				return False
 			elif action == 'block':
@@ -140,7 +142,6 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 				print("obj user : ", obj.blocked_user)
 				print("self user : ", self.user)
 				if obj.blocked_user == self.user:
-					print("Doğru kişi")
 					obj.friend_block = False
 					obj.blocked_user = None
 					obj.save()
