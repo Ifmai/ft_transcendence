@@ -156,7 +156,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					}
 				)
 
-
+	#BAKICAM
 	async def disconnect(self, code):
 		tournament_player = await self.get_self_player_tournament()
 		if len(tournament_dict[self.room_group_name]['profiles']) == 1:

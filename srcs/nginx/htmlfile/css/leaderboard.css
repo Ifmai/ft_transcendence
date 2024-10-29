@@ -86,3 +86,9 @@
 		flex: 0 0 70px;
 	}
 }
+
+#leader_board_link {
+    text-decoration: none; /* Alt çizgi yok */
+    color: inherit; /* Renk miras al */
+    cursor: pointer; /* İmleci el şeklinde yap */
+}
