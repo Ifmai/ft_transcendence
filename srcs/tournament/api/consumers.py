@@ -158,7 +158,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	#BAKICAM
 	async def disconnect(self, code):
-		tournament_player = await self.get_self_player_tournament()
 		if len(tournament_dict[self.room_group_name]['profiles']) == 1:
 			tournament_dict.pop(self.room_group_name, None)
 			await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
@@ -166,7 +165,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			if self.room_group_name not in tournament_dict:
 				await self.set_alias_name()
 				await self.delete_tournament()
-		elif tournament_player:
+		else:
 			for p in tournament_dict[self.room_group_name]['profiles']:
 				if p['profile'] == self.scope['profile']:
 					tournament_dict[self.room_group_name]['profiles'].remove(p)
@@ -182,16 +181,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 					break
 			await asyncio.sleep(2)
-			check = False
 			for p in tournament_dict[self.room_group_name]['profiles']:
 				if p['profile'] == self.scope['profile']:
-					check = True
-					break
-			if tournament_player.creator == True and check != True:
+					return
+			tournament_player = await self.get_self_player_tournament()
+			if tournament_player.creator == True:
 				await self.set_tournament_creator()
-			if not any(p['profile'] != self.scope['profile'] for p in tournament_dict[self.room_group_name]['profiles']):
-				await self.delete_tournament_player(tournament_player)
-				await self.set_alias_name()
+			await self.delete_tournament_player(tournament_player)
+			await self.set_alias_name()
 
 
 
