@@ -158,7 +158,6 @@ async function pongPage() {
 		if (event.key === "ArrowDown" || event.key === "ArrowUp" || event.keyCode === 32){
 			event.preventDefault();
 		}
-		console.log("event keycode: ", event.keyCode);
 		if (socket && socket.readyState === WebSocket.OPEN && event.keyCode in keys) {
 			socket.send(JSON.stringify({ type: "keyPress", keyCode: event.keyCode, state: "down" }));
 		}
