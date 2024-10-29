@@ -111,7 +111,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			for match in tournament_dict[self.room_group_name]['matches']:
 					await self.send_private_match_id(match['match_id'], match['player1'], match['player2'])
 
-	
+
 	async def final_match(self, text_data_json):
 		winner_username = text_data_json['winner_name']
 		loser_username = text_data_json['loser_name']
@@ -143,7 +143,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 							}
 						)
 		elif self.profile == winner_player_obj and await self.get_tournament_round() == 2:
-			print("ben final maçı sonrasında buraya geldim. Gelen user : ", self.user)
 			await self.set_champion()
 			await self.change_tournament_state(StatusChoices.FINISHED.value)
 			tournament_dict[self.room_group_name]['champion'] = self.profile
@@ -254,7 +253,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		except PlayerTournament.DoesNotExist as e:
 			print(f"Error: {e}", flush=True)
 		return tournament_player
-	
+
 	@database_sync_to_async
 	def set_tournament_creator(self):
 		new_creator = None
@@ -269,7 +268,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			return True
 		else:
 			return False
-	
+
 	@database_sync_to_async
 	def delete_tournament_player(self, tournament_player):
 		tournament_player.delete()
@@ -296,7 +295,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		for player in tournament_dict[self.room_group_name]['profiles']:
 			alias_names.append(player['alias_name'])
 		return alias_names
-					
+
 
 	@database_sync_to_async
 	def set_tournament_round(self):
@@ -316,6 +315,5 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	@database_sync_to_async
 	def set_alias_name(self):
-		print("selam")
 		self.profile.alias_name = ''
 		self.profile.save()

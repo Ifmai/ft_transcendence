@@ -19,7 +19,6 @@ async function forgotPassword() {
         event.preventDefault();
         const email = document.getElementById('email-ref').value;
 		const csrfToken = getCookie('csrftoken');
-        console.log('Email:', email);
         try {
             const response = await fetch('https://10.11.22.5/api/users/refreshpassword/', {
                 method: 'POST',

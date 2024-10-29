@@ -77,7 +77,6 @@ async function profilePage() {
 	try {
 		if (response.ok) {
 			const data = await response.json();
-			console.log("gelen data : ", data);
 			const userProfile = document.getElementById('player-profile');
 			const nameLabel = document.getElementById('pub-profile-name');
 			const locLabel = document.getElementById('pub-profile-location');
@@ -115,7 +114,6 @@ async function profilePage() {
 
 function createWinLossChart(wins, losses) {
     // Check if we are on the player profile page
-	console.log("BEN GELDİM KANKA BURALARDAYIM");
 	const chartElement = document.getElementById('winLossChart');
 	chartElement.width = 200; // Set the width
 	chartElement.height = 200;
@@ -159,11 +157,9 @@ async function getMatchHistory() {
 		let url;
 		if(username){
 			url = `/api/tournament/match-history/${username}`
-			console.log("selam kanka :x");
 		}
 		else{
 			url = `/api/tournament/match-history/`
-			console.log("merhaba bropa :P");
 		}
         const response = await fetch(url, {
             method: 'GET',
@@ -195,7 +191,6 @@ function renderMatchHistory(matches) {
 
         const players = match.players.map((player, index) => {
             const result = player.won ? 'winner' : 'loser';
-			console.log(index);
             if  (index === 0) {
                 // If there's an odd number of players and this is the last player
                 return `

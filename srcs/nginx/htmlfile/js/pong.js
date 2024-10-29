@@ -23,7 +23,6 @@ async function pongPage() {
 	else{
 		wsUrl = `wss://10.11.22.5/ws-pong/pong/${room_id}/?token=${getCookie('access_token')}`;
 	}
-	console.log("url kanka : ", wsUrl);
 	const socket = new WebSocket(wsUrl);
 	if(tournament)
 		initWebSocket_tournament();

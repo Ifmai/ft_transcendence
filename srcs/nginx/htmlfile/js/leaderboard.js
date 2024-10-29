@@ -16,7 +16,6 @@ async function renderLeaderboard(data) {
 				`;
 		leaderboardBody.appendChild(row);
 	});
-	console.log("Leader data : ", leaderboardData);
 }
 
 
@@ -40,7 +39,6 @@ async function get_data(){
 			leaderboardData.push(data_player);
 		});
 		await renderLeaderboard(data)
-		console.log("DAta : ", data);
         return response;
     } catch (error) {
         console.error(error);

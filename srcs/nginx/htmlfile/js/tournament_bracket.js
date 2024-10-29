@@ -8,7 +8,7 @@ async function tour_bracketPage() {
 
 async function initWebSocket_tournament() {
     if (ws_tournament && ws_tournament.readyState === WebSocket.OPEN) {
-        console.log('Turnuva soketi zaten açık kanka');
+        console.log('Turnuva soketi zaten açık');
         return;
     }else{
         token = getCookie('access_token')
@@ -31,7 +31,6 @@ async function initWebSocket_tournament() {
     ws_tournament.onmessage = async function(event) {
         const data = JSON.parse(event.data);
         if(data['type'] == 'joined'){
-            console.log("Path : ", getPath());
             if(getPath() != `/pong-game`){
                 player1 = document.getElementById('player1').querySelector('h3');
                 player2 = document.getElementById('player2').querySelector('h3');
@@ -99,7 +98,6 @@ async function initWebSocket_tournament() {
         else if(data['type'] == 'match')
         {
             cleanupFunctions = [];
-            console.log("Clean up func. : ", cleanupFunctions);
             window.history.pushState({}, "", `/pong-game?room=${data['match_id']}&match=${data['match_id']}&tournament=${getCodeURL('tournament')}`);
             await loadPage(selectPage('/pong-game'));
         }

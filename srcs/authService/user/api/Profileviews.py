@@ -57,10 +57,9 @@ class ProfilPhotoUpdateView(generics.UpdateAPIView,):
 
 	def put(self, request, *args, **kwargs):
 		profil_object = self.get_object()
-		print('photo : ', request.FILES)
 		if 'photo' in request.FILES:
-			profil_object.photo = request.FILES['photo']  # Düzeltilen anahtar
-			profil_object.save()  # Profil nesnesini kaydet
+			profil_object.photo = request.FILES['photo']
+			profil_object.save()
 		return Response({'status': 'profile picture updated'})
 
 	def get_object(self):
@@ -78,11 +77,9 @@ def serve_dynamic_image(request, filename):
         raise Http404("Image not found")
 
 def serve_dynamic_media(request, filename):
-    print("Çalışıyorum kanka : ", filename)
     ROOT = settings.MEDIA_ROOT
     image_path = os.path.join(ROOT, 'profil_photo', filename)
 
-    print(image_path)
 
     if os.path.exists(image_path):
         with open(image_path, 'rb') as f:

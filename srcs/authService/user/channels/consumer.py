@@ -74,7 +74,6 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 		}))
 
 	async def tournament_broadcast(self, event):
-		print("broadcast")
 		tournamnet_name = event['tournament_name']
 		creator_name = event['creator_name']
 		await self.send(text_data=json.dumps({
@@ -112,7 +111,7 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 			await self.error_broadcast("Böyle bir kişi yok.")
 		else:
 			await self.access_broadcast("block", f"{username}")
-	
+
 	async def unblock_friend(self, username):
 		r_user = await self.get_user(username)
 		if await self.delete_or_block_friend_db(self.user, r_user, 'unblock_friend'):
@@ -139,8 +138,6 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 				obj.save()
 				return False
 			elif action == 'unblock_friend':
-				print("obj user : ", obj.blocked_user)
-				print("self user : ", self.user)
 				if obj.blocked_user == self.user:
 					obj.friend_block = False
 					obj.blocked_user = None
@@ -168,7 +165,7 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 				f_request.friend_request = True
 				f_request.save()
 				return "accepted"
-			
+
 			elif r_response == 'reject':
 				f_request.delete()
 				return "rejected"
@@ -209,7 +206,7 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 	async def friend_request_list(self):
 		request_list = await self.get_request_list(self.user)
 		for req in request_list:
-			await self.send(	
+			await self.send(
 				text_data=json.dumps({
 					"type": 'request_list',
 					"user" : req['username'],
@@ -219,7 +216,7 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 	#Friends Request List END
 
 
-	#Friend Request 
+	#Friend Request
 	@database_sync_to_async
 	def add_friends_list(self, sender, receiver):
 		friend = UserFriendsList.objects.create(sender=sender, receiver=receiver)
@@ -227,7 +224,7 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 			return True
 		else:
 			return False
-	
+
 	async def friend_Request(self, r_username):
 		receiver = await self.get_user(r_username)
 		if receiver:
@@ -284,7 +281,7 @@ class FriendListConsumer(AsyncWebsocketConsumer):
 
 	async def update_online_status(self, change_status):
 		user = self.scope['user']
-		
+
 		if user.is_authenticated:
 			await sync_to_async(Profil.objects.filter(user=user).update)(status=change_status)
 

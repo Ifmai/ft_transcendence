@@ -16,7 +16,6 @@ async function initWebSocket_one_pvp_one() {
 
     ws_tournament.onmessage = async function(event) {
         const data = JSON.parse(event.data);
-        console.log('gelen room_id: ', data['room_id ']);
         if(data['room_id']){
             await closeWebSocket_one_pvp_one();
             window.history.pushState({}, "", `/pong-game?room=${data['room_id']}`);

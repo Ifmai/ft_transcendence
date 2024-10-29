@@ -84,7 +84,6 @@ async function loadPage (page){
                 return response.text();
             });
             document.getElementById('main-div').innerHTML = html;
-            console.log("PAGE : ", page.page);
             if(page.page != '../pages/waitlogin.html' && page.page != '../pages/pong.html' && page.page != '../pages/local.html'){
                 const navbar = await selectNavbar()
                 const navbarhtml = await fetch(navbar).then((response) => {
@@ -133,20 +132,3 @@ window.route = route;
 document.addEventListener("DOMContentLoaded", async function() {
     await loadPage(selectPage(getPath()));
 });
-
-// window.addEventListener('beforeunload', function (event) {
-//     // Veri göndermek için sendBeacon kullanabilirsiniz.
-//     const url = 'https://example.com/api/log'; // Hedef URL
-//     const data = JSON.stringify({ message: 'Sayfa kapatılıyor' });
-
-//     navigator.sendBeacon(url, data);
-
-//     // İsterseniz burada kullanıcıya bir uyarı mesajı da gösterebilirsiniz.
-//     event.returnValue = 'Bu sayfayı kapatmak istediğinize emin misiniz?';
-// });
-
-// document.addEventListener('visibilitychange', function() {
-//     if (document.visibilityState === 'hidden') {
-//         console.log('Sekme kapatıldı veya başka bir sekmeye geçildi.');
-//     }
-// });

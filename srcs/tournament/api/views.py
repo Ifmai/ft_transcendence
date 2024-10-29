@@ -23,10 +23,8 @@ class MatchHistoryView(ListAPIView):
 		username = self.kwargs.get('username', None)
 		profile = None
 		if username:
-			print("selam knak :xd")
 			profile = Profil.objects.get(user__username=username)
 		else:
-			print("user gelmedi kanka xP")
 			profile = Profil.objects.get(user=self.request.user)
 		return Match.objects.filter(playermatch__player=profile).distinct().order_by('-id')[:8]
 
@@ -172,7 +170,7 @@ class TournamentView(APIView):
 
 		if Profil.objects.filter(alias_name=alias).exists():
 			return Response({"statusCode": 400, "message": "Alias name is already taken"}, status=status.HTTP_400_BAD_REQUEST)
-		
+
 		serializer = TournamentSerializer()
 		if (serializer.is_player_in_tournament(player.id)):
 			return Response({"statusCode": 400, "message": "Player already in a tournament"}, status=status.HTTP_400_BAD_REQUEST)
@@ -182,4 +180,3 @@ class TournamentView(APIView):
 
 		PlayerTournament.objects.create(player=player, tournament=tournament, creator=False)
 		return Response({"statusCode": 200, "message": "Player joined tournament", "tournament_id" : tournament.id}, status=status.HTTP_200_OK)
-	

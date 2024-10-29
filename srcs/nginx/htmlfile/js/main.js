@@ -131,7 +131,6 @@ async function initWebSocket() {
     };
 }
 
-//WebSocket bağlantısını kapatma fonksiyonu
 function closeWebSocket() {
     if (ws) {
         ws.close();

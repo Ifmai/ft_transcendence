@@ -2,7 +2,6 @@ async function how_to_play(){
     const arrowUp = document.querySelector('.idx-arrow-up');
     const arrowDown = document.querySelector('.idx-arrow-down');
     const spaceBar = document.querySelector('.idx-space-bar');
-    console.log(arrowDown, arrowUp, spaceBar);
     if (!arrowUp || !arrowDown || !spaceBar) {
         console.error('One or more key elements not found');
         return;

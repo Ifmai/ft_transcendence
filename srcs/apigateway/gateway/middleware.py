@@ -8,7 +8,7 @@ from rest_framework.response import Response
 class APIGatewayMiddleware:
 	def __init__(self, get_response):
 		self.get_response = get_response
-	
+
 	def __call__(self, request):
 		response = self.process_request(request)
 		if response:
@@ -25,7 +25,7 @@ class APIGatewayMiddleware:
 			return response
 		except requests.exceptions.RequestException as e:
 			return Response({'error: ': e})
-	
+
 	def jwt_token_delete(self, http_response):
 		http_response.set_cookie(
 			key = 'access_token',
@@ -72,7 +72,7 @@ class APIGatewayMiddleware:
 			return http_response
 		except Exception as e:
 			return Response({'error: ': e})
-	
+
 	def process_request(self, request):
 		path = request.path
 		method = request.method
@@ -83,11 +83,6 @@ class APIGatewayMiddleware:
 		for key, value in cookies.items():
 			cookie_jar.set(key, value)
 
-
-		#Servis Servis bölücem burayı.
-		# if path.startswith('/api/users/'):
-		# 	return self.handle_users_service(path, method, headers, body, cookie_jar)
-		print("GELEN KANKA ", path)
 		if path.startswith('/api/users/'):
 			url = f'http://userservice:8001{path}'
 		elif path.startswith('/api/tournament/'):
@@ -112,7 +107,7 @@ class APIGatewayMiddleware:
 					http_response = HttpResponse(content=response.content, status=response.status_code, headers=dict(response.headers))
 					self.jwt_token_cookies(refresh_response, http_response)
 					return http_response
-			
+
 			http_response = HttpResponse(content=response.content, status=response.status_code, headers=dict(response.headers))
 			if path == '/api/users/jwtlogin/':
 				self.jwt_token_cookies(response, http_response)

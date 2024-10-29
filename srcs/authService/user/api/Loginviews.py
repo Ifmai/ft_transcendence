@@ -47,7 +47,7 @@ class UserLoginView(TokenObtainPairView):
             else:
                 return super().post(request, *args, **kwargs)
         else:
-            return Response({"Hatalı giriş. Şifrenizi kontrol ediniz."}, status=status.HTTP_401_UNAUTHORIZED)                
+            return Response({"Hatalı giriş. Şifrenizi kontrol ediniz."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserCreateView(generics.CreateAPIView):
@@ -77,7 +77,6 @@ class UserIntraLoginView(APIView):
             'Authorization': f'Bearer {access_token}',
         }
         infoResponse = requests.get(urlinfo, headers=headers).json()
-        #print("Gelen Response : ", infoResponse)
         loginEmail = infoResponse.get('email')
         if not User.objects.filter(email=loginEmail).exists():
             random_password = secrets.token_urlsafe(8)
@@ -138,7 +137,7 @@ class CheckRefreshTokenView(APIView):
             if not refresh_token:
                 return Response({'error': 'Refresh token required.'}, status=status.HTTP_202_ACCEPTED)
             elif not access_token and refresh_token:
-                return Response({"okaii"}, status=status.HTTP_401_UNAUTHORIZED)    
+                return Response({"okaii"}, status=status.HTTP_401_UNAUTHORIZED)
             else:
                 return Response({'okaii'}, status=status.HTTP_200_OK)
         except Exception as e:

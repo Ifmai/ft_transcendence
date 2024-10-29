@@ -86,7 +86,6 @@ async function join_tournament(alliasName, currentTournamentName){
 		});
 		if(response.ok){
 			const data = await response.json();
-			console.log("tournament_id : ", data['tournament_id']);
             window.history.pushState({}, "", `/tournament?tournament=${data['tournament_id']}`);
 			await loadPage(selectPage('/tournament'));
 		}
@@ -102,7 +101,7 @@ async function tournamentPage() {
 	cleanupFunctions.push(cleanTournament);
 	await get_tournaments_list();
 	const tournamentList = document.getElementById('trn-tournamentList');
-	
+
 	document.getElementById('trn-createTournamentBtn').addEventListener('click', (e) => {
 		e.preventDefault();
 		document.getElementById('trn-createPopupOverlay').style.display = 'flex';

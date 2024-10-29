@@ -32,8 +32,7 @@ async function populateFriendList(friend) {
     friendList.insertBefore(friendElement, friendList.lastElementChild);
 
     friendElement.querySelector('.chat-friend-block').addEventListener('click', function() {
-        const buttonText = this.innerText; // Butonun içindeki metni al
-        console.log("Button text : ", buttonText);
+        const buttonText = this.innerText;
         showPopup(`${friend.username} successfully ${buttonText.toLowerCase()}`, true);
         ws.send(JSON.stringify({
             'type': buttonText.includes('Unblock') ? 'unblock_friend' : 'block_friend',
@@ -81,7 +80,7 @@ function addFriendRequest(request) {
 
 async function sendListRequest() {
     if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ 
+        ws.send(JSON.stringify({
             'type': 'list_request',
         }));
     } else {
@@ -158,5 +157,3 @@ async function friendList() {
         overlay.style.display = 'none';
     });
 }
-
-
