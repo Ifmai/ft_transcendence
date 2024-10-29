@@ -55,7 +55,7 @@ async function initWebSocket() {
     }
 
     // Yeni WebSocket bağlantısı oluştur
-    ws = new WebSocket(`wss://lastdance.com.tr/ws/friend-list/?token=${getCookie('access_token')}`);
+    ws = new WebSocket(`wss://10.11.22.5/ws/friend-list/?token=${getCookie('access_token')}`);
     ws.onopen = function(event) {
         console.log('WebSocket bağlantısı açıldı.');
     };
@@ -92,11 +92,11 @@ async function initWebSocket() {
         }
         else if(data['type'] == 'friend_request_response'){
             if(data['Response'] == 'accepted'){
-                ws.send(JSON.stringify({ 
+                ws.send(JSON.stringify({
                     'type' : 'list_request',
                 }));
             }
-            ws.send(JSON.stringify({ 
+            ws.send(JSON.stringify({
                 'type' : 'friend_request_list',
             }));
         }

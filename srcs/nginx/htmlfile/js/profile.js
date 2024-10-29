@@ -201,7 +201,7 @@ function renderMatchHistory(matches) {
                 return `
                     <div class="player ${result}">
                         <img src="${player.player.photo}" alt="${player.player.user}" class="player-avatar">
-                        <span class="player-name">${player.player.user}</span>
+                        <span class="player-name"><a id="leader_board_link" href="/profile?user=${player.player.user}">${player.player.user}</a></span>
                         <span class="player-score">${player.score}</span>
                     </div>
                 `;
@@ -210,7 +210,7 @@ function renderMatchHistory(matches) {
                 return `
                     <div class="player ${result}">
                         <span class="player-score">${player.score}</span>
-                        <span class="player-name">${player.player.user}</span>
+                        <span class="player-name"><a id="leader_board_link" href="/profile?user=${player.player.user}">${player.player.user}</a></span>
                         <img src="${player.player.photo}" alt="${player.player.user}" class="player-avatar">
                     </div>
                 `;

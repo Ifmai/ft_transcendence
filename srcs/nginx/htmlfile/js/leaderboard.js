@@ -11,7 +11,7 @@ async function renderLeaderboard(data) {
 		row.className = 'lb-leaderboard-row';
 		row.innerHTML = `
 					<div class="lb-leaderboard-cell lb-rank">${index + 1}</div>
-					<div class="lb-leaderboard-cell">${entry.user}</div>
+					<div class="lb-leaderboard-cell"><a id="leader_board_link" href="/profile?user=${entry.user}">${entry.user}</a></div>
 					<div class="lb-leaderboard-cell lb-score">${entry.point}</div>
 				`;
 		leaderboardBody.appendChild(row);
@@ -22,7 +22,7 @@ async function renderLeaderboard(data) {
 
 async function get_data(){
 	try {
-        const response = await fetch('https://lastdance.com.tr/api/users/leaderboard/', {
+        const response = await fetch('https://10.11.22.5/api/users/leaderboard/', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-+zo&y+uv@s7t#&juqo7-j04xt%+1jaba^yem7m1&$n@180&lvh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['apigateway', 'userservice', 'chatservice', 'lastdance.com.tr']
+ALLOWED_HOSTS = ['apigateway', 'userservice', 'chatservice', '10.11.22.5']
 
 
 # Application definition

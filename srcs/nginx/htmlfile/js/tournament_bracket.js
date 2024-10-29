@@ -17,7 +17,7 @@ async function initWebSocket_tournament() {
             return;
         }
         else{
-            ws_tournament = new WebSocket(`wss://lastdance.com.tr/ws-tournament/${getCodeURL('tournament')}/?token=${getCookie('access_token')}`);
+            ws_tournament = new WebSocket(`wss://10.11.22.5/ws-tournament/${getCodeURL('tournament')}/?token=${getCookie('access_token')}`);
             ws_tournament.onopen = function(event) {
                 console.log('Torunament WebSocketi bağlantısı açıldı.');
                 ws_tournament.send(JSON.stringify({
@@ -39,7 +39,7 @@ async function initWebSocket_tournament() {
                 player4 = document.getElementById('player4').querySelector('h3');
                 if (data['message'][0]){
                     player1.innerText = data['message'][0];
-                    document.getElementById('player1-status').classList.add('ready'); 
+                    document.getElementById('player1-status').classList.add('ready');
                 }
                 else if (!data['message'][0]) {
                     player1.innerText = 'Player 1';
@@ -47,7 +47,7 @@ async function initWebSocket_tournament() {
                 }
                 if (data['message'][1]){
                     player2.innerText = data['message'][1];
-                    document.getElementById('player2-status').classList.add('ready'); 
+                    document.getElementById('player2-status').classList.add('ready');
                 }
                 else if (!data['message'][1]){
                     player2.innerText = 'Player 2';
@@ -55,7 +55,7 @@ async function initWebSocket_tournament() {
                 }
                 if (data['message'][2]){
                     player3.innerText = data['message'][2];
-                    document.getElementById('player3-status').classList.add('ready'); 
+                    document.getElementById('player3-status').classList.add('ready');
                 }
                 else if (!data['message'][2]){
                     player3.innerText = 'Player 3';
@@ -63,7 +63,7 @@ async function initWebSocket_tournament() {
                 }
                 if (data['message'][3]){
                     player4.innerText = data['message'][3];
-                    document.getElementById('player4-status').classList.add('ready'); 
+                    document.getElementById('player4-status').classList.add('ready');
                 }
                 else if (!data['message'][3]){
                     player4.innerText = 'Player 4';

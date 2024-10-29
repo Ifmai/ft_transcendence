@@ -1,6 +1,6 @@
 let now_chat_room;
 
-async function get_chat_history() {  
+async function get_chat_history() {
     chat_ws.send(JSON.stringify({
         'type': 'new_chat',
         'chat_room' : now_chat_room
@@ -47,9 +47,9 @@ async function chatPage() {
     sendBtn.addEventListener('click', async function () {
         const message = escapeHtml(messageInput.value.trim());
         if (message) {
-            chat_ws.send(JSON.stringify({ 
+            chat_ws.send(JSON.stringify({
                 'type' : 'chat_message',
-                'chat_room': now_chat_room, 
+                'chat_room': now_chat_room,
                 'message': message ,
             }));
             messageInput.value = '';
@@ -63,7 +63,7 @@ async function chat_ws_init() {
         return;
     }
 
-    chat_ws = new WebSocket(`wss://lastdance.com.tr/ws-chat/global-chat/?token=${getCookie('access_token')}`);
+    chat_ws = new WebSocket(`wss://10.11.22.5/ws-chat/global-chat/?token=${getCookie('access_token')}`);
     chat_ws.onopen = function (event) {
         console.log('Chat WebSocket bağlantısı açıldı.');
     };

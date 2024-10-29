@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-dyleu*ply7t2eb_#65*%^)m1*y3as^gn(3^wk5pjmok+aj^wf#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = ['lastdance.com.tr', 'apigateway', 'userservice']
-ALLOWED_HOSTS = ['lastdance.com.tr','188.166.163.124', 'localhost', '127.0.0.1', 'tournament-app']
+#ALLOWED_HOSTS = ['10.11.22.5', 'apigateway', 'userservice']
+ALLOWED_HOSTS = ['10.11.22.5','188.166.163.124', 'localhost', '127.0.0.1', 'tournament-app']
 
 
 # Application definition
@@ -138,9 +138,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
-    'https://lastdance.com.tr',
+    'https://10.11.22.5',
     'http://userservice:8001',
-    'http://lastdance.com.tr',
+    'http://10.11.22.5',
 ]
 CSRF_COOKIE_NAME = 'csrftoken'  # CSRF çerezi için isim
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
@@ -151,9 +151,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Belirli alan adlarından gelen isteklere izin vermek için
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
-    'https://lastdance.com.tr',
+    'https://10.11.22.5',
     'http://userservice:8001',
-    'http://lastdance.com.tr',
+    'http://10.11.22.5',
 ]
 
 

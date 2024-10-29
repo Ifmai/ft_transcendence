@@ -21,7 +21,7 @@ async function forgotPassword() {
 		const csrfToken = getCookie('csrftoken');
         console.log('Email:', email);
         try {
-            const response = await fetch('https://lastdance.com.tr/api/users/refreshpassword/', {
+            const response = await fetch('https://10.11.22.5/api/users/refreshpassword/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ async function newPasswordPage() {
             return;
         }
         try {
-            const response = await fetch(`https://lastdance.com.tr/api/users/reset/${refresh}/`, {
+            const response = await fetch(`https://10.11.22.5/api/users/reset/${refresh}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

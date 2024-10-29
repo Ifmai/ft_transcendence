@@ -64,7 +64,7 @@ async function load_page_check(page) {
 
 async function checkingauth() {
 	try {
-		const response = await fetch('https://lastdance.com.tr/api/users/whois/', {
+		const response = await fetch('https://10.11.22.5/api/users/whois/', {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',

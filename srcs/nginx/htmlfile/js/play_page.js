@@ -9,7 +9,7 @@ async function initWebSocket_one_pvp_one() {
         return;
     }
 
-    ws_tournament = new WebSocket(`wss://lastdance.com.tr/ws-match/matchmaking/2/?token=${getCookie('access_token')}`);
+    ws_tournament = new WebSocket(`wss://10.11.22.5/ws-match/matchmaking/2/?token=${getCookie('access_token')}`);
     ws_tournament.onopen = function(event) {
         console.log('1 vs 1 WebSocket bağlantısı açıldı.');
     };

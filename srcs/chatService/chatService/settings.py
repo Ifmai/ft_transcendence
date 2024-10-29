@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-+zo&y+uv@s7t#&juqo7-j04xt%+1jaba^yem7m1&$n@180&lvh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['apigateway', 'userservice', 'chatservice', 'lastdance.com.tr']
+ALLOWED_HOSTS = ['apigateway', 'userservice', 'chatservice', '10.11.22.5']
 
 # Application definition
 
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	
+
 	'chat.apps.ChatConfig',
     'rest_framework',
 	'rest_framework_simplejwt',
@@ -144,7 +144,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
-} 
+}
 
 from datetime import timedelta
 SIMPLE_JWT = {
@@ -162,12 +162,10 @@ ACCOUNT_EMAIL_REQUIRED = (False)
 #CSRF
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
-    'https://lastdance.com.tr',
+    'https://10.11.22.5',
     'http://userservice:8001',
     'http://apigateway:8000',
 	'http://chatservice:8002'
 ]
 CSRF_COOKIE_NAME = 'csrftoken'  # CSRF çerezi için isim
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
-
-

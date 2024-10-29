@@ -1,6 +1,6 @@
 async function logoutPage() {
     try {
-        const response = await fetch('https://lastdance.com.tr/api/users/logout/', {
+        const response = await fetch('https://10.11.22.5/api/users/logout/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

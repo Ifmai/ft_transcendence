@@ -1,62 +1,52 @@
 # version: "3.4"
-
 networks:
   lastdance:
     name: lastdance
     driver: bridge
-
 volumes:
   db_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /root/lastdance/srcs/user_db
-
+      device: /home/lastdance/ft_transcendence/srcs/user_db
   web_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /root/lastdance/srcs/authService
-
+      device: /home/lastdance/ft_transcendence/srcs/authService
   chat_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /root/lastdance/srcs/chatService
-
+      device: /home/lastdance/ft_transcendence/srcs/chatService
   api_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /root/lastdance/srcs/apigateway
-
+      device: /home/lastdance/ft_transcendence/srcs/apigateway
   tournament_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /root/lastdance/srcs/tournament
-
+      device: /home/lastdance/ft_transcendence/srcs/tournament
   match-making:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /root/lastdance/srcs/matchmaking
-
+      device: /home/lastdance/ft_transcendence/srcs/matchmaking
   game_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /root/lastdance/srcs/game
-
+      device: /home/lastdance/ft_transcendence/srcs/game
 services:
-
   apigateway:
     container_name: apigateway
     build: ./apigateway
@@ -70,8 +60,6 @@ services:
       - lastdance
     depends_on:
       - user
-
-
   user:
     container_name: userservice
     build: ./authService
@@ -91,7 +79,6 @@ services:
       - lastdance
     depends_on:
       - users_db
-
   chat:
     container_name: chatservice
     build: ./chatService
@@ -107,13 +94,12 @@ services:
       - "8002:8002"
     volumes:
       - chat_data:/chatServices
-      - /root/lastdance/srcs/authService/uploads/:/chatServices/uploads/
+      - /home/lastdance/ft_transcendence/srcs/authService/uploads/:/chatServices/uploads/
     networks:
       - lastdance
     depends_on:
       - users_db
       - user
-
   tournament:
     container_name: tournament-app
     build: ./tournament
@@ -128,12 +114,11 @@ services:
       - "8003:8003"
     volumes:
       - tournament_data:/tournament-app
-      - /root/lastdance/srcs/authService/uploads/:/tournament-app/uploads/
+      - /home/lastdance/ft_transcendence/srcs/authService/uploads/:/tournament-app/uploads/
     networks:
       - lastdance
     depends_on:
       - user
-
   pong:
     container_name: pong-app
     build: ./game
@@ -148,12 +133,11 @@ services:
       - "8005:8005"
     volumes:
       - game_data:/pong-app
-      - /root/lastdance/srcs/authService/uploads/:/pong-app/uploads/
+      - /home/lastdance/ft_transcendence/srcs/authService/uploads/:/pong-app/uploads/
     networks:
       - lastdance
     depends_on:
       - user
-
   match_making:
     container_name: match_making
     build: ./matchmaking
@@ -168,22 +152,22 @@ services:
       - "8004:8004"
     volumes:
       - match-making:/match-making
-      - /root/lastdance/srcs/authService/uploads/:/match-making/uploads/
+      - /home/lastdance/ft_transcendence/srcs/authService/uploads/:/match-making/uploads/
     networks:
       - lastdance
     depends_on:
       - user
       - tournament
-
   front_end:
     container_name: front_end
     build: ./nginx
     restart: always
     volumes:
-      - /root/lastdance/srcs/nginx/conf/default.conf:/etc/nginx/nginx.conf
-      - /etc/letsencrypt:/etc/letsencrypt:rw
-      - /root/lastdance/srcs/nginx/htmlfile:/usr/share/nginx/html
-      - /root/lastdance/srcs/nginx/log/:/var/log/nginx/
+      - /home/lastdance/ft_transcendence/srcs/nginx/conf/default.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf/localhost.key:/etc/ssl/private/localhost.key
+      - ./nginx/conf/localhost.pem:/etc/ssl/certs/localhost.pem
+      - /home/lastdance/ft_transcendence/srcs/nginx/htmlfile:/usr/share/nginx/html
+      - /home/lastdance/ft_transcendence/srcs/nginx/log/:/var/log/nginx/
     ports:
       - '80:80'
       - '443:443'
@@ -191,7 +175,6 @@ services:
       - lastdance
     depends_on:
       - user
-
   users_db:
     container_name: users_db
     image: postgres:16.4

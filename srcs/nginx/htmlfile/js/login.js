@@ -11,7 +11,7 @@ function closePopup_2fa_login() {
 
 async function login(username, password, code_2fa) {
     try {
-        const response = await fetch('https://lastdance.com.tr/api/users/jwtlogin/', {
+        const response = await fetch('https://10.11.22.5/api/users/jwtlogin/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ async function loginPage() {
     intraBtn.addEventListener('click', async function(event) {
         event.preventDefault();
         try {
-            window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c7fda387fc96d9bc0bbfb60511719a79b6307a19ad79150bd63c9d67d11033fc&redirect_uri=https%3A%2F%2Flastdance.com.tr%2Fwait&response_type=code";
+            window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c7fda387fc96d9bc0bbfb60511719a79b6307a19ad79150bd63c9d67d11033fc&redirect_uri=https%3A%2F%2F10.11.22.5%2Fwait&response_type=code";
         } catch (error) {
             console.error('Error:', error);
         }
@@ -96,7 +96,7 @@ async function loginPage() {
 async function intralogin() {
     try {
         code = getCodeURL('code');
-        const response = await fetch(`https://lastdance.com.tr/api/users/login42/${code}/`, {
+        const response = await fetch(`https://10.11.22.5/api/users/login42/${code}/`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

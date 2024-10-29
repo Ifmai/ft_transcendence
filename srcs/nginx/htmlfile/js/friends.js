@@ -24,9 +24,9 @@ async function populateFriendList(friend) {
         <button class="chat-friend-options-button" onclick="toggleOptions('${friend.username}-options')">:</button>
         <div class="chat-friend-options" id="${friend.username}-options" style="display: none;">
             <button class="chat-friend-block" id="${friend.blocked ? (friend.who_blocked + ' ' + friend.username) : ''}">
-                ${friend.blocked ? 'Bloklamayı kaldır' : 'Blokla'}
+                ${friend.blocked ? 'Unblock' : 'Block'}
             </button>
-                <button class="chat-friend-remove">Sil</button>
+                <button class="chat-friend-remove">Delete</button>
         </div>
     `;
     friendList.insertBefore(friendElement, friendList.lastElementChild);
@@ -34,16 +34,16 @@ async function populateFriendList(friend) {
     friendElement.querySelector('.chat-friend-block').addEventListener('click', function() {
         const buttonText = this.innerText; // Butonun içindeki metni al
         console.log("Button text : ", buttonText);
-        alert(`${friend.username} başarıyla ${buttonText.toLowerCase()}.`);
+        showPopup(`${friend.username} successfully ${buttonText.toLowerCase()}`, true);
         ws.send(JSON.stringify({
-            'type': buttonText.includes('Bloklamayı kaldır') ? 'unblock_friend' : 'block_friend',
+            'type': buttonText.includes('Unblock') ? 'unblock_friend' : 'block_friend',
             'name': friend.username
         }));
     });
 
     friendElement.querySelector('.chat-friend-remove').addEventListener('click', function() {
         friendElement.remove();
-        alert(`Arkadaş silindi.`);
+        showPopup(`Friend has been removed.`, true);
         ws.send(JSON.stringify({
             'type' : 'delete_friend',
             'name' : friend.username

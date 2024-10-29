@@ -30,7 +30,7 @@ class PasswordResetRequest(APIView):
         token = default_token_generator.make_token(userobj)
         encrypted_pk = encrypt_data(str(userobj.pk))
         combined_token = f"{encrypted_pk}.{token}"
-        reset_url = f"https://lastdance.com.tr/new-password?refresh={combined_token}"
+        reset_url = f"https://10.11.22.5/new-password?refresh={combined_token}"
         send_mail(
             subject="Password Reset Request",
             message=f"Click the link below to reset your password:\n{reset_url}",
@@ -39,8 +39,8 @@ class PasswordResetRequest(APIView):
             fail_silently=False,
         )
         return Response({"message": "Password reset email sent."}, status=status.HTTP_200_OK)
-    
-class PasswordResetConfirm(APIView):    
+
+class PasswordResetConfirm(APIView):
     def post(self, request, *args, **kwargs):
         new_password = request.data['new_password']
         token = kwargs.get('refresh')
