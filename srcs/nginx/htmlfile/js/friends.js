@@ -136,7 +136,6 @@ async function friendList() {
     sendFriendRequestButton.addEventListener('click', () => {
         const newFriendName = newFriendInput.value.trim();
         if (newFriendName) {
-            addMessage('System', `Friend request sent to ${newFriendName}`, '/placeholder.svg?height=40&width=40');
             ws.send(JSON.stringify({
                 'type': 'friend_request',
                 'name': newFriendName

@@ -16,10 +16,10 @@ def create_profil(sender, instance, created, **kwargs):
 			profilePolice = Profil.objects.get(user=instance)
 			profilePolice.bio = 'İŞİMİZ GÜVENLİK. 7/24 BURDAYIM!'
 			profilePolice.city = 'Tekirdağ'
-			profilePolice.save()
 			static_file_path = os.path.join(settings.BASE_DIR, 'uploads', 'profil_photo', 'miskirik.png')
 			with open(static_file_path, 'rb') as f:
 				profilePolice.photo.save('miskirik.png', File(f))
+			profilePolice.save()
 
 @receiver(post_save, sender=Profil)
 def create_first_durum(sender, instance, created, **kwargs):

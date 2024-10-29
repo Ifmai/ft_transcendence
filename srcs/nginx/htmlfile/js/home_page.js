@@ -25,10 +25,10 @@ async function homePage() {
 		}
 
 		// Paddle'lara çarpma kontrolü
-		if (hpBallX <= 10 && hpBallY >= leftPaddleY && hpBallY <= leftPaddleY + 60) {
+		if (hpBallX <= 10 && hpBallY + hpBall.clientHeight >= leftPaddleY && hpBallY <= leftPaddleY + hpLeftPaddle.clientHeight) {
 			hpBallSpeedX = -hpBallSpeedX;
 		}
-		if (hpBallX >= hpMaxX - 10 && hpBallY >= rightPaddleY && hpBallY <= rightPaddleY + 60) {
+		if (hpBallX >= hpMaxX - 10 && hpBallY + hpBall.clientHeight >= rightPaddleY && hpBallY <= rightPaddleY + hpRightPaddle.clientHeight) {
 			hpBallSpeedX = -hpBallSpeedX;
 		}
 
@@ -39,16 +39,16 @@ async function homePage() {
 	function updatePaddles() {
 		// Sol paddle topun y konumuna göre hareket eder
 		if (leftPaddleY + 30 < hpBallY && leftPaddleY < hpMaxY - 60) {
-			leftPaddleY += 1; // Aşağı hareket
+			leftPaddleY += 4; // Aşağı hareket
 		} else if (leftPaddleY + 20 > hpBallY && leftPaddleY > 0) {
-			leftPaddleY -= 1; // Yukarı hareket
+			leftPaddleY -= 4; // Yukarı hareket
 		}
 
 		// Sağ paddle topun y konumuna göre hareket eder
 		if (rightPaddleY + 30 < hpBallY && rightPaddleY < hpMaxY - 60) {
-			rightPaddleY += 1; // Aşağı hareket
+			rightPaddleY += 4; // Aşağı hareket
 		} else if (rightPaddleY + 20 > hpBallY && rightPaddleY > 0) {
-			rightPaddleY -= 1; // Yukarı hareket
+			rightPaddleY -= 4; // Yukarı hareket
 		}
 
 		hpLeftPaddle.style.top = `${leftPaddleY}px`;

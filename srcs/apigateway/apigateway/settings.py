@@ -11,22 +11,24 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-dyleu*ply7t2eb_#65*%^)m1*y3as^gn(3^wk5pjmok+aj^wf#'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 #ALLOWED_HOSTS = ['10.11.22.5', 'apigateway', 'userservice']
-ALLOWED_HOSTS = ['10.11.22.5','188.166.163.124', 'localhost', '127.0.0.1', 'tournament-app']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -44,13 +46,11 @@ INSTALLED_APPS = [
 
 	'rest_framework',
 	'gateway.apps.GatewayConfig',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -146,15 +146,6 @@ CSRF_COOKIE_NAME = 'csrftoken'  # CSRF çerezi için isim
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 
 # Tüm alan adlarından gelen isteklere izin vermek için
-CORS_ALLOW_ALL_ORIGINS = True
-
-# Belirli alan adlarından gelen isteklere izin vermek için
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8000',
-    'https://10.11.22.5',
-    'http://userservice:8001',
-    'http://10.11.22.5',
-]
 
 
 # HTTP yöntemlerine izin vermek için

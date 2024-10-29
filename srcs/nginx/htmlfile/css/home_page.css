@@ -54,14 +54,12 @@
 .hp-paddle {
 	width: 100%;
 	height: 100%;
-	background: blue;
+	background: linear-gradient(to bottom right, #3182ce, #63b3ed);
 	border-radius: 0.5rem;
 	box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.5);
 	position: relative;
 	transform-style: preserve-3d;
 	animation: hp-rotatePaddle 20s linear infinite;
-	background-size: 300px;
-	background-position: center;
 }
 
 @keyframes hp-rotatePaddle {

@@ -15,8 +15,8 @@ class LeaderBoardView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Profil.objects.all()
-
+        return Profil.objects.exclude(user__username='ChatPolice')
+    
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serialized_data = [self.get_serializer(profil).data for profil in queryset]
