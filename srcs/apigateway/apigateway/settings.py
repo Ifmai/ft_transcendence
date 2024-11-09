@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = ['10.11.22.5', 'apigateway', 'userservice']
+#ALLOWED_HOSTS = ['127.0.0.1', 'apigateway', 'userservice']
 ALLOWED_HOSTS = ['*']
 
 
@@ -138,9 +138,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
-    'https://10.11.22.5',
+    'https://127.0.0.1',
     'http://userservice:8001',
-    'http://10.11.22.5',
+    'http://127.0.0.1',
 ]
 CSRF_COOKIE_NAME = 'csrftoken'  # CSRF çerezi için isim
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'

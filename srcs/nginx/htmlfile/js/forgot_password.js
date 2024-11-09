@@ -20,7 +20,7 @@ async function forgotPassword() {
         const email = document.getElementById('email-ref').value;
 		const csrfToken = getCookie('csrftoken');
         try {
-            const response = await fetch('https://10.11.22.5/api/users/refreshpassword/', {
+            const response = await fetch('https://127.0.0.1/api/users/refreshpassword/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ async function newPasswordPage() {
             return;
         }
         try {
-            const response = await fetch(`https://10.11.22.5/api/users/reset/${refresh}/`, {
+            const response = await fetch(`https://127.0.0.1/api/users/reset/${refresh}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

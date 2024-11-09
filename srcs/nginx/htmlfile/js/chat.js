@@ -63,7 +63,7 @@ async function chat_ws_init() {
         return;
     }
 
-    chat_ws = new WebSocket(`wss://10.11.22.5/ws-chat/global-chat/?token=${getCookie('access_token')}`);
+    chat_ws = new WebSocket(`wss://127.0.0.1/ws-chat/global-chat/?token=${getCookie('access_token')}`);
     chat_ws.onopen = function (event) {
         console.log('Chat WebSocket bağlantısı açıldı.');
     };

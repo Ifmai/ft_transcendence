@@ -1,4 +1,5 @@
 up:
+	@[ -d "user_db" ] || mkdir user_db
 	@sudo docker compose up -d --build
 
 down:

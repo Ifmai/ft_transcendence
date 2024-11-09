@@ -17,7 +17,7 @@ async function initWebSocket_tournament() {
             return;
         }
         else{
-            ws_tournament = new WebSocket(`wss://10.11.22.5/ws-tournament/${getCodeURL('tournament')}/?token=${getCookie('access_token')}`);
+            ws_tournament = new WebSocket(`wss://127.0.0.1/ws-tournament/${getCodeURL('tournament')}/?token=${getCookie('access_token')}`);
             ws_tournament.onopen = function(event) {
                 console.log('Torunament WebSocketi bağlantısı açıldı.');
                 ws_tournament.send(JSON.stringify({

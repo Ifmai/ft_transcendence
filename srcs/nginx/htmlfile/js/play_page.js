@@ -6,10 +6,12 @@ async function initWebSocket_one_pvp_one() {
     token = getCookie('access_token')
     if(!token) {
         console.log('Kullanıcı oturum açmamış, WebSocket bağlantısı oluşturulmadı.');
+        document.getElementById('matchPopup').style.display = 'none';
+        window.history.pushState({}, "", '/play');
+        await loadPage(selectPage('/play'));
         return;
     }
-
-    ws_tournament = new WebSocket(`wss://10.11.22.5/ws-match/matchmaking/2/?token=${getCookie('access_token')}`);
+    ws_tournament = new WebSocket(`wss://127.0.0.1/ws-match/matchmaking/2/?token=${getCookie('access_token')}`);
     ws_tournament.onopen = function(event) {
         console.log('1 vs 1 WebSocket bağlantısı açıldı.');
     };
@@ -41,8 +43,10 @@ async function initWebSocket_one_pvp_one() {
 }
 
 async function closeWebSocket_one_pvp_one() {
-    ws_tournament.close();
-    ws_tournament = null;
+    if(ws_tournament){
+        ws_tournament.close();
+        ws_tournament = null;
+    }
 }
 
 

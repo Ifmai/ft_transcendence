@@ -77,7 +77,7 @@ class Ball():
 
 
 class GameState:
-	def __init__(self, match_id, channel_layer, room_id, side, user_name):
+	def __init__(self, match_id, channel_layer, room_id, side):
 		self.match_id = match_id
 		self.channel_layer = channel_layer
 		self.room_id = room_id
@@ -244,7 +244,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 			self.match_id = self.scope['url_route']['kwargs'].get('match_id')
 			self.side = ''
 			self.user = self.scope['user']
-			self.game_state = GameState(self.match_id, self.channel_layer, self.room_id, self.side, self.user.username)
+			self.game_state = GameState(self.match_id, self.channel_layer, self.room_id, self.side)
 		except KeyError as e:
 			print(f"Error getting scope: {e}")
 
@@ -265,19 +265,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 			rooms[self.room_id]['ball'] = Ball(1200, 800)
 
 		await self.assign_paddle(player_db)
-
-	# async def retrieve_paddle(self):
-	# 	"""Assign a paddle or retrieve existing paddle for the player."""
-	# 	if self.user.id in [rooms[self.room_id]['left'].get('user_id'), rooms[self.room_id]['right'].get('user_id')]:
-	# 		# User already has a paddle, retrieve existing paddle info
-	# 		if rooms[self.room_id]['left']['user_id'] == self.user.id:
-	# 			self.side = 'left'
-	# 			self.game_state.side = 'left'
-	# 		else:
-	# 			self.side = 'right'
-	# 			self.game_state.side = 'right'
-	# 		# Optionally send the paddle state to the client
-	# 		await self.send_initial_state()
 
 	async def assign_paddle(self, player_db):
 		"""Assign a paddle to the player based on available slots."""

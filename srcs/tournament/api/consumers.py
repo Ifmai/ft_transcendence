@@ -60,7 +60,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						'm_type': 'start'
 					}
 				)
-				await self.tournament_dict()
 
 	async def start_point(self):
 		if len(tournament_dict[self.room_group_name]['matches']) == 2:

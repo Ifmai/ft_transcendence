@@ -29,7 +29,7 @@ async function registerPage(){
         }
 
         try {
-            const response = await fetch('https://10.11.22.5/api/users/register/', {
+            const response = await fetch('https://127.0.0.1/api/users/register/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

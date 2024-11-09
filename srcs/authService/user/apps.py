@@ -16,7 +16,7 @@ def create_default_user(sender, **kwargs):
         User.objects.create_user(
             username='ChatPolice',
             password='ChatPolice123ChatPolice',
-            email='ChatPolice@10.11.22.5',
+            email='ChatPolice@127.0.0.1',
             first_name='Muhammet Ali',
             last_name='Iskırık',
         )

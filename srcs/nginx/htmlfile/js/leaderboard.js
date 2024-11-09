@@ -21,7 +21,7 @@ async function renderLeaderboard(data) {
 
 async function get_data(){
 	try {
-        const response = await fetch('https://10.11.22.5/api/users/leaderboard/', {
+        const response = await fetch('https://127.0.0.1/api/users/leaderboard/', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

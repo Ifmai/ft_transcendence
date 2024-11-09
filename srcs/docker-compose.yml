@@ -9,43 +9,43 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/lastdance/ft_transcendence/srcs/user_db
+      device: ./user_db
   web_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/lastdance/ft_transcendence/srcs/authService
+      device: ./authService
   chat_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/lastdance/ft_transcendence/srcs/chatService
+      device: ./chatService
   api_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/lastdance/ft_transcendence/srcs/apigateway
+      device: ./apigateway
   tournament_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/lastdance/ft_transcendence/srcs/tournament
+      device: ./tournament
   match-making:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/lastdance/ft_transcendence/srcs/matchmaking
+      device: ./matchmaking
   game_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/lastdance/ft_transcendence/srcs/game
+      device: ./game
 services:
   apigateway:
     container_name: apigateway
@@ -94,7 +94,7 @@ services:
       - "8002:8002"
     volumes:
       - chat_data:/chatServices
-      - /home/lastdance/ft_transcendence/srcs/authService/uploads/:/chatServices/uploads/
+      - ./authService/uploads/:/chatServices/uploads/
     networks:
       - lastdance
     depends_on:
@@ -114,7 +114,7 @@ services:
       - "8003:8003"
     volumes:
       - tournament_data:/tournament-app
-      - /home/lastdance/ft_transcendence/srcs/authService/uploads/:/tournament-app/uploads/
+      - ./authService/uploads/:/tournament-app/uploads/
     networks:
       - lastdance
     depends_on:
@@ -133,7 +133,7 @@ services:
       - "8005:8005"
     volumes:
       - game_data:/pong-app
-      - /home/lastdance/ft_transcendence/srcs/authService/uploads/:/pong-app/uploads/
+      - ./authService/uploads/:/pong-app/uploads/
     networks:
       - lastdance
     depends_on:
@@ -152,7 +152,7 @@ services:
       - "8004:8004"
     volumes:
       - match-making:/match-making
-      - /home/lastdance/ft_transcendence/srcs/authService/uploads/:/match-making/uploads/
+      - ./authService/uploads/:/match-making/uploads/
     networks:
       - lastdance
     depends_on:
@@ -163,11 +163,11 @@ services:
     build: ./nginx
     restart: always
     volumes:
-      - /home/lastdance/ft_transcendence/srcs/nginx/conf/default.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf/default.conf:/etc/nginx/nginx.conf
       - ./nginx/conf/localhost.key:/etc/ssl/private/localhost.key
       - ./nginx/conf/localhost.pem:/etc/ssl/certs/localhost.pem
-      - /home/lastdance/ft_transcendence/srcs/nginx/htmlfile:/usr/share/nginx/html
-      - /home/lastdance/ft_transcendence/srcs/nginx/log/:/var/log/nginx/
+      - ./nginx/htmlfile:/usr/share/nginx/html
+      - ./nginx/log/:/var/log/nginx/
     ports:
       - '80:80'
       - '443:443'
@@ -180,9 +180,9 @@ services:
     image: postgres:16.4
     restart: always
     environment:
-      POSTGRES_USER: authuser
-      POSTGRES_PASSWORD: Zodiyac123++
-      POSTGRES_DB: users
+      POSTGRES_USER: ${USER_DB_USER}
+      POSTGRES_PASSWORD: ${USER_DB_PASS}
+      POSTGRES_DB: ${USER_DB_NAME}
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:

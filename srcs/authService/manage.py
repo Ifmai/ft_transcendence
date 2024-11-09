@@ -11,7 +11,6 @@ def create_key_if_not_exists():
         with open(key_file, 'wb') as key_file:
             key_file.write(key)
         os.environ['FERNET_KEY'] = key.decode()
-        print("Anahtar oluşturuldu ve ortam değişkenine eklendi.")
     else:
         with open(key_file, 'rb') as key_file:
             key = key_file.read()

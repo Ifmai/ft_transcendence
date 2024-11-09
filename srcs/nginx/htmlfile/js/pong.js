@@ -18,10 +18,10 @@ async function pongPage() {
 	let wsUrl;
 
 	if(match_id){
-		wsUrl = `wss://10.11.22.5/ws-pong/pong/${room_id}/${match_id}/?token=${getCookie('access_token')}`;
+		wsUrl = `wss://127.0.0.1/ws-pong/pong/${room_id}/${match_id}/?token=${getCookie('access_token')}`;
 	}
 	else{
-		wsUrl = `wss://10.11.22.5/ws-pong/pong/${room_id}/?token=${getCookie('access_token')}`;
+		wsUrl = `wss://127.0.0.1/ws-pong/pong/${room_id}/?token=${getCookie('access_token')}`;
 	}
 	const socket = new WebSocket(wsUrl);
 	if(tournament)

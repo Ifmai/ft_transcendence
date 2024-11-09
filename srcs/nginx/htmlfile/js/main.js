@@ -55,7 +55,7 @@ async function initWebSocket() {
     }
 
     // Yeni WebSocket bağlantısı oluştur
-    ws = new WebSocket(`wss://10.11.22.5/ws/friend-list/?token=${getCookie('access_token')}`);
+    ws = new WebSocket(`wss://127.0.0.1/ws/friend-list/?token=${getCookie('access_token')}`);
     ws.onopen = function(event) {
         console.log('WebSocket bağlantısı açıldı.');
     };

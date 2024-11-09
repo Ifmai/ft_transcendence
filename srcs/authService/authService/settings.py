@@ -134,7 +134,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'api/users/static/'
-MEDIA_URL = 'https://10.11.22.5/api/users/media/'
+MEDIA_URL = 'https://127.0.0.1/api/users/media/'
 MEDIA_ROOT = 'uploads'
 
 # Default primary key field type
@@ -156,7 +156,7 @@ ACCOUNT_EMAIL_REQUIRED = (False)
 #CSRF
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
-    'https://10.11.22.5',
+    'https://127.0.0.1',
     'http://apigateway:8000',
     'http://userservice:8001',
 ]
