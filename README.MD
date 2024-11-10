@@ -19,9 +19,9 @@
 | **Backend Framework**  | ![Django REST](https://img.shields.io/badge/django%20rest-ff1709?style=for-the-badge&logo=django&logoColor=white)                                                                                                                                                                                                     |
 | **Database**           | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)                                                                                                                                                                                                     |
 | **Containerization**   | ![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)                                                                                                                                                                                                                  |
-| **Frontend**           | ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)  &nbsp; ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)                                                                                     |
+| **Frontend**           | ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)  &nbsp; ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)  &nbsp; ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)  |
 | **Authentication**     | ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)  &nbsp; ![2FA](https://img.shields.io/badge/2FA-FF0000?style=for-the-badge&logo=authy&logoColor=white)                                                                                                                                       |
-| **Languages**          | ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)  &nbsp; ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)  &nbsp; ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)  &nbsp; ![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue) |
+| **Languages**          | ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)  &nbsp; ![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue) |
 | **Development Tools**  | ![VSCode](https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)  &nbsp; ![Google Chrome](https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white)  &nbsp; ![Mozilla Firefox](https://img.shields.io/badge/Firefox-FF7139?style=for-the-badge&logo=firefox&logoColor=white)  &nbsp; ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white) |
 | **Design**             | ![Adobe Photoshop](https://img.shields.io/badge/Photoshop-31A8FF?style=for-the-badge&logo=adobephotoshop&logoColor=white)                                                                                                                                                                                                                     |
 | **Libraries**          | ![Channels](https://img.shields.io/badge/Channels-FF7139?style=for-the-badge&logo=django&logoColor=white)  &nbsp; ![Daphne](https://img.shields.io/badge/Daphne-092E20?style=for-the-badge&logo=django&logoColor=white)  &nbsp; ![Simple-JWT](https://img.shields.io/badge/Simple--JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)  &nbsp; ![Fernet](https://img.shields.io/badge/Fernet-306998?style=for-the-badge&logo=python&logoColor=white) |
@@ -90,11 +90,11 @@ graph TD
         ChatService
     end
 
-    classDef default fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef gateway fill:#ff9,stroke:#333,stroke-width:2px;
-    classDef nginx fill:#9ff,stroke:#333,stroke-width:2px;
-    classDef client fill:#f99,stroke:#333,stroke-width:2px;
-    classDef database fill:#bfe,stroke:#333,stroke-width:2px;
+    classDef default fill:#fff,stroke:#333,stroke-width:2px,color:#000;
+    classDef gateway fill:#ff9,stroke:#333,stroke-width:2px,color:#000;
+    classDef nginx fill:#9ff,stroke:#333,stroke-width:2px,color:#000;
+    classDef client fill:#f99,stroke:#333,stroke-width:2px,color:#000;
+    classDef database fill:#bfe,stroke:#333,stroke-width:2px,color:#000;
     class Gateway gateway;
     class Nginx nginx;
     class Client client;
